@@ -18,6 +18,7 @@ const services = [ACCEL_SERVICE];
 let microbitPaired = false;
 
 let collectingData = false;
+let isRecordingGesture = false;
 
 let lastAccelX = 0;
 let lastAccelY = 0;
@@ -244,33 +245,36 @@ function playAudio(name) {
     stopAllAudio();
   }
 
-  // play corresponding audio
-  let selectEl = document.getElementById(name + "-select");
-  if (selectEl) {
-    let audioFileName = selectEl.options[
-      selectEl.selectedIndex
-    ].value.toLowerCase();
+  if(!isRecordingGesture){
+    // play corresponding audio
+    let selectEl = document.getElementById(name + "-select");
+    if (selectEl) {
+      let audioFileName = selectEl.options[
+        selectEl.selectedIndex
+      ].value.toLowerCase();
 
-    // play corresponding audio element
-    let audioEl = document.getElementById(audioFileName + "-audio");
-    if (audioEl) {
-      // check if it needs to be looped
-      if (name.includes("countdown")) {
-        let loopChecked = document.getElementById(name + "-loop-checkbox");
-        if (loopChecked && loopChecked.checked) {
-          audioEl.loop = true;
+      // play corresponding audio element
+      let audioEl = document.getElementById(audioFileName + "-audio");
+      if (audioEl) {
+        // check if it needs to be looped
+        if (name.includes("countdown")) {
+          let loopChecked = document.getElementById(name + "-loop-checkbox");
+          if (loopChecked && loopChecked.checked) {
+            audioEl.loop = true;
+          }
         }
+        console.log("play ", audioFileName);
+        audioEl.play();
+      } else if (audioFileName == "random") {
+        console.log("play random");
+        playRandomSound();
+      } else if (audioFileName != "none") {
+        // need to do text to speech
+        speak(audioFileName);
       }
-      console.log("play ", audioFileName);
-      audioEl.play();
-    } else if (audioFileName == "random") {
-      console.log("play random");
-      playRandomSound();
-    } else if (audioFileName != "none") {
-      // need to do text to speech
-      speak(audioFileName);
     }
   }
+
 }
 
 // p5 / ml5 stuff
@@ -851,6 +855,7 @@ function recordGesture(evt) {
   console.log("gestureID: ", gestureID);
   currentGesture = gestureID;
   collectingData = true;
+  isRecordingGesture = true;
   recordCountdown.start();
 }
 
@@ -1210,7 +1215,7 @@ function runPrediction() {
         model.classify(inputs_no_peaks, predictionResults);
       }
     }
-  }, 100);
+  }, 300);
 }
 
 function predictionResults(error, results) {
@@ -1314,19 +1319,6 @@ let recordCountdown = (function (document) {
       accelXSample = [];
       accelYSample = [];
       accelZSample = [];
-
-      // // // check whether to loop audio
-      // let countdownStartSelect = document.getElementById('countdown-start-select');
-      // let audioFileName = countdownStartSelect.options[countdownStartSelect.selectedIndex].value.toLowerCase();
-      // let audioEl = document.getElementById(audioFileName + "-audio");
-      // if(document.getElementById('countdown-start-loop-checkbox').checked){
-      //   audioEl.loop = true;
-      // }else{
-      //   audioEl.loop = false;
-      // }
-
-      // // play audio
-      // playAudio("countdown-start");
     }
     let time = recordCountdownTime;
 
@@ -1364,7 +1356,7 @@ let recordCountdown = (function (document) {
 
   function end() {
     reset();
-    // playAudio("countdown-end");
+    isRecordingGesture = false;
   }
 
   return { start: start, end: end, reset: reset };
