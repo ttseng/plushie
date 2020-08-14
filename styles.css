@@ -1,0 +1,513 @@
+:root {
+  --base: #d3ebf5;
+  --border-color: #a5c5e7;
+  --light-blue: #9cddf8;
+  --hover-blue: #8fcfe9;
+  --light-grey: #efefef;
+  --yellow:#fff6be;
+  --green: #b0f3d4;
+  --purple: #dbbbff;
+  --max-width: 1080px;
+}
+
+body {
+  background: var(--base);
+  padding: 50px 25px 25px;
+  margin: 0 auto;
+  max-width: var(--max-width)
+}
+
+hr{
+  background-color: var(--border-color);
+}
+
+.row-container{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 15px;
+}
+
+#console {
+  width: 300px;
+  margin: 0 auto;
+  border-radius: 15px;
+  padding: 15px;
+  background: white;
+  left: 50%;
+  margin-left: calc(var(--max-width) / 2 * -1);
+  position: fixed;
+}
+
+.heading {
+  position: inherit;
+  width: fit-content;
+  background: var(--primary);
+  top: -40px;
+  font-size: 28px;
+  text-align: center;
+  border-radius: 27px;
+  padding: 5px 30px;
+  font-family: consolas, monospace;
+  color: white;
+  margin-bottom: -20px;
+  z-index: 1;
+}
+
+#console .heading {
+  background: var(--primary);
+  top: 25px;
+}
+
+#console .content{
+  margin-top: 30px;
+}
+
+#reconnect-btn{
+  display: none;
+}
+
+#train-btn.active{
+  background-color: var(--green);
+}
+
+#repair-btn.active{
+  display: inline;
+}
+
+#status-container {
+  display: none;
+  background: var(--dark);
+  width: 100%;
+  text-align: center;
+  border-radius: 5px;
+  padding: 5px;
+  color: white;
+}
+
+button {
+  display: block;
+  font-size: 16px;
+  border-radius: 3px;
+  background-color: #efefef;
+  border: 1px solid grey;
+  box-shadow: 2px 2px #dadada;
+  cursor: pointer;
+}
+.pair {
+  display: block;
+  
+}
+button.round:disabled{
+  background: #cccccc;
+  color: #8c8c8c;
+}
+button.round {
+  margin: 0 auto;
+  cursor: pointer;
+  background: red;
+  padding: 5px;
+  border-radius: 50%;
+  height: 2em;
+  width: 2em;
+  font-size: 30px;
+  color: white;
+}
+
+.record-btn-container{
+  display: flex;
+  margin-top: 10px;
+}
+
+.sound-options{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sound-options button{
+  padding: 5px 15px;
+  height: 36px;
+}
+
+#file-upload-label{
+  display: block;
+  padding: 5px 15px;
+  font-size: 16px;
+  border-radius: 3px;
+  background-color: #efefef;
+  border: 1px solid grey;
+  box-shadow: 2px 2px #dadada;
+  cursor: pointer;
+  margin: 10px 0;
+  font-weight: normal;
+}
+
+#file-upload{
+  display: none;
+}
+
+.sound {
+  display: grid;
+  grid-template-columns: 60% 20% 20%;
+  background: var(--light-grey);
+  border-radius: 40px;
+  margin-bottom: 15px;
+  font-weight: bold;
+}
+
+.name {
+  padding: 5px 25px;
+}
+
+.play {
+  background: #9770e5;
+  color: white;
+  text-align: center;
+  vertical-align: middle;
+  padding: 5px;
+}
+
+.play:hover{
+  cursor: pointer;
+}
+
+.play i{
+  pointer-events: none;
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.remove {
+  background: #fe6da3;
+  color: white;
+  text-align: center;
+  vertical-align: middle;
+  padding: 5px;
+  border-radius: 0 40px 40px 0;
+}
+
+.remove:hover{
+  cursor: pointer;
+}
+
+.remove i{
+  font-size: 20px;
+  margin-top: 2px;
+}
+
+.action{
+  display: flex;
+  background: var(--light-grey);
+  margin-bottom: 20px;
+  border-radius: 15px;
+  flex-direction: row;
+  border-bottom: 1px solid var(--light-grey);
+  align-items: center;
+  padding: 10px 15px;
+}
+
+.action:last-of-type{
+  border-bottom: none;
+}
+
+.action img, .action .icon{
+  width: 80px;
+  height: 80px;
+  font-size: 40px;
+  text-align: center;
+}
+
+input {
+  margin-bottom: 15px;
+}
+.accel {
+  display: inline-block;
+  width: 55px;
+  text-align: right;
+}
+.note {
+  font-size: smaller;
+}
+.note a {
+  color: black;
+  text-decoration: underline;
+}
+.hidden-on-load{
+  visibility: hidden;
+}
+canvas {
+  /* visibility: hidden; */
+  margin: 10px 0;
+}
+
+video {
+  width: 100%;
+}
+
+#counter-container h2 {
+  font-size: 100px;
+  font-family: "consolas";
+}
+#chart {
+  visibility: initial;
+  max-width: 100%;
+}
+
+.main-content{
+  width: 70%;
+  float: right;
+}
+
+.container {
+  background: white;
+  border-radius: 10px;
+  margin-bottom: 40px;
+  padding: 15px;
+  position: relative;
+  border: 2px solid var(--border-color)
+}
+
+
+.container .content{
+  margin-top: -20px;
+}
+
+#sounds-container{
+}
+
+#max-data,
+#graph-btns {
+}
+
+#instructions {
+  text-align: center;
+}
+
+#counter-container {
+  text-align: center;
+}
+
+select {
+  margin-top: 5px;
+  margin-left: 5px;
+  height: 40px;
+}
+
+.color{
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+}
+
+.color.red{
+  background: red;
+}
+
+.color.green{
+  background: green;
+}
+
+.color.blue{
+  background: blue;
+}
+
+#info button{
+  /* margin-top: -20px; */
+}
+
+.modal-header button{
+  box-shadow: none;
+}
+
+.modal-content form{
+  padding: 0px 25px;
+}
+
+#text{
+  width: 100%;
+}
+
+label{
+  font-weight: bold;
+}
+
+input[type=checkbox]{
+  margin: 0;
+  margin-right: 5px;
+}
+
+#countdown .show-btn{
+  margin-top: -20px;
+}
+
+#countdown .content{
+  margin-top: 15px;
+}
+
+#timer label{
+  background-color: transparent
+}
+
+#timer-countdown-trigger-action{
+  align-items: baseline;
+}
+
+.timer-countdown-btn-container{
+  display: flex;
+  justify-content: center;
+}
+
+
+#timer-countdown-start-action{
+  flex-wrap: wrap;
+}
+
+#timer-countdown-start-action .icon{
+  width: 50px;
+  margin-right: 10px;
+}
+
+#timer-countdown-start-action .description{
+  width: 95px;
+  margin-right: 10px;
+}
+
+#countdown-start-action div:not(.loop-container){
+  flex: 1;
+}
+
+.countdown-timer{
+  width: 60px;
+  font-family: monospace;
+  background: grey;
+  color: white;
+  text-align: center;
+  padding: 5px 10px;
+  border-radius: 3px;
+  margin-left: 10px;
+  font-weight: bold;
+}
+
+.countdown-timer.active{
+  background: #be97f1;
+}
+
+#timer-countdown{
+  font-family: monospace;
+  font-size: 40px;
+  background:#97D5F1;
+  color: white;
+  text-align: center;
+  padding: 10px;
+  border-radius: 15px;
+  margin-bottom: 15px;
+}
+
+#timer-countdown:hover{
+  cursor: pointer;
+}
+
+#timer-reset-btn{
+  margin-bottom: 20px;
+}
+
+.loop-container{
+  flex: 0 0 100%;
+}
+
+#noise-level-display{
+  background:#DFDFFE;
+  padding: 10px 15px;
+  border-radius: 15px;
+  text-align: center;
+  margin-top: -15px;
+  margin-bottom: 15px;
+}
+
+#noise-level{
+  font-size: 40px;
+  font-family: monospace;
+}
+
+#noise-input-threshold{
+  width: 50px;
+  text-align: center;
+  margin-bottom: 0;
+}
+
+.gesture-container{
+  padding: 10px 0px;
+  background-color: var(--light-grey);
+}
+
+.gesture-container .title{
+  font-size: larger;
+  font-weight: bold; 
+}
+
+label{
+  background-color: var(--light-blue);
+  border-radius: 3px;
+  padding: 3px 7px;
+}
+
+#default-gestures label{
+  margin: 5px 10px 5px 0;
+}
+
+
+.sample-counter{
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: grey;
+  border-top-right-radius: 15px;
+  padding: 0 10px;
+  border-bottom-left-radius: 5px;
+  color: white;
+}
+
+
+#default-gestures{
+  display: flex;
+  margin-bottom: 15px;
+}
+
+.custom-gesture{
+  border: 1px solid var(--primary);
+  margin: 35px 0 10px;
+  border-radius: 15px;
+  padding: 10px;
+  position: relative;
+}
+
+.custom-gesture label{
+  margin-top: -30px !important;
+}
+
+.custom-gesture label:hover{
+  cursor: pointer;
+  background-color:var(--hover-blue);
+}
+
+.custom-gesture label i{
+  margin-left: 5px;
+}
+
+.custom-gesture.incomplete{
+  background-color: var(--yellow);
+}
+
+.custom-gesture.ready{
+  background-color: var(--green);
+}
+
+.sample-container{
+  display: flex;
+  flex-wrap: wrap;
+  padding: 10px 0;
+}
+
+.sample-container div{
+  margin: 5px;
+}

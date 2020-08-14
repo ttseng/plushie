@@ -1,0 +1,381 @@
+<html>
+
+<head>
+  <title>Plushie Microbit</title>
+  <link id="favicon" rel="icon" href="https://glitch.com/edit/favicon-app.ico" type="image/x-icon" />
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- load smoothie.js -->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/smoothie/1.34.0/smoothie.js"></script>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
+
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- FontAwesome for icons (https://fontawesome.com/cheatsheet)-->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
+    integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous" />
+
+  <!-- load p5js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/p5.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/addons/p5.dom.min.js"></script>
+
+  <!-- load m5js -->
+  <script src="https://unpkg.com/ml5@0.4.3/dist/ml5.min.js"></script>
+
+  <!-- plotly -->
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+  <!-- pluralize -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pluralize/8.0.0/pluralize.min.js"></script>
+
+  <!-- google fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500&display=swap" rel="stylesheet" />
+
+</head>
+
+<body>
+  <div id="console" class="container">
+    <div class="heading">
+      Console
+    </div>
+
+    <div class="content">
+      <button onclick="pair()" id="pair-btn" id="repair-btn">
+        Pair Your Microbit
+      </button>
+      <div id="status-container">
+        <b id="status-label">Status:</b> <span id="status">Awaiting pairing...</span>
+      </div>
+      <hr>
+
+      <div class="hidden-on-load">
+        <button id="reconnect-btn" onClick="pair()" class="pair">
+          Reconnect Microbit
+        </button>
+
+        <div style="display: flex;">
+          <button id="train-btn" onClick="trainModel()" disabled>
+            Train Model
+          </button>
+          <button onClick="saveModel()">
+            Save Model
+          </button>
+          <!-- <button onClick="loadDefaultGestures()">
+            Load Default Gestures
+          </button> -->
+        </div>
+
+        <hr>
+
+        <canvas id="smoothie-chart" width="250" height="250"></canvas>
+
+        <div id="p5js-container"></div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="main-content">
+
+    <div class="container" id="gestures-container">
+      <div class="heading">
+        Gestures
+      </div>
+
+      <div id="default-gestures">
+        <label>Shake</label>
+        <label>Bow</label>
+        <label>None</label>
+      </div>
+
+      <hr>
+
+      <button onClick="addNewGesture()" id="new-gesture-btn">+ Add New Gesture</button>
+
+      <div id="custom-gestures">
+
+      </div>
+    </div>
+
+    <!-- SOUNDS CONTAINER -->
+    <div class="row-container">
+    <div class="container" id="sounds-container">
+      <div class="heading">
+        Sounds
+      </div>
+      <div class="content">
+        <div class="sound">
+          <div class="name">wow</div>
+          <div class="play" onclick="onClickPlay()">
+            <audio id="wow-audio" onended="stopPlayback()" onplay="startPlayback()">
+              <source src="sounds/wow.mp3"
+                type="audio/mpeg" />
+            </audio>
+            <i class="fas fa-play"></i>
+          </div>
+          <div class="remove" onclick="removeAudio()">
+            <i class="fas fa-times"></i>
+          </div>
+        </div>
+
+        <div class="sound">
+          <div class="name">applause</div>
+          <div class="play" onclick="onClickPlay()">
+            <audio id="applause-audio" onended="stopPlayback()" onplay="startPlayback()">
+              <source src="sounds/applause.mp3"
+                type="audio/mpeg" />
+            </audio>
+            <i class="fas fa-play"></i>
+          </div>
+          <div class="remove" onclick="removeAudio()">
+            <i class="fas fa-times"></i>
+          </div>
+        </div>
+
+
+        <div class="sound">
+          <div class="name">tick-tock</div>
+          <div class="play" onclick="onClickPlay()">
+            <audio id="tick-tock-audio" onended="stopPlayback()">
+              <source
+                src="sounds/tick-tock.mp3"
+                type="audio/mpeg" />
+            </audio>
+            <i class="fas fa-play"></i>
+          </div>
+          <div class="remove" onclick="removeAudio()">
+            <i class="fas fa-times"></i>
+          </div>
+        </div>
+
+        <button id="record-btn" class="round" onclick="toggleRecordingState()">
+          <i class="fas fa-microphone" id="record-icon"></i>
+        </button>
+
+        <hr />
+
+        <div class="sound-options">
+          <label id="file-upload-label" for="file-upload">
+            <i class="fas fa-file-upload"></i> &nbsp; Upload
+          </label>
+          <input type="file" id="file-upload" accept="audio/*" />
+          <button onclick="showTextSpeechModal()">
+            <i class="far fa-comments"></i> &nbsp; Text to Speech
+          </button>
+        </div>
+
+        <hr/>
+        <button onClick="stopAllAudio()">Stop All Sounds</button>
+      </div>
+    </div>
+
+    <!-- TRIGGERS CONTAINER -->
+
+    <div class="container" id="triggers">
+      <div class="heading">
+        Triggers
+      </div>
+      <div class="content">
+
+        <div class="action">
+          <div class="description">
+            On <label>Shake</label>, play sound<br/>
+            <select id="shake-select" class="audio-select">
+              <option value="none">🔇 None</option>
+              <option value="random">🔀 Random</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="action">
+          <div class="description">
+            On <label>Bow</label>, play sound<br/>
+            <select id="bow-select" class="audio-select">
+              <option value="none">🔇 None</option>
+              <option value="random">🔀 Random</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="action">
+          <div class="description">
+            On <label>No Gesture</label>, play sound<br/>
+            <select id="none-select" class="audio-select">
+              <option value="none">🔇 None</option>
+              <option value="random">🔀 Random</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <!-- HEARING -->
+    <div class="row-container">
+    <div class="container" id="hearing">
+      <div class="heading">
+        Hearing
+      </div>
+
+      <div id="noise-level-display">
+        🔊 Current noise levels: <br />
+        <div id="noise-level"></div>
+      </div>
+
+      <div class="action">
+        <div class="icon">
+          📢
+        </div>
+        <div style="margin-left: 15px;">
+          If noise louder than <input type="text" id="noise-input-threshold" value="100"
+            oninput="setNoiseThreshold(this.value)">, play sound
+        </div>
+        <div>
+          <select class="audio-select" id="loud-select">
+            <option value="none">🔇 None</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- TIMER -->
+    <div id="timer" class="container">
+      <div class="heading">
+        Timer
+      </div>
+
+      <div class="content">
+
+        <div id="timer-countdown" onClick="setTimer()">
+          00:10
+        </div>
+
+        <div class="timer-countdown-btn-container">
+          <!-- <button class='start-countdown' onClick="countdown.start()">
+              Start
+            </button> -->
+
+          <button onClick="countdown.reset()" id="timer-reset-btn">
+            Reset
+          </button>
+        </div>
+
+        <div class="action" id="timer-countdown-trigger-action">
+          <input type="checkbox" id="timer-countdown-trigger-checkbox">
+          <label for="countdown-checkbox">Trigger on</label>
+          <select id="timer-countdown-trigger-select">
+            <option value="shake" selected>shake</option>
+            <option value="bow">bow</option>
+          </select>
+        </div>
+
+        <div class="action" id="timer-countdown-start-action">
+          <div class="icon">
+            ⏲️
+          </div>
+          <div class="description">
+            At start, play sound
+          </div>
+          <div>
+            <select class="audio-select" id="timer-countdown-start-select">
+              <option value="none">🔇 None</option>
+            </select>
+          </div>
+          <div class="loop-container">
+            <input type="checkbox" id="timer-countdown-start-loop-checkbox" checked>
+            <label for="loop-countdown-start-checkbox">Loop audio</label>
+          </div>
+        </div>
+
+        <div class="action">
+          <div class="icon">
+            🏁
+          </div>
+          When done, play sound
+          <select class="audio-select" id="timer-countdown-end-select">
+            <option value="none">🔇 None</option>
+            <option value="random">🔀 Random</option>
+          </select>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  </div>
+
+  <!-- text-to-speech modal -->
+  <div class="modal fade" id="textToSpeechModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="myModalLabel">Text to Speech</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" name="modal-message"></div>
+
+        <form id="text-to-speech-form">
+          <label for="text">Text to say:</label><br />
+          <div style="width: 100%;">
+            <input id="text" name="text" type="text" onInput="textOnChange()" onkeypress="checkSubmit()" />
+          </div>
+
+          <button id="preview-btn" onclick="previewTTS()" type="button" disabled>
+            <i class="fas fa-play"></i> &nbsp; Preview
+          </button>
+
+          <div class="modal-footer">
+            <button disabled id="add-tts-btn" type="submit" class="btn btn-primary" data-dismiss="modal"
+              onClick="addTTS()">
+              Add
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="myModalLabel">Error</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" name="modal-message"></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    crossorigin="anonymous"></script>
+  <script type="text/javascript" src="microbit.js"></script>
+</body>
+
+</html>
