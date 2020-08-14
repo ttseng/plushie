@@ -3,7 +3,7 @@ let shouldLoadDefaultGestures = true;
 let shouldLoadModel = true;
 let withPeaks = true;
 let dataDirectory = "none-bow-shake-peaks";
-const numEpochs = 5; // change to 120 when not testing
+const numEpochs = 120; // change to 120 when not testing
 
 // Microbit Bluetooth documentation: https://lancaster-university.github.io/microbit-docs/resources/bluetooth/bluetooth_profile.html
 let accelService = null;
@@ -1284,7 +1284,7 @@ function updateTriggers() {
     populateSelects();
 
     // update timer trigger
-    let timerTrigger = document.getElementById("countdown-trigger-select");
+    let timerTrigger = document.getElementById("timer-countdown-trigger-select");
     timerTrigger.options.add(new Option(gesture, gesture));
   });
 
