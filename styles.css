@@ -7,7 +7,9 @@
   --yellow:#fff6be;
   --green: #b0f3d4;
   --purple: #dbbbff;
+  --pink: #ffa6c7;
   --max-width: 1080px;
+  --border-radius: 15px;
 }
 
 body {
@@ -19,6 +21,14 @@ body {
 
 hr{
   background-color: var(--border-color);
+}
+
+i{
+  pointer-events: none;
+}
+
+.hidden{
+  display: none;
 }
 
 .row-container{
@@ -70,18 +80,32 @@ hr{
   background-color: var(--green);
 }
 
+#warning{
+  display: inline-block;
+  background: var(--yellow);
+  padding: 5px 10px;
+  margin: 10px 0px;
+  font-weight: bold;
+}
+
+#warning.hidden{
+  display: none;
+}
+
 #repair-btn.active{
   display: inline;
 }
 
 #status-container {
-  display: none;
   background: var(--dark);
   width: 100%;
   text-align: center;
   border-radius: 5px;
   padding: 5px;
   color: white;
+}
+#status-container.hidden{
+  display: none;
 }
 
 button {
@@ -150,12 +174,12 @@ button.round {
   display: grid;
   grid-template-columns: 60% 20% 20%;
   background: var(--light-grey);
-  border-radius: 40px;
+  border-radius: var(--border-radius);
   margin-bottom: 15px;
   font-weight: bold;
 }
 
-.name {
+.sound .name {
   padding: 5px 25px;
 }
 
@@ -178,12 +202,12 @@ button.round {
 }
 
 .remove {
-  background: #fe6da3;
+  background: var(--pink);
   color: white;
   text-align: center;
   vertical-align: middle;
   padding: 5px;
-  border-radius: 0 40px 40px 0;
+  border-radius: 0 var(--border-radius) var(--border-radius) 0;
 }
 
 .remove:hover{
@@ -449,12 +473,24 @@ label{
   background-color: var(--light-blue);
   border-radius: 3px;
   padding: 3px 7px;
+  width: fit-content;
 }
 
-#default-gestures label{
-  margin: 5px 10px 5px 0;
+label.gesture{
+  margin: 5px 20px 5px 0;
+  display: grid;
+  grid-template-columns: 65% 35%;
+  padding: 0;
 }
 
+label.gesture span{
+  margin: 0 10px;
+}
+
+label.gesture .remove{
+  padding: 0 10px;
+  border-radius: 0 3px 3px 0;
+}
 
 .sample-counter{
   position: absolute;
@@ -482,7 +518,7 @@ label{
 }
 
 .custom-gesture label{
-  margin-top: -30px !important;
+  margin-top: -25px !important;
 }
 
 .custom-gesture label:hover{
@@ -510,4 +546,18 @@ label{
 
 .sample-container div{
   margin: 5px;
+}
+
+.plot{
+  border-radius: 5px;
+  border-radius: 5px;
+  position: relative;
+}
+
+.plot .remove{
+  position: absolute;
+  right: 0;
+  top: 0;
+  border-radius: 0 5px 0px 0;
+  margin: 0;
 }

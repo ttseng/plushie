@@ -47,7 +47,7 @@
       rel="stylesheet"
     />
   </head>
-
+ 
   <body>
     <div id="console" class="container">
       <div class="heading">
@@ -58,7 +58,7 @@
         <button onclick="pair()" id="pair-btn" id="repair-btn">
           Pair Your Microbit
         </button>
-        <div id="status-container">
+        <div id="status-container" class="hidden">
           <b id="status-label">Status:</b>
           <span id="status">Awaiting pairing...</span>
         </div>
@@ -69,17 +69,21 @@
             Reconnect Microbit
           </button>
 
-          <div style="display: flex;">
-            <button id="train-btn" onClick="trainModel()" disabled>
-              Train Model
-            </button>
-            <!-- <button onClick="saveModel()">
-            Save Model
-          </button> -->
-            <!-- <button onClick="loadDefaultGestures()">
-            Load Default Gestures
-          </button> -->
+          <button id="train-btn" onClick="trainModel()" disabled>
+            Train Model
+          </button>
+
+          <div id="warning" class="hidden">
+
           </div>
+
+          <!-- <button onClick="saveModel()">
+          Save Model
+        </button> -->
+          <!-- <button onClick="loadDefaultGestures()">
+          Load Default Gestures
+        </button> -->
+        
 
           <hr />
 
@@ -97,9 +101,6 @@
         </div>
 
         <div id="default-gestures">
-          <label>Shake</label>
-          <label>Bow</label>
-          <label>None</label>
         </div>
 
         <hr />
@@ -197,7 +198,7 @@
             Triggers
           </div>
           <div class="content">
-            <div class="action">
+            <div class="action shake">
               <div class="description">
                 On <label>Shake</label>, play sound<br />
                 <select id="shake-select" class="audio-select">
@@ -207,7 +208,7 @@
               </div>
             </div>
 
-            <div class="action">
+            <div class="action bow">
               <div class="description">
                 On <label>Bow</label>, play sound<br />
                 <select id="bow-select" class="audio-select">
@@ -217,7 +218,7 @@
               </div>
             </div>
 
-            <div class="action">
+            <div class="action none">
               <div class="description">
                 On <label>No Gesture</label>, play sound<br />
                 <select id="none-select" class="audio-select">

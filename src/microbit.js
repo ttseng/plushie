@@ -34,7 +34,7 @@ async function pair() {
       "gattserverdisconnected",
       onMicrobitDisconnected
     );
-    document.getElementById("status-container").style.display = "inline";
+    document.getElementById("status-container").classList.remove('hidden');
     document.getElementById("pair-btn").style.display = "none";
 
     console.log("connecting to GATT server...");

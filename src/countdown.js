@@ -54,14 +54,17 @@ let recordCountdown = (function (document) {
   
       let recordBtn = document.querySelector(`#${currentGesture} .record-btn`);
       recordBtn.disabled = false;
+
+      let dataId = new Date().getTime(); 
   
-      generatePlotly();
+      generatePlotly(dataId);
   
       // add data
-      addData();
+      addNewData(dataId);
     }
   
     function end() {
+      console.log('end timer');
       reset();
       isCollectingData = false;
     }
@@ -117,7 +120,7 @@ let recordCountdown = (function (document) {
       let time = timerCountdownTime;
   
       function myClock(){
-        console.log('time: ', time);
+        // console.log('time: ', time);
         time--;
   
         minutes = parseInt(time / 60, 10);
@@ -135,7 +138,7 @@ let recordCountdown = (function (document) {
       }
     }
     function reset(){
-      console.log('end timer');
+    //   console.log('end timer');
       clearInterval(myTimer);
       stopAllAudio();
       timerCountdownRunning = false;
