@@ -60,17 +60,23 @@ async function pair() {
     showUI();
     updateStatusContainer("");
 
+    // hide pair button
     let reconnectBtn = document.getElementById("reconnect-btn");
-    reconnectBtn.classList.remove("active");
+    reconnectBtn.classList.add('hidden');
+    microbitPaired = true;
 
     if (!sensorDataLoaded) {
+
+      // first load
       // set up smoothie data collection parameters on first load
       setupDataCollection();
       sensorDataLoaded = true;
-      microbitPaired = true;
 
       // hide instructions
-      document.getElementById('instructions').classList.add('hidden');
+      document.getElementById('instructions').classList.add('hidden'); 
+    }else{
+      // reconnected microbit
+      smoothie.start();
     }
   } catch (error) {
     showModal(error);
@@ -97,6 +103,7 @@ function onMicrobitDisconnected() {
 
   // make pair button active
   let reconnectBtn = document.getElementById("reconnect-btn");
+  reconnectBtn.classList.remove('hidden');
   reconnectBtn.classList.add("active");
 }
 

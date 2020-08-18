@@ -92,10 +92,10 @@ i{
 }
 
 #reconnect-btn{
-  display: none;
+  margin-bottom: 10px;
 }
 
-#train-btn.active{
+button.active{
   background-color: var(--green);
 }
 

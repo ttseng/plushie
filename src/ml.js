@@ -180,7 +180,14 @@ function recordGesture(evt) {
   console.log("recording gestureID: ", gestureID);
   currentGesture = gestureID;
   isCollectingData = true;
-  recordCountdown.start();
+  
+  if(!recordCountdownRunning){
+    countdownTimer.start(recordCountdownTime,
+      document.querySelector(`#${gestureID} .countdown-timer`),
+      atRecordTimerStart,
+      recordTimerDisplay,
+      atRecordTimeEnd);
+  }
 }
 
 function gestureLabel(gestureName, isTrained) {
@@ -639,7 +646,14 @@ function predictionResults(error, results) {
       // console.log('countdownTrigger: ', countdownTrigger);
       if (countdownTrigger == currentState && !timerCountdownRunning) {
         console.log("start countdown");
-        timerCountdown.start();
+
+        countdownTimer.start(
+          timerCountdownTime,
+          document.getElementById("timer-countdown"),
+          atCountdownTimerStart,
+          countdownTimerDisplay,
+          atCountdownTimerEnd
+        );
       }
     }
   }
@@ -706,3 +720,84 @@ function getCurrentGestures() {
   // used to determine if there's a naming conflict
   return [...new Set(gestureData.map(item => item.ys.gesture))];
 }
+
+// record timer functions
+function atRecordTimerStart(display){
+  recordCountdownRunning = true;
+  display.classList.add('active');
+  accelXSample = [];
+  accelYSample = [];
+  accelZSample = [];
+}
+
+function recordTimerDisplay(timeLeft){
+  return timeLeft.toFixed(2);
+}
+
+function atRecordTimeEnd(defaultTime, display){
+  console.log('atRecordTimerEnd');
+  isCollectingData = false;
+  recordCountdownRunning = false;
+  display.innerHTML = defaultTime.toFixed(2); // initial countdown time with two decimal places
+  display.classList.remove('active');
+
+  let recordBtn = document.querySelector(`#${currentGesture} .record-btn`);
+  recordBtn.disabled = false;
+
+  let dataId = new Date().getTime(); 
+
+  generatePlotly(dataId);
+
+  // add data
+  addNewData(dataId);
+}
+
+
+// countdown timer functions
+function atCountdownTimerStart(){
+  timerCountdownRunning = true;
+  // check whether to loop audio
+  let countdownStartSelect = document.getElementById('timer-countdown-start-select');
+  let audioFileName = countdownStartSelect.options[countdownStartSelect.selectedIndex].value.toLowerCase();  
+  let audioEl = document.getElementById(audioFileName + "-audio");
+  if(document.getElementById('timer-countdown-start-loop-checkbox').checked && audioEl){
+    audioEl.loop = true;
+  }else if(audioEl){
+    audioEl.loop = false;
+  }
+
+  // play audio
+  playAudio("timer-countdown-start");
+}
+
+// returns content to display in the timer display element
+function countdownTimerDisplay(timeLeft){
+  minutes = parseInt(timeLeft / 60, 10);
+  seconds = parseInt(timeLeft % 60, 10);
+
+  minutes = minutes < 10 ? "0" + minutes : minutes;
+  seconds = seconds < 10 ? "0" + seconds : seconds;
+  return minutes + ":" + seconds;
+}
+
+function atCountdownTimerEnd(defaultTime, display){
+  stopAllAudio();
+  timerCountdownRunning = false;
+  display.innerHTML = defaultTime.toString().toMMSS();
+  playAudio("timer-countdown-end");
+}
+
+String.prototype.toMMSS = function () {
+  var sec_num = parseInt(this, 10); // don't forget the second param
+  var hours = Math.floor(sec_num / 3600);
+  var minutes = Math.floor((sec_num - hours * 3600) / 60);
+  var seconds = sec_num - hours * 3600 - minutes * 60;
+
+  if (minutes < 10) {
+    minutes = "0" + minutes;
+  }
+  if (seconds < 10) {
+    seconds = "0" + seconds;
+  }
+  return minutes + ":" + seconds;
+};
