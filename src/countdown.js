@@ -64,7 +64,6 @@ let recordCountdown = (function (document) {
     }
   
     function end() {
-      console.log('end timer');
       reset();
       isCollectingData = false;
     }

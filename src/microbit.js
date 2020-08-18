@@ -68,6 +68,9 @@ async function pair() {
       setupDataCollection();
       sensorDataLoaded = true;
       microbitPaired = true;
+
+      // hide instructions
+      document.getElementById('instructions').classList.add('hidden');
     }
   } catch (error) {
     showModal(error);

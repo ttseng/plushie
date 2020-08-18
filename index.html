@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="shortcut icon" type="image/ico" href="assets/img/favicon.ico"/>
 
     <!-- load smoothie.js -->
     <script
@@ -55,6 +56,7 @@
       </div>
 
       <div class="content">
+        
         <button onclick="pair()" id="pair-btn" id="repair-btn">
           Pair Your Microbit
         </button>
@@ -64,14 +66,30 @@
         </div>
         <hr />
 
+        <div id="instructions">
+          <p><b>Plushie</b> is a tool for creating interactive toys using the Microbit!</p>
+          <img src="assets/img/froggy-wave.gif"/>
+          <p>Using Plushie, you can program your stuffed animal to respond with sounds based on custom gestures you create.</p>
+          <p>Before you begin, save <a href="firmware/plushie.hex" target="_blank">this firmware</a>, load it onto your Microbit, and then click the <b>Pair Your Microbit</b> button.</p>
+          <p>Full instructions can be found at
+            <a href="https://www.notion.so/scientiffic/Plushie-Tutorial-38eb5fb5bda84e60b7faa8412e7e6870" target="_blank">
+              <label>Plushie Guide</label>
+            </a>
+          </p>
+        </div>
+
         <div class="hidden-on-load">
           <button id="reconnect-btn" onClick="pair()" class="pair">
             Reconnect Microbit
           </button>
 
-          <button id="train-btn" onClick="trainModel()" disabled>
-            Train Model
-          </button>
+          <div class="training-container">
+            <button id="train-btn" onClick="trainModel()" disabled>
+              Train Model
+            </button>
+
+            <div id="train-progress"></div>
+        </div>
 
           <div id="warning" class="hidden">
 
@@ -178,16 +196,18 @@
 
             <div class="sound-options">
               <label id="file-upload-label" for="file-upload">
-                <i class="fas fa-file-upload"></i> &nbsp; Upload
+                <i class="fas fa-file-upload"></i> Upload
               </label>
               <input type="file" id="file-upload" accept="audio/*" />
               <button onclick="showTextSpeechModal()">
-                <i class="far fa-comments"></i> &nbsp; Text to Speech
+                <i class="far fa-comments"></i> Text to Speech
               </button>
             </div>
 
             <hr />
-            <button onClick="stopAllAudio()">Stop All Sounds</button>
+            <button onClick="stopAllAudio()">
+              <i class="fas fa-square"></i> Stop All Sounds
+            </button>
           </div>
         </div>
 

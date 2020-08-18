@@ -4,6 +4,7 @@
   --light-blue: #9cddf8;
   --hover-blue: #8fcfe9;
   --light-grey: #efefef;
+  --grey: #c5bfbf;
   --yellow:#fff6be;
   --green: #b0f3d4;
   --purple: #dbbbff;
@@ -16,7 +17,11 @@ body {
   background: var(--base);
   padding: 50px 25px 25px;
   margin: 0 auto;
-  max-width: var(--max-width)
+  width: var(--max-width)
+}
+
+a:hover{
+  cursor: pointer;
 }
 
 hr{
@@ -25,6 +30,7 @@ hr{
 
 i{
   pointer-events: none;
+  margin-right: 5px;
 }
 
 .hidden{
@@ -38,14 +44,27 @@ i{
 }
 
 #console {
+  position: fixed;
   width: 300px;
   margin: 0 auto;
   border-radius: 15px;
   padding: 15px;
   background: white;
-  left: 50%;
-  margin-left: calc(var(--max-width) / 2 * -1);
-  position: fixed;
+}
+
+#instructions {
+  background: var(--green);
+  border-radius: 5px;
+  padding: 15px;
+}
+
+#instructions img{
+  max-width: 100%;
+  margin-bottom: 15px;
+}
+
+#instructions label:hover{
+  cursor: pointer;
 }
 
 .heading {
@@ -80,12 +99,19 @@ i{
   background-color: var(--green);
 }
 
+.training-container{
+  display: flex;
+}
+
+#train-progress{
+  margin: 0 10px;
+}
+
 #warning{
   display: inline-block;
   background: var(--yellow);
   padding: 5px 10px;
   margin: 10px 0px;
-  font-weight: bold;
 }
 
 #warning.hidden{
@@ -142,6 +168,10 @@ button.round {
   margin-top: 10px;
 }
 
+#record-icon{
+  margin-left: 3px;
+}
+
 .sound-options{
   display: flex;
   justify-content: space-between;
@@ -149,7 +179,7 @@ button.round {
 }
 
 .sound-options button{
-  padding: 5px 15px;
+  padding: g5px 15px;
   height: 36px;
 }
 
@@ -202,7 +232,7 @@ button.round {
 }
 
 .remove {
-  background: var(--pink);
+  background: var(--grey);
   color: white;
   text-align: center;
   vertical-align: middle;
@@ -278,33 +308,23 @@ video {
 }
 
 .main-content{
-  width: 70%;
+  width: 700px;
   float: right;
 }
 
-.container {
+div.container {
   background: white;
   border-radius: 10px;
   margin-bottom: 40px;
   padding: 15px;
   position: relative;
-  border: 2px solid var(--border-color)
+  border: 2px solid var(--border-color);
+  max-width: none !important;
 }
 
 
-.container .content{
+div.container .content{
   margin-top: -20px;
-}
-
-#sounds-container{
-}
-
-#max-data,
-#graph-btns {
-}
-
-#instructions {
-  text-align: center;
 }
 
 #counter-container {
@@ -492,6 +512,16 @@ label.gesture .remove{
   border-radius: 0 3px 3px 0;
 }
 
+.toggle-data-btn{
+  margin-top: 10px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.data-container{
+  margin-top: 10px;
+}
+
 .sample-counter{
   position: absolute;
   top: 0;
@@ -526,10 +556,6 @@ label.gesture .remove{
   background-color:var(--hover-blue);
 }
 
-.custom-gesture label i{
-  margin-left: 5px;
-}
-
 .custom-gesture.incomplete{
   background-color: var(--yellow);
 }
@@ -552,6 +578,7 @@ label.gesture .remove{
   border-radius: 5px;
   border-radius: 5px;
   position: relative;
+  overflow: hidden;
 }
 
 .plot .remove{
@@ -560,4 +587,8 @@ label.gesture .remove{
   top: 0;
   border-radius: 0 5px 0px 0;
   margin: 0;
+}
+
+#tfjs-visor-container{
+  display: none;
 }

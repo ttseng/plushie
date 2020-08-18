@@ -13,6 +13,8 @@ let isTraining = false;
 let trainedGestures;
 
 let pencilIcon = "<i class='fas fa-pencil-alt'></i>";
+let showIcon = '<i class="fas fa-eye"></i>';
+let hideIcon = '<i class="fas fa-eye-slash"></i>';
 
 // warning messages
 let insufficientDataWarning =
@@ -98,13 +100,11 @@ function draw() {
 }
 
 function loadDefaultGestures() {
-  console.log("load default gesture data");
   // load default data
   model.loadData(`${dataDirectory}/gestures.json`, dataLoaded);
 
   if (shouldLoadModel) {
     // load default model
-    console.log("load default gesture model");
     const modelInfo = {
       model: `${dataDirectory}/model.json`,
       metadata: `${dataDirectory}/model_meta.json`,
@@ -118,7 +118,7 @@ function loadDefaultGestures() {
 function addDefaultGestures() {
   let container = document.getElementById("default-gestures");
   let gestures = getModelGestures();
-  trainedGestures = gestures;  
+  trainedGestures = gestures;
 
   gestures.forEach(function (gestureName) {
     container.append(gestureLabel(gestureName, true));
@@ -126,42 +126,41 @@ function addDefaultGestures() {
 }
 
 function removeGesture(evt) {
-  let gestureLabelEl = evt.target.closest('label');
-  let gestureName = gestureLabelEl.querySelector('.name').innerHTML;
-  let isTrained = gestureLabelEl.classList.contains('trained');
+  let gestureLabelEl = evt.target.closest("label");
+  let gestureName = gestureLabelEl.querySelector(".name").innerHTML;
+  let isTrained = gestureLabelEl.classList.contains("trained");
 
-  let isTrainedAlert = "Are you sure you want to remove this gesture? You'll have to retrain the model.";
-  let isUntrainedAlert =  "Are you sure you want to remove this gesture?";
+  let isTrainedAlert =
+    "Are you sure you want to remove this gesture? You'll have to retrain the model.";
+  let isUntrainedAlert = "Are you sure you want to remove this gesture?";
   let alertMsg = isTrained ? isTrainedAlert : isUntrainedAlert;
 
-  let remove = confirm(
-    alertMsg
-  );
+  let remove = confirm(alertMsg);
   if (remove) {
     console.log("remove ", gestureName);
 
-    if(isTrained){
-        console.log('remove trained gesture');
-        if(gestureLabelEl.closest('.gesture-container')){
-            // remove the custom gesture
-            gestureLabelEl.closest('.gesture-container').remove();
-        }else{
-            // remove default gesture
-            gestureLabelEl.remove();
-        }
-        
-        // remove corresponding trigger
-        let actionEl = document.querySelector(`.action.${gestureName}`);
-        if(actionEl){
-            actionEl.remove();
-            modelNeedsTraining = true;
-        }
-    }else{
-        // remove gestureContainer
-        console.log('remove untrained gesture');
-        gestureLabelEl.closest('.gesture-container').remove();
+    if (isTrained) {
+      console.log("remove trained gesture");
+      if (gestureLabelEl.closest(".gesture-container")) {
+        // remove the custom gesture
+        gestureLabelEl.closest(".gesture-container").remove();
+      } else {
+        // remove default gesture
+        gestureLabelEl.remove();
+      }
+
+      // remove corresponding trigger
+      let actionEl = document.querySelector(`.action.${gestureName}`);
+      if (actionEl) {
+        actionEl.remove();
+        modelNeedsTraining = true;
+      }
+    } else {
+      // remove gestureContainer
+      console.log("remove untrained gesture");
+      gestureLabelEl.closest(".gesture-container").remove();
     }
-    
+
     hideStatusContainer();
 
     // clean gestureData of this gesture's info
@@ -184,72 +183,105 @@ function recordGesture(evt) {
   recordCountdown.start();
 }
 
-function gestureLabel(gestureName, isTrained){
-    let label = document.createElement("label");
-    let trainLabel = isTrained ? "trained" : "untrained";
-    label.classList.add("gesture", trainLabel);
-    let labelName = document.createElement('span');
-    labelName.classList.add('name');
-    labelName.innerHTML = gestureName;
-    label.append(labelName);
+function gestureLabel(gestureName, isTrained) {
+  let label = document.createElement("label");
+  let trainLabel = isTrained ? "trained" : "untrained";
+  label.classList.add("gesture", trainLabel);
+  let labelName = document.createElement("span");
+  labelName.classList.add("name");
+  labelName.innerHTML = gestureName;
+  label.append(labelName);
 
-    let removeBtn = document.createElement('div');
-    removeBtn.classList.add('remove');
-    removeBtn.innerHTML = removeIcon;
-    removeBtn.addEventListener('click', removeGesture);
-    label.append(removeBtn);
-    return label;
+  let removeBtn = document.createElement("div");
+  removeBtn.classList.add("remove");
+  removeBtn.innerHTML = removeIcon;
+  removeBtn.addEventListener("click", removeGesture);
+  label.append(removeBtn);
+  return label;
 }
 
 function addNewGesture(evt) {
-  let gestureName = prompt("Enter your gesture name: ", "");
+    if(!microbitPaired){
+        alert('Pair your microbit first to begin adding gestures!')
+    }else{
+        let gestureName = prompt("Enter your gesture name: ", "");
 
-  if (gestureName) {
-    // format with all lower case and hyphens in place of spaces
-    gestureName = gestureName.replace(/\s+/g, "-").toLowerCase();
+        if (gestureName && !getCurrentGestures().includes(gestureName)) {
+          // format with all lower case and hyphens in place of spaces
+          gestureName = gestureName.replace(/\s+/g, "-").toLowerCase();
+      
+          // create gesture container UI
+          let gestureContainer = document.createElement("div");
+          gestureContainer.classList.add(
+            "gesture-container",
+            "custom-gesture",
+            "incomplete"
+          );
+          gestureContainer.setAttribute("id", gestureName);
+      
+          // label.addEventListener("click", renameGesture);
+          gestureContainer.append(gestureLabel(gestureName, false));
+      
+          // show / hide button
+          let toggleDataBtn = document.createElement("button");
+          toggleDataBtn.classList.add("toggle-data-btn", "hidden");
+          toggleDataBtn.innerHTML = hideIcon + "Hide Data";
+          toggleDataBtn.addEventListener("click", function () {
+            toggleDataVisibility(gestureName);
+          });
+      
+          gestureContainer.append(toggleDataBtn);
+      
+          let dataContainer = document.createElement("div");
+          dataContainer.classList.add("data-container");
+      
+          let recordContainer = document.createElement("div");
+          recordContainer.classList.add("record-btn-container");
+      
+          let recordGestureBtn = document.createElement("button");
+          recordGestureBtn.innerHTML = "Record Gesture";
+          recordGestureBtn.classList.add("record-btn");
+          recordGestureBtn.addEventListener("click", recordGesture);
+          recordContainer.append(recordGestureBtn);
+      
+          let countdownContainer = document.createElement("div");
+          countdownContainer.innerHTML = "2.00"; // two second timer
+          countdownContainer.classList.add("countdown-timer");
+          recordContainer.append(countdownContainer);
+          dataContainer.append(recordContainer);
+      
+          let sampleCounter = document.createElement("div");
+          sampleCounter.classList.add("sample-counter");
+          sampleCounter.innerHTML = `record at least 3 samples`;
+          dataContainer.append(sampleCounter);
+      
+          let sampleContainer = document.createElement("div");
+          sampleContainer.classList.add("sample-container");
+          sampleContainer.setAttribute("id", name);
+          dataContainer.append(sampleContainer);
+      
+          gestureContainer.append(dataContainer);
+      
+          let parentContainer = document.getElementById("custom-gestures");
+          parentContainer.prepend(gestureContainer);
+      
+          updateMLBtns();
+        }else{
+            alert(`The name ${gestureName} is already been used. Please choose a new name.`)
+        }
+    }
+}
 
-    // create gesture container UI
-    let gestureContainer = document.createElement("div");
-    gestureContainer.classList.add(
-      "gesture-container",
-      "custom-gesture",
-      "incomplete"
-    );
-    gestureContainer.setAttribute("id", gestureName);
+function toggleDataVisibility(gestureName) {
+  let triggerBtn = event.target;
 
-    // label.addEventListener("click", renameGesture);
-    gestureContainer.append(gestureLabel(gestureName, false));
-
-    let recordContainer = document.createElement("div");
-    recordContainer.classList.add("record-btn-container");
-
-    let recordGestureBtn = document.createElement("button");
-    recordGestureBtn.innerHTML = "Record Gesture";
-    recordGestureBtn.classList.add("record-btn");
-    recordGestureBtn.addEventListener("click", recordGesture);
-    recordContainer.append(recordGestureBtn);
-
-    let countdownContainer = document.createElement("div");
-    countdownContainer.innerHTML = "2.00"; // two second timer
-    countdownContainer.classList.add("countdown-timer");
-    recordContainer.append(countdownContainer);
-    gestureContainer.append(recordContainer);
-
-    let sampleCounter = document.createElement("div");
-    sampleCounter.classList.add("sample-counter");
-    sampleCounter.innerHTML = `record at least 3 samples`;
-    gestureContainer.append(sampleCounter);
-
-    let sampleContainer = document.createElement("div");
-    sampleContainer.classList.add("sample-container");
-    sampleContainer.setAttribute("id", name);
-    gestureContainer.append(sampleContainer);
-
-    let parentContainer = document.getElementById("custom-gestures");
-    parentContainer.prepend(gestureContainer);
-
-    updateMLBtns();
+  let dataContainer = document.querySelector(`#${gestureName} .data-container`);
+  if (triggerBtn.innerHTML.indexOf(hideIcon) >= 0) {
+    triggerBtn.innerHTML = showIcon + "Show Data";
+  } else {
+    triggerBtn.innerHTML = hideIcon + "Hide Data";
   }
+  dataContainer.classList.toggle("hidden");
 }
 
 function renameGesture(evt) {
@@ -313,16 +345,23 @@ function updateMLBtns() {
         // there are new gestures that haven't been added to the model yet
         enableTrainBtn();
         hideWarning();
-      }else{
-          hideWarning();
+      } else {
+        hideWarning();
       }
     }
 
+    if (isTraining) {
+      disableTrainBtn();
+    }
+
     // determine whether to hide or show detected gesture status in console
-    if(document.querySelectorAll('label.untrained') && document.querySelectorAll('label.untrained').length > 0){
-        hideStatusContainer();
-    }else{
-        showStatusContainer();
+    if (
+      document.querySelectorAll("label.untrained") &&
+      document.querySelectorAll("label.untrained").length > 0
+    ) {
+      hideStatusContainer();
+    } else {
+      showStatusContainer();
     }
   }
 
@@ -344,8 +383,6 @@ function updateMLBtns() {
 }
 
 function addNewData(id) {
-  let gestureDataStart = gestureData.slice();
-  console.log('start add data with gestureDataStart.length: ', gestureDataStart.length, gestureDataStart);
   let accelX = accelXSample.slice(0);
   let accelY = accelYSample.slice(0);
   let accelZ = accelZSample.slice(0);
@@ -394,13 +431,13 @@ function addNewData(id) {
     gestureData.push({
       xs: inputs,
       ys: target,
-      id: id
+      id: id,
     });
   } else {
     gestureData.push({
       xs: inputs_no_peaks,
       ys: target,
-      id: id
+      id: id,
     });
   }
 
@@ -409,10 +446,6 @@ function addNewData(id) {
 
   // update training btns
   updateMLBtns();
-
-  console.log("added data to gesture ", targetGesture);
-
-  console.log('end add data with gestureData.length: ', gestureData.length, gestureData);
   console.log(" ");
 }
 
@@ -453,6 +486,10 @@ function exportData() {
 function trainModel() {
   console.log("train model");
 
+  // toggle training model btn
+  let trainBtn = document.getElementById("train-btn");
+  trainBtn.innerHTML = "Training...";
+
   if (modelNeedsTraining) {
     // reset model and re-add data
     createNeuralNetwork();
@@ -478,7 +515,10 @@ function trainModel() {
 }
 
 function whileTraining(epoch, loss) {
-  console.log("epoch: ", epoch);
+  hideTfConsole();
+
+  let trainProgress = document.getElementById("train-progress");
+  trainProgress.innerHTML = `${Math.round((epoch / 120) * 100)}%`;
 }
 
 function finishedTraining() {
@@ -486,17 +526,24 @@ function finishedTraining() {
   modelNeedsTraining = false;
   isTraining = false;
 
+  // Reset training btn text
+  let trainBtn = document.getElementById("train-btn");
+  trainBtn.innerHTML = "Train Model";
+  document.getElementById("train-progress").innerHTML = "";
+
   // show status container with prediction
   showStatusContainer();
 
   // add new triggers
   updateTriggers();
 
-  // remove any unneeded incomplete divs
+  // remove any incomplete flags from gesture-containers
   Array.from(document.getElementsByClassName("ready")).forEach(function (el) {
     el.classList.remove("ready");
     el.querySelector("label").classList.remove("untrained");
     el.querySelector("label").classList.add("trained");
+    el.querySelector(".toggle-data-btn").classList.remove("hidden");
+    el.querySelector(".toggle-data-btn").click();
   });
 
   // update training btns
@@ -644,4 +691,18 @@ function updateTriggers() {
 
 function saveModel() {
   model.save();
+}
+
+function hideTfConsole() {
+  document.getElementById("tfjs-visor-container").style.display = "none";
+}
+
+function showTfConsole() {
+  document.getElementById("tfjs-visor-container").style.display = "inline";
+}
+
+function getCurrentGestures() {
+  // this is a list of all gestures on the page, both trained and untrained
+  // used to determine if there's a naming conflict
+  return [...new Set(gestureData.map(item => item.ys.gesture))];
 }

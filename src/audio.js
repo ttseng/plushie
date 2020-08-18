@@ -1,5 +1,7 @@
 // everything related ot audio features including audio recording and text-to-speech
 
+let mute = true; // for debugging purposes
+
 // speech synthesis params
 let voices;
 let lang = "en-GB"; // target language
@@ -94,7 +96,7 @@ function addAudioEvtListeners() {
 }
 
 function populateSelects() {
-  Array.from(document.getElementsByClassName("name")).forEach(function (
+  Array.from(document.querySelectorAll(".sound .name")).forEach(function (
     soundNameDiv
   ) {
     let name = soundNameDiv.innerHTML.toLowerCase();
@@ -103,10 +105,12 @@ function populateSelects() {
 }
 
 function setDefaultSounds() {
-  document.getElementById("shake-select").value = "wow";
-  document.getElementById("bow-select").value = "applause";
-  document.getElementById("timer-countdown-start-select").value = "tick-tock";
-  document.getElementById("timer-countdown-end-select").value = "wow";
+  if(!mute){
+    document.getElementById("shake-select").value = "wow";
+    document.getElementById("bow-select").value = "applause";
+    document.getElementById("timer-countdown-start-select").value = "tick-tock";
+    document.getElementById("timer-countdown-end-select").value = "wow";
+  }
 }
 
 

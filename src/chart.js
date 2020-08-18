@@ -158,7 +158,7 @@ function generatePlotly(id) {
     },
     legend: {
       orientation: "h",
-    },
+    }
   };
 
   Plotly.newPlot(
@@ -184,7 +184,8 @@ function generatePlotly(id) {
       },
     ],
     layout,
-    { staticPlot: true }
+    { staticPlot: false,
+    displayModeBar: false}
   );
 
   // generate peaks data
