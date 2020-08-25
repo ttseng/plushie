@@ -5,6 +5,13 @@ let mute = false; // for debugging purposes
 // speech synthesis params
 let voices;
 let lang = "en-GB"; // target language
+let languageCodes = {
+  "english": "en-GB",
+  "japanese": "ja-JP",
+  "chinese": "zh-TW",
+  "french": "fr-FR",
+  "spanish": "es-ES"
+};
 let synth = window.speechSynthesis; // speech synthesizer
 let targetVoice;
 getVoices();
@@ -356,12 +363,19 @@ function showTextSpeechModal() {
 
 function getVoices() {
   voices = synth.getVoices();
-  targetVoice = voices.filter((voice) => voice.lang == lang)[0];
+  targetVoice = voices.filter((voice) => voice.lang == lang).reverse()[0];
   if (!targetVoice) {
     // correct for mobile
     lang = lang.replace(/-/g, "_");
-    targetVoice = voices.filter((voice) => voice.lang == lang)[0];
+    targetVoice = voices.filter((voice) => voice.lang == lang).reverse()[0];
   }
+}
+
+function setLanguage(language){
+  language = language.toLowerCase();
+  lang = languageCodes[language];
+  getVoices();
+  console.log('set language to ', lang);
 }
 
 function textOnChange() {
