@@ -11,7 +11,7 @@ getVoices();
 
 // microphone params
 let volume = 0;
-let loudThreshold = document.getElementById('noise-input-threshold').value; 
+let loudThreshold = document.getElementById("noise-input-threshold").value;
 
 // recording params
 const recordButton = document.getElementById("record-btn");
@@ -19,7 +19,6 @@ const recordIcon = document.getElementById("record-icon");
 let isRecording = false;
 let rec; // mediarecorder item
 let isPlaying = false;
-
 
 // SETUP
 
@@ -83,7 +82,7 @@ function getAudioPermission() {
 
       let average = values / length;
       volume = Math.round(average);
-      document.getElementById('noise-level').innerHTML = volume;
+      document.getElementById("noise-level").innerHTML = volume;
     };
   });
 }
@@ -105,7 +104,7 @@ function populateSelects() {
 }
 
 function setDefaultSounds() {
-  if(!mute){
+  if (!mute) {
     document.getElementById("shake-select").value = "wow";
     document.getElementById("bow-select").value = "applause";
     document.getElementById("timer-countdown-start-select").value = "tick-tock";
@@ -184,7 +183,7 @@ function addSound(data, shouldSpeak = true) {
       playDiv.append(audioEl);
     } else {
       // play the text to speech
-      if(shouldSpeak){
+      if (shouldSpeak) {
         speak(name);
       }
     }
@@ -212,13 +211,12 @@ function addSound(data, shouldSpeak = true) {
 // PLAYBACK
 
 function playAudio(name) {
-  console.log("play audio for ", name);
-  // stop all audio if countdown isn't running
-  if (!timerCountdownRunning && currentState != "none") {
-    stopAllAudio();
-  }
-
-  if(!isCollectingData){
+  if (!isCollectingData) {
+    console.log("play audio for ", name);
+    // stop all audio if countdown isn't running
+    if (!timerCountdownRunning && currentState != "none") {
+      stopAllAudio();
+    }
     // play corresponding audio
     let selectEl = document.getElementById(name + "-select");
     if (selectEl) {
@@ -264,20 +262,23 @@ function onClickPlay() {
 }
 
 function playRandomSound() {
-  let soundNames = Array.from(document.querySelectorAll('.sound .name')).map(item => item.innerHTML);
-  let randomSoundName = soundNames[[Math.floor(Math.random() * Math.floor(soundNames.length))]];
+  let soundNames = Array.from(document.querySelectorAll(".sound .name")).map(
+    (item) => item.innerHTML
+  );
+  let randomSoundName =
+    soundNames[[Math.floor(Math.random() * Math.floor(soundNames.length))]];
   console.log(randomSoundName);
-  let audioEl = document.getElementById(randomSoundName + '-audio')
-  if(audioEl){
+  let audioEl = document.getElementById(randomSoundName + "-audio");
+  if (audioEl) {
     audioEl.play();
-  }else{
+  } else {
     speak(randomSoundName);
   }
 }
 
 function stopPlayback() {
   isPlaying = false;
-  if(event){
+  if (event) {
     event.target.loop = false;
   }
 }
@@ -392,7 +393,7 @@ function previewTTS() {
 }
 
 function speak(text) {
-  console.log('speak');
+  console.log("speak");
   let utterThis = new SpeechSynthesisUtterance(text);
   utterThis.voice = targetVoice;
   utterThis.lang = lang;
@@ -416,12 +417,10 @@ if (speechSynthesis.onvoiceschanged !== undefined) {
 
 // UPLOAD AUDIO
 
-const inputFile = document.getElementById('file-upload');
-inputFile.addEventListener('change', function(){
+const inputFile = document.getElementById("file-upload");
+inputFile.addEventListener("change", function () {
   addSound(this.files[0]);
 });
-
-
 
 // UTILS
 function addToSelects(name) {
@@ -453,4 +452,3 @@ function removeFromSelects(name) {
 function isString(x) {
   return Object.prototype.toString.call(x) === "[object String]";
 }
-

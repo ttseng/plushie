@@ -188,7 +188,7 @@ function recordGesture(evt) {
     // first run a 3 / 2 / 1 countdown before recording
     countdownTimer.start(preRecordTime,
       evt.target,
-      null,
+      preRecordStart,
       preRecordTimeLeft,
       atPreRecordTimeEnd
     );
