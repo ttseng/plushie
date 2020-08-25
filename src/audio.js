@@ -2,15 +2,20 @@
 
 let mute = false; // for debugging purposes
 
+let currentAudio;
+let audioContext;
+let gainNode;
+let sourceNode;
+
 // speech synthesis params
 let voices;
 let lang = "en-GB"; // target language
 let languageCodes = {
-  "english": "en-GB",
-  "japanese": "ja-JP",
-  "chinese": "zh-TW",
-  "french": "fr-FR",
-  "spanish": "es-ES"
+  english: "en-GB",
+  japanese: "ja-JP",
+  chinese: "zh-TW",
+  french: "fr-FR",
+  spanish: "es-ES",
 };
 let synth = window.speechSynthesis; // speech synthesizer
 let targetVoice;
@@ -70,6 +75,7 @@ function getAudioPermission() {
     analyser = audioContext.createAnalyser();
     microphone = audioContext.createMediaStreamSource(stream);
     javascriptNode = audioContext.createScriptProcessor(2048, 1, 1);
+    gainNode = audioContext.createGain();
 
     analyser.smoothingTimeConstant = 0.8;
     analyser.fftSize = 1024;
@@ -188,6 +194,12 @@ function addSound(data, shouldSpeak = true) {
       stopAllAudio();
       audioEl.play();
       playDiv.append(audioEl);
+
+      // audioContext stuff for this new source node
+      let source = audioContext.createMediaElementSource(audioEl);
+      source.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+
     } else {
       // play the text to speech
       if (shouldSpeak) {
@@ -220,10 +232,7 @@ function addSound(data, shouldSpeak = true) {
 function playAudio(name) {
   if (!isCollectingData) {
     console.log("play audio for ", name);
-    // stop all audio if countdown isn't running
-    if (!timerCountdownRunning && currentState != "none") {
-      stopAllAudio();
-    }
+
     // play corresponding audio
     let selectEl = document.getElementById(name + "-select");
     if (selectEl) {
@@ -241,11 +250,34 @@ function playAudio(name) {
             audioEl.loop = true;
           }
         }
+        // stop any playing
+        stopAllAudio();
+        
+        // set gain to 1 
+        gainNode.gain.value = 1.0;
+
+        currentAudio = audioFileName;
+
         console.log("play ", audioFileName);
+
         audioEl.play();
       } else if (audioFileName == "random") {
         console.log("play random");
         playRandomSound();
+      } else if (audioFileName == "silence") {
+        // fade out track if there is one playing
+        if (currentAudio.length > 0) {
+          console.log('fade out track');
+          gainNode.gain.linearRampToValueAtTime(
+            0.01,
+            audioContext.currentTime + 1
+          ); 
+          
+          setTimeout(function(){
+            console.log('stop all audio');
+            stopAllAudio();
+          }, 1000);
+        }
       } else if (audioFileName != "none") {
         // need to do text to speech
         speak(audioFileName);
@@ -259,6 +291,9 @@ function onClickPlay() {
   // stop all other audio (only for previewing track)
   stopAllAudio();
 
+  // set gain back to default
+  gainNode.gain.value = 1.0;
+
   let audio = event.target.querySelector("audio");
   if (audio) {
     audio.play();
@@ -269,6 +304,9 @@ function onClickPlay() {
 }
 
 function playRandomSound() {
+  // reset gain
+  gainNode.gain.value = 1.0;
+
   let soundNames = Array.from(document.querySelectorAll(".sound .name")).map(
     (item) => item.innerHTML
   );
@@ -277,6 +315,7 @@ function playRandomSound() {
   console.log(randomSoundName);
   let audioEl = document.getElementById(randomSoundName + "-audio");
   if (audioEl) {
+    currentAUdio = randomSoundName;
     audioEl.play();
   } else {
     speak(randomSoundName);
@@ -288,6 +327,7 @@ function stopPlayback() {
   if (event) {
     event.target.loop = false;
   }
+  currentAudio = "";
 }
 
 function startPlayback() {
@@ -301,6 +341,7 @@ function stopAllAudio() {
     sounds[i].pause();
     sounds[i].currentTime = 0;
   }
+  currentAudio = "";
 }
 
 function removeAudio() {
@@ -371,11 +412,11 @@ function getVoices() {
   }
 }
 
-function setLanguage(language){
+function setLanguage(language) {
   language = language.toLowerCase();
   lang = languageCodes[language];
   getVoices();
-  console.log('set language to ', lang);
+  console.log("set language to ", lang);
 }
 
 function textOnChange() {

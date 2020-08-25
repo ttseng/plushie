@@ -218,68 +218,71 @@ function addNewGesture(evt) {
     }else{
         let gestureName = prompt("Enter your gesture name: ", "");
 
-        if (gestureName && !getCurrentGestures().includes(gestureName)) {
-          // format with all lower case and hyphens in place of spaces
-          gestureName = gestureName.replace(/\s+/g, "-").toLowerCase();
-      
-          // create gesture container UI
-          let gestureContainer = document.createElement("div");
-          gestureContainer.classList.add(
-            "gesture-container",
-            "custom-gesture",
-            "incomplete"
-          );
-          gestureContainer.setAttribute("id", gestureName);
-      
-          // label.addEventListener("click", renameGesture);
-          gestureContainer.append(gestureLabel(gestureName, false));
-      
-          // show / hide button
-          let toggleDataBtn = document.createElement("button");
-          toggleDataBtn.classList.add("toggle-data-btn", "hidden");
-          toggleDataBtn.innerHTML = hideIcon + "Hide Data";
-          toggleDataBtn.addEventListener("click", function () {
-            toggleDataVisibility(gestureName);
-          });
-      
-          gestureContainer.append(toggleDataBtn);
-      
-          let dataContainer = document.createElement("div");
-          dataContainer.classList.add("data-container");
-      
-          let recordContainer = document.createElement("div");
-          recordContainer.classList.add("record-btn-container");
-      
-          let recordGestureBtn = document.createElement("button");
-          recordGestureBtn.innerHTML = "Record Gesture";
-          recordGestureBtn.classList.add("record-btn");
-          recordGestureBtn.addEventListener("click", recordGesture);
-          recordContainer.append(recordGestureBtn);
-      
-          let countdownContainer = document.createElement("div");
-          countdownContainer.innerHTML = "2.00"; // two second timer
-          countdownContainer.classList.add("countdown-timer");
-          recordContainer.append(countdownContainer);
-          dataContainer.append(recordContainer);
-      
-          let sampleCounter = document.createElement("div");
-          sampleCounter.classList.add("sample-counter");
-          sampleCounter.innerHTML = `record at least 3 samples`;
-          dataContainer.append(sampleCounter);
-      
-          let sampleContainer = document.createElement("div");
-          sampleContainer.classList.add("sample-container");
-          sampleContainer.setAttribute("id", name);
-          dataContainer.append(sampleContainer);
-      
-          gestureContainer.append(dataContainer);
-      
-          let parentContainer = document.getElementById("custom-gestures");
-          parentContainer.prepend(gestureContainer);
-      
-          updateMLBtns();
-        }else{
+        if (gestureName) {
+          if(getCurrentGestures().includes(gestureName)){
             alert(`The name ${gestureName} is already been used. Please choose a new name.`)
+          }else{
+            // format with all lower case and hyphens in place of spaces
+            gestureName = gestureName.replace(/\s+/g, "-").toLowerCase();
+                  
+            // create gesture container UI
+            let gestureContainer = document.createElement("div");
+            gestureContainer.classList.add(
+              "gesture-container",
+              "custom-gesture",
+              "incomplete"
+            );
+            gestureContainer.setAttribute("id", gestureName);
+
+            // label.addEventListener("click", renameGesture);
+            gestureContainer.append(gestureLabel(gestureName, false));
+
+            // show / hide button
+            let toggleDataBtn = document.createElement("button");
+            toggleDataBtn.classList.add("toggle-data-btn", "hidden");
+            toggleDataBtn.innerHTML = hideIcon + "Hide Data";
+            toggleDataBtn.addEventListener("click", function () {
+              toggleDataVisibility(gestureName);
+            });
+
+            gestureContainer.append(toggleDataBtn);
+
+            let dataContainer = document.createElement("div");
+            dataContainer.classList.add("data-container");
+
+            let recordContainer = document.createElement("div");
+            recordContainer.classList.add("record-btn-container");
+
+            let recordGestureBtn = document.createElement("button");
+            recordGestureBtn.innerHTML = "Record Gesture";
+            recordGestureBtn.classList.add("record-btn");
+            recordGestureBtn.addEventListener("click", recordGesture);
+            recordContainer.append(recordGestureBtn);
+
+            let countdownContainer = document.createElement("div");
+            countdownContainer.innerHTML = "2.00"; // two second timer
+            countdownContainer.classList.add("countdown-timer");
+            recordContainer.append(countdownContainer);
+            dataContainer.append(recordContainer);
+
+            let sampleCounter = document.createElement("div");
+            sampleCounter.classList.add("sample-counter");
+            sampleCounter.innerHTML = `record at least 3 samples`;
+            dataContainer.append(sampleCounter);
+
+            let sampleContainer = document.createElement("div");
+            sampleContainer.classList.add("sample-container");
+            sampleContainer.setAttribute("id", name);
+            dataContainer.append(sampleContainer);
+
+            gestureContainer.append(dataContainer);
+
+            let parentContainer = document.getElementById("custom-gestures");
+            parentContainer.prepend(gestureContainer);
+
+            updateMLBtns();
+          }
+         
         }
     }
 }
@@ -501,6 +504,7 @@ function trainModel() {
   // toggle training model btn
   let trainBtn = document.getElementById("train-btn");
   trainBtn.innerHTML = "Training...";
+  trainBtn.disabled = true;
 
   if (modelNeedsTraining) {
     // reset model and re-add data
@@ -513,7 +517,7 @@ function trainModel() {
   }
 
   // export the dataset
-  exportData();
+  // exportData();
 
   model.normalizeData();
 
@@ -680,7 +684,7 @@ function updateTriggers() {
     // add a new trigger element
     let triggersContainer = document.querySelector("#triggers .content");
     let newTriggerContainer = document.createElement("div");
-    newTriggerContainer.classList.add("action");
+    newTriggerContainer.classList.add("action", gesture);
 
     let descriptionContainer = document.createElement("div");
     descriptionContainer.classList.add("description");
@@ -688,8 +692,10 @@ function updateTriggers() {
     let gestureSelectContainer = document.createElement("select");
     gestureSelectContainer.setAttribute("id", `${gesture}-select`);
     // add defualt audio elements
-    gestureSelectContainer.innerHTML = `<option value="none">🔇 None</option>
-      <option value="random">🔀 Random</option>`;
+    gestureSelectContainer.innerHTML = `<option value="none"> None</option>
+      <option value="random">🔀 Random</option>
+      <option value="silence">🔇 Silence</option>
+      `;
     gestureSelectContainer.classList.add("audio-select");
 
     descriptionContainer.innerHTML = `On <label>${gesture}</label>, play sound<br/>`;
