@@ -1,5 +1,7 @@
 // countdown for recording gesture, timer UI
 
+let preRecordTime = 2.0 // 3 2 1 countdown 
+
 let recordCountdownTime = 2.0; // time to record gesture = 2 seconds
 let recordCountdownRunning = false;
 
@@ -8,7 +10,9 @@ let timerCountdownRunning = false;
 
 let countdownTimer = (function (document) {
   function start(timeLimit, display, atSetup, toDisplay, atEnd) {
-    atSetup(display); // funciton to run when setting up timer
+    if(atSetup){
+      atSetup(display); // funciton to run when setting up timer
+    }
 
     let time = timeLimit;
     let startTime = new Date().getTime();
@@ -40,3 +44,23 @@ function setTimer() {
     event.target.innerHTML = length.toMMSS();
   }
 }
+
+// for 3 / 2 / 1 countdown when recording gesture data
+
+function preRecordTimeLeft(timeLeft){
+  let timeToDisplay = (timeLeft+1).toFixed(0);
+  return `......${timeToDisplay}......`;
+}
+
+function atPreRecordTimeEnd(defaulTime, display){
+  display.innerHTML = `Recording...`;
+
+  // run countdown timer
+  countdownTimer.start(recordCountdownTime,
+    document.querySelector(`#${currentGesture} .countdown-timer`),
+    atRecordTimerStart,
+    recordTimerDisplay,
+    atRecordTimeEnd);
+}
+
+

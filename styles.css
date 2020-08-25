@@ -168,6 +168,10 @@ button.round {
   margin-top: 10px;
 }
 
+.record-btn{
+  width: 130px;
+}
+
 #record-icon{
   margin-left: 3px;
 }

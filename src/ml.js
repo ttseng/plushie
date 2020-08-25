@@ -175,18 +175,23 @@ function getModelGestures() {
 }
 
 function recordGesture(evt) {
+  // disable the recording button
+
   evt.target.disabled = true;
+
   let gestureID = evt.target.closest(".gesture-container").id.toLowerCase();
   console.log("recording gestureID: ", gestureID);
   currentGesture = gestureID;
   isCollectingData = true;
   
   if(!recordCountdownRunning){
-    countdownTimer.start(recordCountdownTime,
-      document.querySelector(`#${gestureID} .countdown-timer`),
-      atRecordTimerStart,
-      recordTimerDisplay,
-      atRecordTimeEnd);
+    // first run a 3 / 2 / 1 countdown before recording
+    countdownTimer.start(preRecordTime,
+      evt.target,
+      null,
+      preRecordTimeLeft,
+      atPreRecordTimeEnd
+    );
   }
 }
 
@@ -735,7 +740,6 @@ function recordTimerDisplay(timeLeft){
 }
 
 function atRecordTimeEnd(defaultTime, display){
-  console.log('atRecordTimerEnd');
   isCollectingData = false;
   recordCountdownRunning = false;
   display.innerHTML = defaultTime.toFixed(2); // initial countdown time with two decimal places
@@ -743,6 +747,7 @@ function atRecordTimeEnd(defaultTime, display){
 
   let recordBtn = document.querySelector(`#${currentGesture} .record-btn`);
   recordBtn.disabled = false;
+  recordBtn.innerHTML = "Record Gesture";
 
   let dataId = new Date().getTime(); 
 

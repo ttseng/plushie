@@ -158,7 +158,9 @@ function generatePlotly(id) {
     },
     legend: {
       orientation: "h",
-    }
+    },
+    yaxis: {fixedrange: true},
+    xaxis: {fixedrange: true}
   };
 
   Plotly.newPlot(
