@@ -287,6 +287,7 @@ input {
   text-decoration: underline;
 }
 .hidden-on-load{
+  display: none;
   visibility: hidden;
 }
 canvas {
@@ -591,4 +592,38 @@ label.gesture .remove{
 
 #tfjs-visor-container{
   display: none;
+}
+
+/* mobile view */
+@media only screen and (max-width: 600px){
+  body{
+    width: 100%;
+  }
+  .main-content{
+    display: none;
+  }
+  #console{
+    width: 90%;
+  }
+  #pair-btn{
+    display: none;
+  }
+  .desktop-instructions{
+    display: none;
+  }
+  .mobile-instructions{
+    display: block;
+  }
+}
+
+@media only screen and (min-width: 600px){
+  #pair-btn{
+    display: initial;
+  }
+  .desktop-instructions{
+    display: block;
+  }
+  .mobile-instructions{
+    display: none;
+  }
 }

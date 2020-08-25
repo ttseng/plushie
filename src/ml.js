@@ -86,7 +86,7 @@ function createNeuralNetwork() {
   }
 }
 
-// currently drawing the taurus to show microbit orientation
+// currently drawing box to show microbit orientation
 function draw() {
   background(0);
   orbitControl();

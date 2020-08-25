@@ -1,6 +1,6 @@
 // everything related ot audio features including audio recording and text-to-speech
 
-let mute = true; // for debugging purposes
+let mute = false; // for debugging purposes
 
 // speech synthesis params
 let voices;
@@ -113,7 +113,6 @@ function setDefaultSounds() {
   }
 }
 
-
 // RECORDING
 
 function toggleRecordingState() {
@@ -149,7 +148,7 @@ function soundAvailable(e) {
   addSound(e.data);
 }
 
-function addSound(data) {
+function addSound(data, shouldSpeak = true) {
   let name;
   let isTTS = false;
 
@@ -185,7 +184,9 @@ function addSound(data) {
       playDiv.append(audioEl);
     } else {
       // play the text to speech
-      speak(name);
+      if(shouldSpeak){
+        speak(name);
+      }
     }
     soundDiv.append(playDiv);
 
@@ -263,13 +264,22 @@ function onClickPlay() {
 }
 
 function playRandomSound() {
-  let sounds = document.querySelectorAll("audio");
-  sounds[Math.floor(Math.random() * Math.floor(sounds.length))].play();
+  let soundNames = Array.from(document.querySelectorAll('.sound .name')).map(item => item.innerHTML);
+  let randomSoundName = soundNames[[Math.floor(Math.random() * Math.floor(soundNames.length))]];
+  console.log(randomSoundName);
+  let audioEl = document.getElementById(randomSoundName + '-audio')
+  if(audioEl){
+    audioEl.play();
+  }else{
+    speak(randomSoundName);
+  }
 }
 
 function stopPlayback() {
   isPlaying = false;
-  event.target.loop = false;
+  if(event){
+    event.target.loop = false;
+  }
 }
 
 function startPlayback() {
@@ -382,6 +392,7 @@ function previewTTS() {
 }
 
 function speak(text) {
+  console.log('speak');
   let utterThis = new SpeechSynthesisUtterance(text);
   utterThis.voice = targetVoice;
   utterThis.lang = lang;

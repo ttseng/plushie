@@ -10,6 +10,8 @@ let microbitPaired = false;
 
 let sinX;
 let sinY;
+let lastAccelX = 0;
+let lastAccelY = 0;
 
 let currentState; // gesture prediction name
 let prevState;
@@ -116,14 +118,14 @@ function accelChanged(event) {
   const accelY = event.target.value.getInt16(2, true) / 1000.0;
   const accelZ = event.target.value.getInt16(4, true) / 1000.0;
 
-  // https://create.arduino.cc/projecthub/RVLAD/free-fall-detection-using-3-axis-accelerometer-06383e
-  // accelT = Math.sqrt(
-  //   Math.pow(accelX, 2) + Math.pow(accelY, 2) + Math.pow(accelZ, 2)
-  // );
-  // accelT = Number(accelT.toFixed(2));
+  const smoothedAccelX = accelX * 0.2 + lastAccelX * 0.8;
+  const smoothedAccelY = accelY * 0.2 + lastAccelY * 0.8;
 
-  sinX = constrain(accelX, -1, 1);
-  sinY = constrain(accelY, -1, 1);
+  sinX = constrain(smoothedAccelX, -1, 1);
+  sinY = constrain(smoothedAccelY, -1, 1);
+
+  lastAccelX = smoothedAccelX;
+  lastAccelY = smoothedAccelY;
 
   accelXArr.push(accelX);
   accelYArr.push(accelY);
