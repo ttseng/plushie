@@ -97,15 +97,7 @@
 
           <div id="warning" class="hidden">
 
-          </div>
-
-          <!-- <button onClick="saveModel()">
-          Save Model
-        </button> -->
-          <!-- <button onClick="loadDefaultGestures()">
-          Load Default Gestures
-        </button> -->
-        
+          </div>       
 
           <hr />
 
@@ -121,6 +113,11 @@
         <div class="heading">
           Gestures
         </div>
+
+        <label id="data-upload-label" for="data-upload" class="hidden-on-load">
+          <i class="fas fa-file-upload"></i> Load Data
+        </label>
+        <input type="file" id="data-upload" accept="application/JSON" />
 
         <div id="default-gestures">
         </div>

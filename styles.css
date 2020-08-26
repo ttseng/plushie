@@ -187,9 +187,9 @@ button.round {
   height: 36px;
 }
 
-#file-upload-label{
+#file-upload-label, #data-upload-label{
   display: block;
-  padding: 5px 15px;
+  padding: 2px 15px;
   font-size: 16px;
   border-radius: 3px;
   background-color: #efefef;
@@ -200,8 +200,14 @@ button.round {
   font-weight: normal;
 }
 
-#file-upload{
+#file-upload, #data-upload{
   display: none;
+}
+
+#data-upload-label{
+  position: absolute;
+  top: 15;
+  right: 15px;
 }
 
 .sound {
@@ -217,7 +223,7 @@ button.round {
   padding: 5px 25px;
 }
 
-.play {
+.sound .play {
   background: #9770e5;
   color: white;
   text-align: center;

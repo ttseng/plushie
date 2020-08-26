@@ -103,6 +103,9 @@ function onMicrobitDisconnected() {
   // pause prediction
   microbitPaired = false;
 
+  // stop all sounds
+  stopAllAudio();
+
   // make pair button active
   let reconnectBtn = document.getElementById("reconnect-btn");
   reconnectBtn.classList.remove('hidden');
