@@ -479,17 +479,15 @@ inputFile.addEventListener("change", function () {
 
 // UTILS
 function addToSelects(name) {
-  // only add if it's not already part of the dropdown
-  let existingSounds = Array.from(
-    document.querySelector(".audio-select").options
-  ).map((e) => e.value);
-  if (!existingSounds.includes(name)) {
-    Array.from(document.getElementsByClassName("audio-select")).forEach(
-      (dropdown) => {
+  Array.from(document.getElementsByClassName("audio-select")).forEach(
+    (dropdown) => {
+      // only add if the dropdown doesn't already have this name
+      let dropdownSounds = Array.from(dropdown.options).map((e) => e.value);
+      if(!dropdownSounds.includes(name)){
         dropdown.options.add(new Option(`🔊 ${name}`, name));
       }
-    );
-  }
+    }
+  );
 }
 
 function removeFromSelects(name) {
