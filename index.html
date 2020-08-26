@@ -114,10 +114,15 @@
           Gestures
         </div>
 
-        <label id="data-upload-label" for="data-upload" class="hidden-on-load">
-          <i class="fas fa-file-upload"></i> Load Data
-        </label>
-        <input type="file" id="data-upload" accept="application/JSON" />
+        <div class="data-options-container hidden-on-load">
+          <button id="export-data-btn" onclick="exportData()" title="export data">
+            <i class="fas fa-file-download"></i>Export
+          </button>
+          <label id="data-upload-label" for="data-upload"  title="load data">
+            <i class="fas fa-file-upload"></i>Load
+          </label>
+          <input type="file" id="data-upload" accept="application/JSON" />
+        </div>
 
         <div id="default-gestures">
         </div>

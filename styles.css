@@ -204,10 +204,17 @@ button.round {
   display: none;
 }
 
-#data-upload-label{
+.data-options-container{
   position: absolute;
   top: 15;
   right: 15px;
+  display: flex !important;
+  align-items: baseline;
+}
+
+.data-options-container button{
+  margin-right: 5px;
+  height: fit-content;
 }
 
 .sound {

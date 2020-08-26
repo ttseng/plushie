@@ -521,9 +521,9 @@ function trainModel() {
   }
 
   // export the dataset
-  if(!dataFromJSON){
-    exportData();
-  }
+  // if(!dataFromJSON){
+  //   exportData();
+  // }
 
   model.normalizeData();
 
