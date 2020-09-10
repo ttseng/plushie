@@ -163,6 +163,10 @@ function removeGesture(evt) {
         actionEl.remove();
         modelNeedsTraining = true;
       }
+
+      // remove from timer select
+      document.querySelector(`#timer-countdown-trigger-select option[value=${gestureName}]`).remove();
+
     } else {
       // remove gestureContainer
       console.log("remove untrained gesture");
@@ -672,7 +676,7 @@ function predictionResults(error, results) {
 }
 
 function updateTriggers() {
-  console.log('update triggers with trainedGestures ', trainedGestures, ' and model meta gestures ', model.data.meta.outputs.gesture.uniqueValues);
+  
   let newGestures = model.data.meta.outputs.gesture.uniqueValues.filter(
     (gesture) => trainedGestures.includes(gesture) == false
   ); // newly added gestures

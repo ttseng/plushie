@@ -33,7 +33,3 @@ function loadFortune(){
         document.getElementById("timer-countdown-start-select").value = "none";
     }
 }
-
-function loadPomodoro(){
-
-}
