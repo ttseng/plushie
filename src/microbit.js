@@ -89,8 +89,7 @@ function showUI() {
   console.log("show ui");
   Array.from(document.getElementsByClassName("hidden-on-load")).forEach(
     function (el, index, array) {
-      el.style.visibility = "initial";
-      el.style.display = "inline-block";
+      el.classList.remove('hidden-on-load');
     }
   );
 }

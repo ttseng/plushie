@@ -63,7 +63,28 @@
         <div id="status-container" class="hidden">
           <b id="status-label">Status:</b>
           <span id="status">Awaiting pairing...</span>
+        </div>        
+
+        <div id="options-container" class="minimized hidden-on-load" >
+          <div id="gesture-confidence-container"></div>
+          <hr>
+          <div class="options">
+            <div class="label">Confidence Threshold:</div>
+            <div class="option">
+              <input type="range" min="40" max="95" value="55" class="slider" id="confidence-slider" onInput="adjustConfidence(this.value)" onChange="adjustConfidence(this.value)"/>
+              <div id="confidence-threshold">55%</div>
+              <div class="info-container" onClick="toggleDescription(this)">
+                <i class="fas fa-info-circle info"></i>
+              </div>
+              <div class="break"></div>
+              <div class="description hidden">Increasing the confidence threshold can make gesture detection less noisy but may make it harder trigger any given gesture.</div>
+            </div>
+            
         </div>
+        </div>
+
+        <div id="options-expand-btn" class="hidden-on-load" onClick="toggleOptions()"><i class="fas fa-chevron-down"></i></div>
+        
         <hr />
 
         <div id="instructions">
@@ -101,7 +122,7 @@
 
           <hr />
 
-          <canvas id="smoothie-chart" width="250" height="250"></canvas>
+          <canvas id="smoothie-chart" width="250" height="150"></canvas>
 
           <div id="p5js-container"></div>
         </div>

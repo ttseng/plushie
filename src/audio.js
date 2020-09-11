@@ -174,6 +174,7 @@ function addSound(data, shouldSpeak = true) {
 
   // ask for name of file
   if (name.length > 0) {
+    name = name.replace(/\s+/g, "-").toLowerCase().replace(/'/,'');
     let soundDiv = document.createElement("div");
     soundDiv.classList.add("sound");
     let nameDiv = document.createElement("div");
@@ -231,7 +232,7 @@ function addSound(data, shouldSpeak = true) {
 
 function playAudio(name) {
   if (!isCollectingData) {
-    console.log("play audio for ", name);
+    // console.log("play audio for ", name);
 
     // play corresponding audio
     let selectEl = document.getElementById(name + "-select");

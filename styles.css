@@ -4,6 +4,8 @@
   --light-blue: #9cddf8;
   --hover-blue: #8fcfe9;
   --light-grey: #efefef;
+  --box-shadow-grey: #dadada;
+  --dark-grey: #434343;
   --grey: #c5bfbf;
   --yellow:#fff6be;
   --green: #b0f3d4;
@@ -65,6 +67,79 @@ i{
 
 #instructions label:hover{
   cursor: pointer;
+}
+
+#options-container{
+  border: 1px solid var(--grey);
+  padding: 15px 10px;
+  max-width: 100%;
+  border-top: none;
+  background-color: #efefef;
+  max-height: fit-content;
+  width: 100%;
+  transition: all 0.5s ease-in-out;
+  display: inline-block;
+}
+
+#options-container.minimized{
+  max-height: 0;
+  display: none;
+}
+
+#options-expand-btn{
+  margin: 0 auto;
+  border-bottom-left-radius: 50%;
+  padding: 5px 6px;
+  text-align: center;
+  border-bottom-right-radius: 50%;
+  border-top: none;
+  background-color: var(--light-grey);
+  border: 1px solid var(--grey);
+}
+
+#options-expand-btn:hover{
+  cursor: pointer;
+}
+
+#options-expand-btn i{
+  margin: 0;
+}
+
+#options-container .option{
+  display: flex;
+  gap: 3px;
+  align-items: center;
+  flex-flow: wrap;
+}
+
+#options-container .option .break{
+  flex-basis: 100%;
+  height: 0;
+}
+
+#options-container .option .info{
+  pointer-events: all;
+}
+
+#options-container .option .info-container{
+  margin-left: auto;
+}
+
+#options-container .option .info-container:hover{
+  cursor: pointer;
+}
+
+#options-container .option .description{
+  font-size: smaller;
+  line-height: 16px;
+}
+
+#gesture-confidence-container .confidence{
+  margin-left: 5px;
+}
+
+#gesture-confidence-container label.active{
+  background-color: var(--purple);
 }
 
 .heading {
@@ -138,9 +213,9 @@ button {
   display: block;
   font-size: 16px;
   border-radius: 3px;
-  background-color: #efefef;
-  border: 1px solid grey;
-  box-shadow: 2px 2px #dadada;
+  background-color: var(--light-grey);
+  border: 1px solid var(--grey);
+  box-shadow: 2px 2px var(--box-shadow-grey);
   cursor: pointer;
 }
 .pair {
@@ -183,18 +258,19 @@ button.round {
 }
 
 .sound-options button{
-  padding: g5px 15px;
+  padding: 5px 15px;
   height: 36px;
 }
 
 #file-upload-label, #data-upload-label{
+  color: var(--dark-grey);
   display: block;
   padding: 2px 15px;
   font-size: 16px;
   border-radius: 3px;
   background-color: #efefef;
-  border: 1px solid grey;
-  box-shadow: 2px 2px #dadada;
+  border: 1px solid var(--grey);
+  box-shadow: 2px 2px var(--box-shadow-grey);
   cursor: pointer;
   margin: 10px 0;
   font-weight: normal;
@@ -291,6 +367,11 @@ button.round {
 input {
   margin-bottom: 15px;
 }
+
+input[type=range]{
+  margin-bottom: 0;
+}
+
 .accel {
   display: inline-block;
   width: 55px;
@@ -389,7 +470,7 @@ select {
   width: 100%;
 }
 
-label{
+label, .label{
   font-weight: bold;
 }
 

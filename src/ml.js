@@ -18,6 +18,7 @@ let trainedGestures;
 let pencilIcon = "<i class='fas fa-pencil-alt'></i>";
 let showIcon = '<i class="fas fa-eye"></i>';
 let hideIcon = '<i class="fas fa-eye-slash"></i>';
+let confidenceThreshold = 0.55; // default confidenceThreshold to trigger new gesture
 
 // warning messages
 let insufficientDataWarning =
@@ -30,7 +31,7 @@ let removeIcon = '<i class="fas fa-times"></i>';
 // p5 / ml5 stuff
 function setup() {
   // p5js canvas
-  let canvas = createCanvas(250, 250, WEBGL);
+  let canvas = createCanvas(250, 200, WEBGL);
   canvas.parent("p5js-container");
 
   createNeuralNetwork();
@@ -76,7 +77,7 @@ function draw() {
   push();
   rotateX(-asin(sinY));
   rotateY(asin(sinX));
-  torus(100, 20);
+  torus(80, 20);
   pop();
 }
 
@@ -129,8 +130,43 @@ function addDefaultGestures() {
   trainedGestures = gestures;
 
   gestures.forEach(function (gestureName) {
+    // add to default gestures container in Gestures
     container.append(gestureLabel(gestureName, true));
   });
+
+  updateConfidenceGestures(gestures);
+}
+
+function updateConfidenceGestures(gestures){
+  let confidenceContainer = document.getElementById('gesture-confidence-container');
+
+  gestures.forEach(function (gestureName){
+    // only add if the gesture doesn't already exist
+    if(!document.querySelector(`label.${gestureName}`)){
+      // add to the confidence container
+      let gestureConfidenceContainer = document.createElement('div');
+      gestureConfidenceContainer.classList.add(gestureName, 'gestureContainer');
+      let label = document.createElement('label');
+      label.classList.add(gestureName);
+      let labelName = document.createElement('span');
+      labelName.innerHTML = gestureName;
+      label.append(labelName);
+      gestureConfidenceContainer.append(label);
+      
+      let confidenceSpan = document.createElement('span');
+      confidenceSpan.classList.add('confidence', gestureName);
+      gestureConfidenceContainer.append(confidenceSpan);
+
+      confidenceContainer.append(gestureConfidenceContainer);
+    }
+
+    // remove any gestures that have been removed
+    let confidenceGestures = Array.from(document.querySelectorAll(`#gesture-confidence-container .confidence`)).map(item => item.classList.value).map(i => i.replace(i.match("confidence"), "").trim() );
+    let removedGestures = confidenceGestures.filter((gesture) => trainedGestures.includes(gesture) == false);
+    removedGestures.forEach(function(gestureName){
+      document.querySelector(`.gestureContainer.${gestureName}`).remove();
+    })
+  })
 }
 
 function removeGesture(evt) {
@@ -172,8 +208,6 @@ function removeGesture(evt) {
       console.log("remove untrained gesture");
       gestureLabelEl.closest(".gesture-container").remove();
     }
-
-    hideStatusContainer();
 
     // clean gestureData of this gesture's info
     gestureData = gestureData.filter((data) => data.ys.gesture !== gestureName);
@@ -388,16 +422,6 @@ function updateMLBtns() {
       if (isTraining) {
         disableTrainBtn();
       }
-  
-      // determine whether to hide or show detected gesture status in console
-      if (
-        document.querySelectorAll("label.untrained") &&
-        document.querySelectorAll("label.untrained").length > 0
-      ) {
-        hideStatusContainer();
-      } else {
-        showStatusContainer();
-      }
     }  
   }
 
@@ -561,7 +585,10 @@ function finishedTraining() {
   showStatusContainer();
 
   // add new triggers
-  updateTriggers();
+  updateTriggers();  
+
+  // update confidence gestures
+  updateConfidenceGestures(model.data.meta.outputs.gesture.uniqueValues);
 
   // update default gestures if loaded data from JSON
   if(dataFromJSON){
@@ -630,48 +657,60 @@ function predictionResults(error, results) {
     console.error(error);
     return;
   }
-  updateStatusContainer(results[0].label);
 
-  // play sounds
   currentState = results[0].label.toLowerCase();
+  let confidence = results[0].confidence;  
 
-  if (currentState != prevState) {
-    console.log("");
-    console.log("new state: ", currentState);
+  showConfidence(results);
 
-    playAudio(currentState);
+  if(confidence > confidenceThreshold){
+    updateStatusContainer(currentState);
 
-    // check if should start countdown
-    let countdownChecked = document.getElementById(
-      "timer-countdown-trigger-checkbox"
-    ).checked;
-    if (countdownChecked) {
-      let countdownTriggerSelect = document.getElementById(
-        "timer-countdown-trigger-select"
-      );
-      let countdownTrigger = countdownTriggerSelect.options[
-        countdownTriggerSelect.selectedIndex
-      ].value.toLowerCase();
-      // console.log('countdownTrigger: ', countdownTrigger);
-      if (countdownTrigger == currentState && !timerCountdownRunning) {
-        console.log("start countdown");
-
-        countdownTimer.start(
-          timerCountdownTime,
-          document.getElementById("timer-countdown"),
-          atCountdownTimerStart,
-          countdownTimerDisplay,
-          atCountdownTimerEnd
+    if(currentState != prevState){
+      console.log("");
+      console.log("new state: ", currentState);
+      logResults(results);
+  
+      playAudio(currentState);
+  
+      // check if should start countdown
+      let countdownChecked = document.getElementById(
+        "timer-countdown-trigger-checkbox"
+      ).checked;
+      if (countdownChecked) {
+        let countdownTriggerSelect = document.getElementById(
+          "timer-countdown-trigger-select"
         );
+        let countdownTrigger = countdownTriggerSelect.options[
+          countdownTriggerSelect.selectedIndex
+        ].value.toLowerCase();
+        // console.log('countdownTrigger: ', countdownTrigger);
+        if (countdownTrigger == currentState && !timerCountdownRunning) {
+          console.log("start countdown");
+  
+          countdownTimer.start(
+            timerCountdownTime,
+            document.getElementById("timer-countdown"),
+            atCountdownTimerStart,
+            countdownTimerDisplay,
+            atCountdownTimerEnd
+          );
+        }
       }
     }
+    prevState = currentState;
   }
-  prevState = currentState;
 
-  // check if volume threshold is met
+  // check if volume confidenceThreshold is met
   if (isLoud()) {
     startPlayback();
     playAudio("loud");
+  }
+}
+
+function logResults(result){
+  for(i=0; i<result.length; i++){
+    console.log(`${result[i].label}: ${result[i].confidence*100}`);
   }
 }
 
@@ -680,6 +719,7 @@ function updateTriggers() {
   let newGestures = model.data.meta.outputs.gesture.uniqueValues.filter(
     (gesture) => trainedGestures.includes(gesture) == false
   ); // newly added gestures
+
   newGestures.forEach(function (gesture) {
     console.log("adding trigger element for ", gesture);
     // add a new trigger element
@@ -803,6 +843,50 @@ function atCountdownTimerEnd(defaultTime, display) {
   timerCountdownRunning = false;
   display.innerHTML = defaultTime.toString().toMMSS();
   playAudio("timer-countdown-end");
+}
+
+// CONFIDENCE ADJUSTMENTS - THRESHOLD TO TRIGGER NEW GESTURE
+
+function adjustConfidence(value){
+  confidenceThreshold = value / 100;
+  document.getElementById('confidence-threshold').innerHTML = value + "%";
+}
+
+function showConfidence(predictionResults){
+  predictionResults.forEach(function (gesture, index) {
+    // find the container and update its value
+    let confidenceContainer = document.querySelector(`#gesture-confidence-container .confidence.${gesture.label}`);
+    let confidence = (gesture.confidence * 100).toFixed(0)
+    confidenceContainer.innerHTML = confidence + "%";
+    
+    let label = document.querySelector(`#gesture-confidence-container label.${gesture.label}`);
+    
+    if(gesture.confidence > confidenceThreshold){
+      if(index == 0){
+        label.classList.add('active');
+      }
+    }else if(index !==0) {
+      label.classList.remove('active');
+    }
+  });
+}
+
+function toggleOptions(){
+  let optionsContainer = document.querySelector('#options-container');
+  let isMinimized = optionsContainer.classList.contains('minimized');
+  optionsContainer.classList.toggle('minimized');
+
+  // update caret content
+  let caret = document.getElementById('options-expand-btn')
+  if(isMinimized){
+    caret.innerHTML = '<i class="fas fa-chevron-up"></i>';	
+  }else{
+    caret.innerHTML = '<i class="fas fa-chevron-down"></i>';
+  }
+}
+
+function toggleDescription(el){
+  el.parentElement.querySelector('.description').classList.toggle('hidden');
 }
 
 String.prototype.toMMSS = function () {
