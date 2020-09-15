@@ -69,7 +69,7 @@
         </button>
 
         <div id="status-container" class="hidden">
-          <b id="status-label">Status:</b>
+          <div><b id="status-label">Status:</b></div>
           <span id="status">Awaiting pairing...</span>
         </div>        
 
@@ -77,7 +77,7 @@
           <div id="gesture-confidence-container"></div>
           <hr>
           <div class="options">
-            <div class="label">Confidence Threshold:</div>
+            <div class="label"><span lang="en">Confidence Threshold:</span><span lang="ja">信頼閾値:</span></div>
             <div class="option">
               <input type="range" min="40" max="95" value="55" class="slider" id="confidence-slider" onInput="adjustConfidence(this.value)" onChange="adjustConfidence(this.value)"/>
               <div id="confidence-threshold">55%</div>
@@ -151,10 +151,10 @@
 
         <div class="data-options-container hidden-on-load">
           <button id="export-data-btn" onclick="exportData()" title="export data">
-            <i class="fas fa-file-download"></i>Export
+            <i class="fas fa-file-download"></i><span lang="en">Export</span><span lang="ja">書き出す</span>
           </button>
           <label id="data-upload-label" for="data-upload"  title="load data">
-            <i class="fas fa-file-upload"></i>Load
+            <i class="fas fa-file-upload"></i><span lang="en">Load</span><span lang="ja">読み込む</span>
           </label>
           <input type="file" id="data-upload" accept="application/JSON" />
         </div>
@@ -304,7 +304,7 @@
             <div class="action none">
               <div class="description">
                 <span lang="en">On <label>No Gesture</label>, play sound<br /></span>
-                <span lang="ja"><label>なし</label>,</span>
+                <span lang="ja"><label>ジェスチャーなし</label>,</span>
                 <select id="none-select" class="audio-select">
                   <option value="none">None</option>
                   <option value="random">🔀 Random</option>

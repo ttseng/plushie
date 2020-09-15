@@ -491,7 +491,13 @@ function addNewData(id) {
 
 // shown in console UI
 function updateStatusContainer(status) {
-  document.getElementById("status-label").innerHTML = "Detected Gesture:";
+  let statusLabel = document.getElementById("status-label");
+  if(isJapanese()){
+    statusLabel.innerHTML = "感知されたジェスチャー:";
+  }else{
+    statusLabel.innerHTML = "Detected Gesture:";  
+  }
+  
   // translate default gesture to Japanese if needed
   if(isJapanese() && gestureTranslation[status]){
     status = gestureTranslation[status];

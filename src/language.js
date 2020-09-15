@@ -23,7 +23,7 @@ let soundEmojiDecorators = {
 let consoleBtns = {
     "pair-btn": ["Pair Your Microbit", "Microbitをつなげる"],
     "reconnect-btn": ["Reconnect Microbit", "Microbitをつなげる"],
-    "train-btn": ["Train Model", "Train Model"],
+    "train-btn": ["Train Model", "モデルを訓練する"],
 }
 
 function setLanguage(el, language) {
