@@ -11,11 +11,11 @@ let sourceNode;
 let voices;
 let lang = "en-GB"; // target language
 let languageCodes = {
-  english: "en-GB",
-  japanese: "ja-JP",
-  chinese: "zh-TW",
-  french: "fr-FR",
-  spanish: "es-ES",
+  en: "en-GB",
+  ja: "ja-JP",
+  zh: "zh-TW",
+  fr: "fr-FR",
+  es: "es-ES",
 };
 let synth = window.speechSynthesis; // speech synthesizer
 let targetVoice;
@@ -111,8 +111,11 @@ function populateSelects() {
   Array.from(document.querySelectorAll(".sound .name")).forEach(function (
     soundNameDiv
   ) {
-    let name = soundNameDiv.innerHTML.toLowerCase();
-    addToSelects(name);
+    // only grab the ones in the current language
+    if (languageCodes[soundNameDiv.lang] == lang) {
+      let name = soundNameDiv.innerHTML.toLowerCase();
+      addToSelects(name);
+    }
   });
 }
 
@@ -174,7 +177,7 @@ function addSound(data, shouldSpeak = true) {
 
   // ask for name of file
   if (name.length > 0) {
-    name = name.replace(/\s+/g, "-").toLowerCase().replace(/'/,'');
+    name = name.replace(/\s+/g, "-").toLowerCase().replace(/'/, "");
     let soundDiv = document.createElement("div");
     soundDiv.classList.add("sound");
     let nameDiv = document.createElement("div");
@@ -200,7 +203,6 @@ function addSound(data, shouldSpeak = true) {
       let source = audioContext.createMediaElementSource(audioEl);
       source.connect(gainNode);
       gainNode.connect(audioContext.destination);
-
     } else {
       // play the text to speech
       if (shouldSpeak) {
@@ -229,7 +231,7 @@ function addSound(data, shouldSpeak = true) {
 }
 
 // PLAYBACK
-
+// name is the name of the gesture
 function playAudio(name) {
   if (!isCollectingData) {
     // console.log("play audio for ", name);
@@ -241,6 +243,8 @@ function playAudio(name) {
         selectEl.selectedIndex
       ].value.toLowerCase();
 
+      // console.log('audioFileName: ', audioFileName);
+
       // play corresponding audio element
       let audioEl = document.getElementById(audioFileName + "-audio");
       if (audioEl) {
@@ -251,10 +255,14 @@ function playAudio(name) {
             audioEl.loop = true;
           }
         }
-        // stop any playing
-        stopAllAudio();
-        
-        // set gain to 1 
+
+        // keep countdown timer audio running (do not disrupt with other gestures)
+        if(!timerCountdownRunning){
+          // stop any playing
+          stopAllAudio();
+        }
+
+        // set gain to 1
         gainNode.gain.value = 1.0;
 
         currentAudio = audioFileName;
@@ -268,14 +276,14 @@ function playAudio(name) {
       } else if (audioFileName == "silence") {
         // fade out track if there is one playing
         if (currentAudio.length > 0) {
-          console.log('fade out track');
+          console.log("fade out track");
           gainNode.gain.linearRampToValueAtTime(
             0.01,
             audioContext.currentTime + 1
-          ); 
-          
-          setTimeout(function(){
-            console.log('stop all audio');
+          );
+
+          setTimeout(function () {
+            console.log("stop all audio");
             stopAllAudio();
           }, 1000);
         }
@@ -413,13 +421,6 @@ function getVoices() {
   }
 }
 
-function setLanguage(language) {
-  language = language.toLowerCase();
-  lang = languageCodes[language];
-  getVoices();
-  console.log("set language to ", lang);
-}
-
 function textOnChange() {
   let previewBtn = document.getElementById("preview-btn");
   let addTTSbtn = document.getElementById("add-tts-btn");
@@ -441,15 +442,12 @@ function checkSubmit() {
 }
 
 function previewTTS() {
-  console.log("preview tts");
   event.preventDefault();
   let inputTxt = document.getElementById("text");
-  console.log("inputTxt: ", inputTxt.value);
   speak(inputTxt.value);
 }
 
 function speak(text) {
-  console.log("speak");
   let utterThis = new SpeechSynthesisUtterance(text);
   utterThis.voice = targetVoice;
   utterThis.lang = lang;
@@ -484,7 +482,7 @@ function addToSelects(name) {
     (dropdown) => {
       // only add if the dropdown doesn't already have this name
       let dropdownSounds = Array.from(dropdown.options).map((e) => e.value);
-      if(!dropdownSounds.includes(name)){
+      if (!dropdownSounds.includes(name)) {
         dropdown.options.add(new Option(`🔊 ${name}`, name));
       }
     }

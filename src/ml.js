@@ -130,7 +130,6 @@ function addDefaultGestures() {
   trainedGestures = gestures;
 
   gestures.forEach(function (gestureName) {
-    // add to default gestures container in Gestures
     container.append(gestureLabel(gestureName, true));
   });
 
@@ -149,7 +148,8 @@ function updateConfidenceGestures(gestures){
       let label = document.createElement('label');
       label.classList.add(gestureName);
       let labelName = document.createElement('span');
-      labelName.innerHTML = gestureName;
+      labelName.innerHTML = gestureName;     
+      
       label.append(labelName);
       gestureConfidenceContainer.append(label);
       
@@ -201,7 +201,10 @@ function removeGesture(evt) {
       }
 
       // remove from timer select
-      document.querySelector(`#timer-countdown-trigger-select option[value=${gestureName}]`).remove();
+      let option = document.querySelector(`#timer-countdown-trigger-select option[value=${gestureName}]`);
+      if(option){
+        option.remove();
+      }
 
     } else {
       // remove gestureContainer
@@ -489,6 +492,10 @@ function addNewData(id) {
 // shown in console UI
 function updateStatusContainer(status) {
   document.getElementById("status-label").innerHTML = "Detected Gesture:";
+  // translate default gesture to Japanese if needed
+  if(isJapanese() && gestureTranslation[status]){
+    status = gestureTranslation[status];
+  }
   document.getElementById("status").innerHTML = status;
 }
 
@@ -669,8 +676,8 @@ function predictionResults(error, results) {
     if(currentState != prevState){
       console.log("");
       console.log("new state: ", currentState);
-      logResults(results);
-  
+      // logResults(results);
+   
       playAudio(currentState);
   
       // check if should start countdown
@@ -686,7 +693,6 @@ function predictionResults(error, results) {
         ].value.toLowerCase();
         // console.log('countdownTrigger: ', countdownTrigger);
         if (countdownTrigger == currentState && !timerCountdownRunning) {
-          console.log("start countdown");
   
           countdownTimer.start(
             timerCountdownTime,

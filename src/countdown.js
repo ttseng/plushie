@@ -1,5 +1,4 @@
 // countdown for recording gesture, timer UI
-
 let preRecordTime = 3.15 // 3 2 1 countdown - slightly calibrated to align with the audio clip
 
 let recordCountdownTime = 2.0; // time to record gesture = 2 seconds
@@ -8,6 +7,7 @@ let recordCountdownRunning = false;
 let timerCountdownTime = 10; // 10 seconds
 let timerCountdownRunning = false;
 
+// generalized countdown timer
 let countdownTimer = (function (document) {
   function start(timeLimit, display, atSetup, toDisplay, atEnd) {
     if(atSetup){
@@ -34,6 +34,7 @@ let countdownTimer = (function (document) {
   return { start: start };
 })(document);
 
+// gesture-triggered countdown timer
 function setTimer() {
   let length = prompt(
     "Enter new countdown time (in seconds)",
@@ -45,13 +46,12 @@ function setTimer() {
   }
 }
 
+// for 3 / 2 / 1 countdown when recording gesture data
 function preRecordStart(){
   isCollectingData = true;
   let preCountdownAudio = document.getElementById('pre-countdown-audio');
   preCountdownAudio.play();
 }
-
-// for 3 / 2 / 1 countdown when recording gesture data
 
 function preRecordTimeLeft(timeLeft){
   let timeToDisplay = (timeLeft).toFixed(0);

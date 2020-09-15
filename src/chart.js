@@ -22,7 +22,7 @@ function setupDataCollection() {
   accelYArr = [];
   accelZArr = [];
 
-  smoothie = new SmoothieChart({ tooltip: true });
+  smoothie = new SmoothieChart({ tooltip: false });
   smoothie.addTimeSeries(accelXSeries, { strokeStyle: "red" });
   smoothie.addTimeSeries(accelYSeries, { strokeStyle: "green" });
   smoothie.addTimeSeries(accelZSeries, { strokeStyle: "blue" });

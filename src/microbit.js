@@ -37,7 +37,12 @@ async function pair() {
       onMicrobitDisconnected
     );
     document.getElementById("status-container").classList.remove('hidden');
-    document.getElementById("pair-btn").style.display = "none";
+
+    // hide pair btn
+    document.getElementById("pair-btn").style.display = 'none';
+    let reconnectBtn = document.getElementById("reconnect-btn");
+    reconnectBtn.classList.add('hidden');
+    microbitPaired = true;
 
     console.log("connecting to GATT server...");
     document.getElementById("status").innerHTML =
@@ -62,10 +67,6 @@ async function pair() {
     showUI();
     updateStatusContainer("");
 
-    // hide pair button
-    let reconnectBtn = document.getElementById("reconnect-btn");
-    reconnectBtn.classList.add('hidden');
-    microbitPaired = true;
 
     if (!sensorDataLoaded) {
 
@@ -145,5 +146,9 @@ function accelChanged(event) {
 function showModal(message) {
   document.getElementsByName("modal-message")[0].innerHTML = message;
   $("#myModal").modal("show");
-  document.getElementById("pair-btn").style.display = "block";
+  document.querySelectorAll(".pair-btn").forEach(function(el){
+    if(el.lang == lang){
+      el.classList.remove('paired');
+    }
+  });
 }

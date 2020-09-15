@@ -51,15 +51,19 @@
  
   <body>
     <div id="console" class="container">
-      <div class="heading">
+      <div class="heading" lang="en">
         Console
+      </div>
+      <div class="heading" lang="ja">
+        制御盤
       </div>
 
       <div class="content">
         
-        <button onclick="pair()" id="pair-btn" id="repair-btn">
+        <button onclick="pair()" id="pair-btn">
           Pair Your Microbit
         </button>
+
         <div id="status-container" class="hidden">
           <b id="status-label">Status:</b>
           <span id="status">Awaiting pairing...</span>
@@ -88,17 +92,24 @@
         <hr />
 
         <div id="instructions">
-          <p><b>Plushie</b> is a tool for creating interactive toys using the Microbit!</p>
+          <p lang="en"><b>Plushie</b> is a tool for creating interactive toys using the Microbit!</p>
+          <p lang="ja"><b>Plushie</b> はMicrobitを使ってインタラクティブなおもちゃをつくるためのツールです!</p>
           <img src="assets/img/froggy-wave-5x.gif"/>
-          <p>Using Plushie, you can program your stuffed animal to respond with sounds based on custom gestures you create.</p>
-          
-          <p class="desktop-instructions">Before you begin, save <a href="firmware/plushie.hex" target="_blank">this firmware</a>, load it onto your Microbit, and then click the <b>Pair Your Microbit</b> button.</p>
-          
-          <p class="mobile-instructions">Plushie is not currently mobile compatible –- try it out on Chrome on your laptop or desktop computer!</p>
 
-          <p>Full instructions can be found at
+          <p lang="en">Using Plushie, you can program your stuffed animal to respond with sounds based on custom gestures you create.</p>
+          <p lang="ja">Plushieを使えば、あなたのぬいぐるみを、独自のジェスチャーに音で反応するようにプログラムすることができます.</p>
+          
+          <p class="desktop-instructions" lang="en">Before you begin, save <a href="firmware/plushie.hex" target="_blank">this firmware</a>, load it onto your Microbit, and then click the <b>Pair Your Microbit</b> button.</p>
+          <p class="desktop-instructions" lang="ja">始める前に、このフ<a href="firmware/plushie.hex" target="_blank">ァーム ウェアを 保存</a>して、Microbitに読み込んでください。それから <b>Microbitをつなげる</b> ボタンをおしてください.</p>
+          
+          <p class="mobile-instructions" lang="en">Plushie is not currently mobile compatible –- try it out on Chrome on your laptop or desktop computer!</p>
+
+          <p>
+            <span lang="en">Full instructions can be found at</span>
+            <span lang="ja">詳細なガイドはこちら：</span>
             <a href="https://www.notion.so/scientiffic/Plushie-Tutorial-38eb5fb5bda84e60b7faa8412e7e6870" target="_blank">
-              <label>Plushie Guide</label>
+              <label lang="en">Plushie Guide</label>
+              <label lang="ja">Plushieガイド</label>
             </a>
           </p>
         </div>
@@ -131,8 +142,11 @@
 
     <div class="main-content">
       <div class="container" id="gestures-container">
-        <div class="heading">
+        <div class="heading" lang="en">
           Gestures
+        </div>
+        <div class="heading" lang="ja">
+          ジェスチャー
         </div>
 
         <div class="data-options-container hidden-on-load">
@@ -150,8 +164,11 @@
 
         <hr />
 
-        <button onClick="addNewGesture()" id="new-gesture-btn">
+        <button onClick="addNewGesture()" id="new-gesture-btn" lang="en">
           + Add New Gesture
+        </button>
+        <button onClick="addNewGesture()" id="new-gesture-btn" lang="jp">
+          + 新しいジェスチャーを加える
         </button>
 
         <div id="custom-gestures"></div>
@@ -160,12 +177,16 @@
       <!-- SOUNDS CONTAINER -->
       <div class="row-container">
         <div class="container" id="sounds-container">
-          <div class="heading">
+          <div class="heading" lang="en">
             Sounds
+          </div>
+          <div class="heading" lang="ja">
+            音
           </div>
           <div class="content">
             <div class="sound">
-              <div class="name">wow</div>
+              <div class="name" lang="en">wow</div>
+              <div class="name" lang="ja">ワオ</div>
               <div class="play" onclick="onClickPlay()">
                 <audio
                   id="wow-audio"
@@ -182,7 +203,8 @@
             </div>
 
             <div class="sound">
-              <div class="name">applause</div>
+              <div class="name" lang="en">applause</div>
+              <div class="name" lang="ja">拍手</div>
               <div class="play" onclick="onClickPlay()">
                 <audio
                   id="applause-audio"
@@ -199,7 +221,8 @@
             </div>
 
             <div class="sound">
-              <div class="name">tick-tock</div>
+              <div class="name" lang="en">tick-tock</div>
+              <div class="name" lang="ja">チクタク</div>
               <div class="play" onclick="onClickPlay()">
                 <audio id="tick-tock-audio" onended="stopPlayback()">
                   <source src="assets/sounds/tick-tock.mp3" type="audio/mpeg" />
@@ -227,17 +250,17 @@
 
             <div class="sound-options">
               <label id="file-upload-label" for="file-upload">
-                <i class="fas fa-file-upload"></i> Upload
+                <i class="fas fa-file-upload"></i> <span lang="en">Upload</span><span lang="ja">アップロード</span>
               </label>
               <input type="file" id="file-upload" accept="audio/*" />
               <button onclick="showTextSpeechModal()">
-                <i class="far fa-comments"></i> Text to Speech
+                <i class="far fa-comments"></i> <span lang="en">Text to Speech</span><span lang="ja">音声合成</span>
               </button>
             </div>
 
             <hr />
             <button onClick="stopAllAudio()">
-              <i class="fas fa-square"></i> Stop All Sounds
+              <i class="fas fa-square"></i> <span lang="en">Stop All Sounds</span> <span lang="ja">すべての音を止める</span>
             </button>
           </div>
         </div>
@@ -245,40 +268,49 @@
         <!-- TRIGGERS CONTAINER -->
 
         <div class="container" id="triggers">
-          <div class="heading">
+          <div class="heading" lang="en">
             Triggers
+          </div>
+          <div class="heading" lang="ja">
+            きっかけ
           </div>
           <div class="content">
             <div class="action shake">
               <div class="description">
-                On <label>Shake</label>, play sound<br />
+                <span lang="en">On <label>Shake</label>, play sound<br /></span>
+                <span lang="ja"><label>振る</label>,</span>
                 <select id="shake-select" class="audio-select">
                   <option value="none">None</option>
                   <option value="random">🔀 Random</option>
                   <option value="silence">🔇 Silence</option>
                 </select>
+                <span lang="ja">をきっかけに、音を鳴らす</span>
               </div>
             </div>
 
             <div class="action bow">
               <div class="description">
-                On <label>Bow</label>, play sound<br />
+                <span lang="en">On <label>Bow</label>, play sound<br /></span>
+                <span lang="ja"><label>おじぎする</label>,</span>
                 <select id="bow-select" class="audio-select">
                   <option value="none">None</option>
                   <option value="random">🔀 Random</option>
                   <option value="silence">🔇 Silence</option>
                 </select>
+                <span lang="ja">をきっかけに、音を鳴らす</span>
               </div>
             </div>
 
             <div class="action none">
               <div class="description">
-                On <label>No Gesture</label>, play sound<br />
+                <span lang="en">On <label>No Gesture</label>, play sound<br /></span>
+                <span lang="ja"><label>なし</label>,</span>
                 <select id="none-select" class="audio-select">
                   <option value="none">None</option>
                   <option value="random">🔀 Random</option>
                   <option value="silence">🔇 Silence</option>
                 </select>
+                <span lang="ja">をきっかけに、音を鳴らす</span>
               </div>
             </div>
           </div>
@@ -288,12 +320,16 @@
       <!-- HEARING -->
       <div class="row-container">
         <div class="container" id="hearing">
-          <div class="heading">
+          <div class="heading" lang="en">
             Hearing
+          </div>
+          <div class="heading" lang="ja">
+            聴く
           </div>
 
           <div id="noise-level-display">
-            🔊 Current noise levels: <br />
+            🔊 <span lang="en">Current noise levels: </span><span lang="ja">現在の騒音レベル: </span>
+            <br />
             <div id="noise-level"></div>
           </div>
 
@@ -302,13 +338,16 @@
               📢
             </div>
             <div style="margin-left: 15px;">
-              If noise louder than
+              <span lang="en">If noise louder than</span>
+              <span lang="ja">騒音が</span>
               <input
                 type="text"
                 id="noise-input-threshold"
                 value="100"
                 oninput="setNoiseThreshold(this.value)"
-              />, play sound
+              />
+              <span lang="en">, play sound</span>
+              <span lang="ja">より大きいとき、音を鳴らす</span>
             </div>
             <div>
               <select class="audio-select" id="loud-select">
@@ -320,8 +359,11 @@
 
         <!-- TIMER -->
         <div id="timer" class="container">
-          <div class="heading">
+          <div class="heading" lang="en">
             Timer
+          </div>
+          <div class="heading" lang="ja">
+            タイマー
           </div>
 
           <div class="content">
@@ -335,17 +377,26 @@
             </button> -->
 
               <button onClick="countdown.reset()" id="timer-reset-btn">
-                Reset
+                <span lang="en">Reset</span>
+                <span lang="ja">リセット</span>
               </button>
             </div>
 
             <div class="action" id="timer-countdown-trigger-action">
               <input type="checkbox" id="timer-countdown-trigger-checkbox" />
-              <label for="countdown-checkbox">Trigger on</label>
+              <label for="countdown-checkbox" lang="en">
+                Trigger on
+              </label>
               <select id="timer-countdown-trigger-select">
-                <option value="shake" selected>shake</option>
-                <option value="bow">bow</option>
+                <option value="shake" selected lang="en">shake</option>
+                <option value="shake" lang="ja">振る</option>
+                <option value="bow" lang="en">bow</option>
+                <option value="bow" lang="ja">おじぎする</option>
               </select>
+              <span for="countdown-checkbox" lang="ja">
+                &nbsp; をきっかけに始める
+              </span>
+
             </div>
 
             <div class="action" id="timer-countdown-start-action">
@@ -353,20 +404,25 @@
                 ⏲️
               </div>
               <div class="description">
-                At start, play sound
+                <span lang="en">At start, play sound</span>
+                <span lang="ja">はじまったら、</span>
               </div>
               <div>
                 <select class="audio-select" id="timer-countdown-start-select">
-                  <option value="none">🔇 None</option>
+                  <option value="none" lang="en">🔇 None</option>
+                  <option value="none" lang="ja">🔇 なし</option>
                 </select>
               </div>
+              <span lang="ja" style="margin-left: 60px; margin-top: -10px;">の音を鳴らす</span>
+
               <div class="loop-container">
                 <input
                   type="checkbox"
                   id="timer-countdown-start-loop-checkbox"
                   checked
                 />
-                <label for="loop-countdown-start-checkbox">Loop audio</label>
+                <label for="loop-countdown-start-checkbox" lang="en">Loop audio</label>
+                <label for="loop-countdown-start-checkbox" lang="ja">繰り返す</label>
               </div>
             </div>
 
@@ -374,15 +430,24 @@
               <div class="icon">
                 🏁
               </div>
-              When done, play sound
+              <span lang="en">When done, play sound</span>
+              <span lang="ja">終わったら、</span>
               <select class="audio-select" id="timer-countdown-end-select">
-                <option value="none">🔇 None</option>
-                <option value="random">🔀 Random</option>
+                <option value="none" lang="en">🔇 None</option>
+                <option value="none" lang="ja">🔇 なし</option>
+                <option value="random" lang="en">🔀 Random</option>
+                <option value="random" lang="ja">🔀 ランダム</option>
               </select>
+              <span lang="ja">の音を鳴らす</span>
             </div>
           </div>
         </div>
       </div>
+    </div>
+
+    <div id="language-select">
+      <span class="lang-link active" onClick="setLanguage(this, 'en')">English</span>
+      <span class="lang-link" onClick="setLanguage(this, 'ja')">日本人</span>
     </div>
 
     <!-- text-to-speech modal -->
@@ -508,14 +573,19 @@
     <script type="text/javascript" src="src/audio.js"></script>
     <script type="text/javascript" src="src/countdown.js"></script>
     <script type="text/javascript" src="src/samples.js"></script>
+    <script type="text/javascript" src="src/language.js"></script>
 
     <script>
+      window.addEventListener('DOMContentLoaded', (event)=> {  
+        setUILanguage('en');
+      });
+
       window.onload = function () {
         getAudioPermission();
-
+        setAudioLanguage();
         populateSelects();
 
-        setDefaultSounds();
+        setDefaultSounds();        
       };
     </script>
   </body>

@@ -19,7 +19,8 @@ body {
   background: var(--base);
   padding: 50px 25px 25px;
   margin: 0 auto;
-  width: var(--max-width)
+  width: var(--max-width);
+  position: relative;
 }
 
 a:hover{
@@ -36,7 +37,7 @@ i{
 }
 
 .hidden{
-  display: none;
+  display: none !important;
 }
 
 .row-container{
@@ -166,10 +167,6 @@ i{
   margin-top: 30px;
 }
 
-#reconnect-btn{
-  margin-bottom: 10px;
-}
-
 button.active{
   background-color: var(--green);
 }
@@ -191,10 +188,6 @@ button.active{
 
 #warning.hidden{
   display: none;
-}
-
-#repair-btn.active{
-  display: inline;
 }
 
 #status-container {
@@ -597,13 +590,13 @@ label{
 
 label.gesture{
   margin: 5px 20px 5px 0;
-  display: grid;
-  grid-template-columns: 65% 35%;
+  display: flex;
   padding: 0;
 }
 
 label.gesture span{
   margin: 0 10px;
+  width: max-content;
 }
 
 label.gesture .remove{
@@ -635,6 +628,7 @@ label.gesture .remove{
 
 #default-gestures{
   display: flex;
+  margin-top: -30px;
   margin-bottom: 15px;
 }
 
@@ -724,4 +718,26 @@ label.gesture .remove{
   .mobile-instructions{
     display: none;
   }
+}
+
+/* Language */
+
+#language-select{
+  position: absolute;
+  right: 30px;
+  top: 10px;
+}
+
+.lang-link{
+  padding: 3px 5px;
+  font-weight: bold;
+  border-radius: 5px;
+}
+
+.lang-link:hover{
+  cursor: pointer;
+}
+
+.lang-link.active{
+  background: var(--purple);
 }
