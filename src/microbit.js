@@ -18,16 +18,21 @@ let prevState;
 
 let sensorDataLoaded = false;
 
-async function pair() {
+async function pair(fromIndex) {
   if (!navigator.bluetooth) {
     showModal("Web Bluetooth is not supported in this browser.");
     return;
   }
-  // requestDevice();
+
   try {
+    let statusContainer = document.getElementById("status-container");
+    let statusEl = document.getElementById("status");
+    let statusLabel = document.getElementById('status-label');
+
+    statusLabel.innerHTML = 'Status: ';
+
     console.log("requesting bluetooth device...");
-    document.getElementById("status").innerHTML =
-      "requesting bluetooth device...";
+    statusEl.innerHTML = "requesting bluetooth device...";
     const uBitDevice = await navigator.bluetooth.requestDevice({
       filters: [{ namePrefix: "BBC micro:bit" }],
       optionalServices: services,
@@ -36,50 +41,63 @@ async function pair() {
       "gattserverdisconnected",
       onMicrobitDisconnected
     );
-    document.getElementById("status-container").classList.remove('hidden');
+    statusContainer.classList.remove("hidden");
 
     // hide pair btn
-    document.getElementById("pair-btn").style.display = 'none';
+    if(fromIndex){
+      document.getElementById("pair-btn").classList.add('hidden');
+    }
+    
     let reconnectBtn = document.getElementById("reconnect-btn");
-    reconnectBtn.classList.add('hidden');
-    microbitPaired = true;
+    if (reconnectBtn) {
+      reconnectBtn.classList.add("hidden");
+    }
 
     console.log("connecting to GATT server...");
-    document.getElementById("status").innerHTML =
-      "connecting to GATT server...";
+    statusEl.innerHTML ="connecting to GATT server...";
     const server = await uBitDevice.gatt.connect();
 
     console.log("getting service...");
-    document.getElementById("status").innerHTML = "getting service...";
+    statusEl.innerHTML = "getting service...";
     let accelService = await server.getPrimaryService(ACCEL_SERVICE);
 
     console.log("getting characteristics...");
-    document.getElementById("status").innerHTML = "getting characteristics...";
+    statusEl.innerHTML = "getting characteristics...";
     let accelCharacteristic = await accelService.getCharacteristic(ACCEL_DATA);
     accelCharacteristic.startNotifications();
 
-    accelCharacteristic.addEventListener(
-      "characteristicvaluechanged",
-      accelChanged
-    );
+    microbitPaired = true;
+    statusEl.innerHTML = "getting characteristics...";
 
-    // show UI
-    showUI();
-    updateStatusContainer("");
+    if(!fromIndex){
+      statusContainer.classList.add('success');
+      statusEl.innerHTML = "🙂 successfully connected"
+    }
+    
+    if(fromIndex){
+      accelCharacteristic.addEventListener(
+        "characteristicvaluechanged",
+        accelChanged
+      );
+    }
 
+    if (fromIndex) {
+      // show UI
+      showUI();
+      updateStatusContainer("");
 
-    if (!sensorDataLoaded) {
+      if (!sensorDataLoaded) {
+        // first load
+        // set up smoothie data collection parameters on first load
+        setupDataCollection();
+        sensorDataLoaded = true;
 
-      // first load
-      // set up smoothie data collection parameters on first load
-      setupDataCollection();
-      sensorDataLoaded = true;
-
-      // hide instructions
-      document.getElementById('instructions').classList.add('hidden'); 
-    }else{
-      // reconnected microbit
-      smoothie.start();
+        // hide instructions
+        document.getElementById("instructions").classList.add("hidden");
+      } else {
+        // reconnected microbit
+        smoothie.start();
+      }
     }
   } catch (error) {
     showModal(error);
@@ -90,7 +108,7 @@ function showUI() {
   console.log("show ui");
   Array.from(document.getElementsByClassName("hidden-on-load")).forEach(
     function (el, index, array) {
-      el.classList.remove('hidden-on-load');
+      el.classList.remove("hidden-on-load");
     }
   );
 }
@@ -108,7 +126,7 @@ function onMicrobitDisconnected() {
 
   // make pair button active
   let reconnectBtn = document.getElementById("reconnect-btn");
-  reconnectBtn.classList.remove('hidden');
+  reconnectBtn.classList.remove("hidden");
   reconnectBtn.classList.add("active");
 }
 
@@ -141,14 +159,10 @@ function accelChanged(event) {
   accelXSeries.append(new Date().getTime(), accelX);
   accelYSeries.append(new Date().getTime(), accelY);
   accelZSeries.append(new Date().getTime(), accelZ);
-};
+}
 
 function showModal(message) {
   document.getElementsByName("modal-message")[0].innerHTML = message;
   $("#myModal").modal("show");
-  document.querySelectorAll(".pair-btn").forEach(function(el){
-    if(el.lang == lang){
-      el.classList.remove('paired');
-    }
-  });
+  document.getElementById("pair-btn").classList.remove('hidden');
 }

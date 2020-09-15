@@ -60,8 +60,12 @@
 
       <div class="content">
         
-        <button onclick="pair()" id="pair-btn">
+        <button onclick="pair(true)" id="pair-btn">
           Pair Your Microbit
+        </button>
+
+        <button id="reconnect-btn" onClick="pair(true)" class="hidden">
+          Reconnect Microbit
         </button>
 
         <div id="status-container" class="hidden">
@@ -115,10 +119,6 @@
         </div>
 
         <div class="hidden-on-load">
-          <button id="reconnect-btn" onClick="pair()" class="hidden">
-            Reconnect Microbit
-          </button>
-
           <div class="training-container">
             <button id="train-btn" onClick="trainModel()" disabled>
               Train Model

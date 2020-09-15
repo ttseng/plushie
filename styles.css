@@ -9,6 +9,7 @@
   --grey: #c5bfbf;
   --yellow:#fff6be;
   --green: #b0f3d4;
+  --dark-green: #39b57b;
   --purple: #dbbbff;
   --pink: #ffa6c7;
   --max-width: 1080px;
@@ -53,6 +54,10 @@ i{
   border-radius: 15px;
   padding: 15px;
   background: white;
+}
+
+#reconnect-btn.active, #pair-btn.active{
+  background-color: var(--green);
 }
 
 #instructions {
@@ -200,6 +205,10 @@ button.active{
 }
 #status-container.hidden{
   display: none;
+}
+
+#status-container.success{
+  background: var(--dark-green);
 }
 
 button {
@@ -740,4 +749,31 @@ label.gesture .remove{
 
 .lang-link.active{
   background: var(--purple);
+}
+
+/* Bluetooth Pairing Page */
+
+body.bluetooth{
+  width: 350px;
+}
+
+body.bluetooth #status-container{
+  margin-top: 20px;
+}
+
+body.bluetooth .content{
+  margin-top: 20px;
+}
+
+body.bluetooth ol{
+  padding: 10px 25px 0px;
+  line-height: 20px;
+}
+
+body.bluetooth li{
+  margin-bottom: 10px;
+}
+
+body.bluetooth li:last-of-type{
+  margin-bottom: 0px;
 }
