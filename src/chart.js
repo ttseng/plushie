@@ -131,23 +131,32 @@ function peaks(y, params) {
   return { numPeaks: peaksCounter, results: signals };
 }
 
-function generatePlotly(id) {
-  let container = document.querySelector(
-    `#${currentGesture} .sample-container`
-  );
+function generatePlotly(id, container, dataX, dataY, dataZ) {
 
   let plot = document.createElement("div");
-  let name =
+  let name = id; // default
+  if(!forDebug){
+    name =
     "gesture_" + currentGesture + "_sample_" + container.children.length;
+  }
   plot.setAttribute("id", name);
   plot.classList.add("plot");
-  container.prepend(plot);
+  if(!forDebug){
+    container.prepend(plot);
+  }else{
+    container.append(plot);
+  }
+
+  let width = 300; // default for new gestures
+  if(forDebug){
+    width = 600;
+  }
+  
 
 //   console.log("generating plot for gesture", currentGesture, " ", name);
-
   let layout = {
     autosize: false,
-    width: 300,
+    width: width,
     height: 200,
     margin: {
       l: 20,
@@ -167,19 +176,19 @@ function generatePlotly(id) {
     name,
     [
       {
-        y: accelXSample,
+        y: dataX,
         mode: "lines",
         line: { color: "red" },
         name: "ax",
       },
       {
-        y: accelYSample,
+        y: dataY,
         mode: "lines",
         line: { color: "green" },
         name: "ay",
       },
       {
-        y: accelZSample,
+        y: dataZ,
         mode: "lines",
         line: { color: "blue" },
         name: "az",
@@ -192,11 +201,11 @@ function generatePlotly(id) {
 
   // generate peaks data
 
-  let peaksData = peaks(accelXSample);
+  let peaksData = peaks(dataX);
   peaksArr[0] = peaksData.numPeaks;
-  peaksData = peaks(accelYSample);
+  peaksData = peaks(dataY);
   peaksArr[1] = peaksData.numPeaks;
-  peaksData = peaks(accelZSample);
+  peaksData = peaks(dataZ);
   peaksArr[2] = peaksData.numPeaks;
 
   // add remove btn
@@ -307,4 +316,73 @@ function updateSampleCounter() {
   }
   counterContainer.innerHTML = msg;
   updateMLBtns();
+}
+
+// DEBUG 
+let debugIndex = 0;
+let forDebug = false;
+
+function showDebug(btn){
+  debugIndex = 0;
+  forDebug = true;
+  // display a chart with the last 6 seconds of data
+  let sampleSize = 97;
+  let sampleLength = sampleSize*5; // 97 samples in ~10 seconds
+  let ax = accelXArr.slice(accelXArr.length - sampleLength);
+  let ay = accelYArr.slice(accelYArr.length - sampleLength);
+  let az = accelZArr.slice(accelZArr.length - sampleLength);  
+  let container = document.getElementById('debug-timeline');
+  container.innerHTML = '';  // clear contents
+  generatePlotly('timeline', container, ax, ay, az);
+
+  // display charts from 2 second samples
+  let displayContainer = document.getElementById('debug-charts');
+  displayContainer.innerHTML = '';
+  // console.log('ax:', ax, 'ay:', ay, 'az:', az);
+
+  for(i=0; i< sampleLength / sampleSize; i++){
+    console.log('generate plot for debug ', i);
+    let start = sampleSize * i;
+    let ax_slice = ax.slice(start, sampleSize + start-1);
+    let ay_slice = ay.slice(start, sampleSize + start-1);
+    let az_slice = az.slice(start, sampleSize + start-1);
+    // console.log('ax_slice:', ax_slice, 'ay_slice:', ay_slice, 'az_slice:', az_slice);
+    generatePlotly(`debug_${i}`, displayContainer, ax_slice, ay_slice, az_slice);
+    runDebugPrediction(ax_slice, ay_slice, az_slice);
+  }
+  forDebug = false;
+}
+
+function runDebugPrediction(ax, ay, az){
+  let inputs = {
+    ax_max: Math.max(...ax),
+    ax_min: Math.min(...ax),
+    ax_std: standardDeviation(ax),
+    ax_peaks: peaks(ax).numPeaks,
+    ay_max: Math.max(...ay),
+    ay_min: Math.min(...ay),
+    ay_std: standardDeviation(ay),
+    ay_peaks: peaks(ay).numPeaks,
+    az_max: Math.max(...az),
+    az_min: Math.min(...az),
+    az_std: standardDeviation(az),
+    az_peaks: peaks(az).numPeaks,
+  };
+
+  model.classify(inputs, debugPredictionResults);
+}
+
+function debugPredictionResults(error, results){
+  if(error){
+    console.error(error);
+  }
+  let confidenceContainer = document.createElement('div');
+  let body = '';
+  results.forEach(function(gesture){
+    body += `<label>${gesture.label}</label> ${(gesture.confidence*100).toFixed(0)}% `;
+  });
+  confidenceContainer.innerHTML = body;
+  let container = document.getElementById(`debug_${debugIndex}`);
+  container.append(confidenceContainer);
+  debugIndex++;
 }

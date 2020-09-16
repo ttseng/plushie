@@ -2,6 +2,8 @@
 let shouldLoadDefaultGestures = true;
 let shouldLoadModel = true;
 
+let debugMode = true;
+
 let dataDirectory = "data/none-bow-shake-peaks";
 let modelNeedsTrainng = false; // this is a flag to determine when the model needs to be retrained.  
 // it's used when a user adds new gestures / removes gestures that the model is already trained to recognize
@@ -116,7 +118,7 @@ function loadData(){
       dataFromJSON = true;
 
       // remove current triggers
-      document.querySelector('#triggers .content').innerHTML = '';
+      document.querySelector('#triggers-container .content').innerHTML = '';
 
       model.loadData(loadDataInput.files, dataLoadedFromFile);
     }
@@ -585,6 +587,7 @@ function whileTraining(epoch, loss) {
 }
 
 function finishedTraining() {
+  currentGesture = undefined;
   console.log("finished training");
   modelNeedsTraining = false;
   isTraining = false;
@@ -628,10 +631,9 @@ function runPrediction() {
   console.log("run prediction");
 
   let prediction = setInterval(function () {
-    let num_samples = 97;
+    let num_samples = 97; // about 2 seconds worth of data
 
     if (microbitPaired && !isTraining && accelXArr.length > num_samples) {
-      // this is based on the length of the arrays from the dataset
       // let num_samples = 1;
       let ax_data = accelXArr.slice(
         Math.max(accelXArr.length - num_samples, 1)
@@ -661,7 +663,7 @@ function runPrediction() {
 
       model.classify(inputs, predictionResults);
     }
-  }, 300);
+  }, 300); 
 }
 
 function predictionResults(error, results) {
@@ -735,7 +737,7 @@ function updateTriggers() {
   newGestures.forEach(function (gesture) {
     console.log("adding trigger element for ", gesture);
     // add a new trigger element
-    let triggersContainer = document.querySelector("#triggers .content");
+    let triggersContainer = document.querySelector("#triggers-container .content");
     let newTriggerContainer = document.createElement("div");
     newTriggerContainer.classList.add("action", gesture);
 
@@ -810,7 +812,8 @@ function atRecordTimeEnd(defaultTime, display) {
 
   let dataId = new Date().getTime();
 
-  generatePlotly(dataId);
+  let parentContainer = document.querySelector(`#${currentGesture} .sample-container`);
+  generatePlotly(dataId, parentContainer, accelXSample, accelYSample, accelZSample);
 
   // add data
   addNewData(dataId);
@@ -915,3 +918,9 @@ String.prototype.toMMSS = function () {
   }
   return minutes + ":" + seconds;
 };
+
+// FOR DEBUG MODE
+function debug(){
+  debugMode = !debugMode;
+  document.getElementById('debug-container').classList.toggle('hidden');
+}

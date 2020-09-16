@@ -489,7 +489,7 @@ input[type=checkbox]{
   margin-top: 15px;
 }
 
-#timer label{
+#timer-container label{
   background-color: transparent
 }
 
@@ -776,4 +776,15 @@ body.bluetooth li{
 
 body.bluetooth li:last-of-type{
   margin-bottom: 0px;
+}
+
+/* DEBUG */
+
+#debug-timeline{
+
+}
+
+#debug-charts .plot{
+  border-bottom: 1px solid var(--grey);
+  margin-bottom: 10px;
 }
