@@ -1,6 +1,8 @@
 // everything related ot audio features including audio recording and text-to-speech
 
 let mute = false; // for debugging purposes
+let isEdited = false;
+let isMuted = false; // for mute button
 
 let currentAudio;
 let audioContext;
@@ -227,13 +229,15 @@ function addSound(data, shouldSpeak = true) {
 
     // update selects
     addToSelects(name);
+
+    isEdited = true;
   }
 }
 
 // PLAYBACK
 // name is the name of the gesture
 function playAudio(name) {
-  if (!isCollectingData) {
+  if (!isCollectingData && !isMuted) {
     // console.log("play audio for ", name);
 
     // play corresponding audio
@@ -351,6 +355,11 @@ function stopAllAudio() {
     sounds[i].currentTime = 0;
   }
   currentAudio = "";
+}
+
+function toggleMute(muteBtn){
+  isMuted = !isMuted;
+  muteBtn.classList.toggle('muted');
 }
 
 function removeAudio() {

@@ -55,6 +55,9 @@
       <div class="heading" lang="ja">制御盤</div>
 
       <div class="content">
+
+        <button id="mute-btn" onClick="toggleMute(this)" class="hidden-on-load">🔇</button>
+
         <button onclick="pair(true)" id="pair-btn">Pair Your Microbit</button>
 
         <button id="reconnect-btn" onClick="pair(true)" class="hidden">
@@ -219,6 +222,7 @@
           <div class="heading" lang="en">Sounds</div>
           <div class="heading" lang="ja">音</div>
           <div class="content">
+
             <div class="sound">
               <div class="name" lang="en">wow</div>
               <div class="name" lang="ja">ワオ</div>
@@ -629,6 +633,11 @@
 
         setDefaultSounds();
       };
+      window.onbeforeunload = function(){
+        if(isEdited){
+          return "If you refresh the page, you will lose any sounds you recorded.  Are you sure you want to continue?";
+        }
+      }
     </script>
   </body>
 </html>
