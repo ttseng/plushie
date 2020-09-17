@@ -282,6 +282,7 @@ function removeData(id) {
   console.log("remove cata ", id);
   let remove = confirm("Are you sure you want to remove this data?");
   if (remove) {
+    currentGesture = gestureData.filter((data) => data.id == id).ys.gesture;
     gestureData = gestureData.filter((data) => data.id !== id);
 
     // remove the plot
