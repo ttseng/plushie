@@ -359,6 +359,9 @@ function stopAllAudio() {
 
 function toggleMute(muteBtn){
   isMuted = !isMuted;
+  if(isMuted){
+    stopAllAudio();
+  }
   muteBtn.classList.toggle('muted');
 }
 
