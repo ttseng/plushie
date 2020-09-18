@@ -279,26 +279,28 @@ function generatePlotly(id, container, dataX, dataY, dataZ) {
 }
 
 function removeData(id) {
-  console.log("remove cata ", id);
   let remove = confirm("Are you sure you want to remove this data?");
   if (remove) {
-    currentGesture = gestureData.filter((data) => data.id == id).ys.gesture;
     gestureData = gestureData.filter((data) => data.id !== id);
+    let parentGesture = event.target.closest('.gesture-container').id;
+    console.log("remove data ", id, 'with event.target', event.target);
 
     // remove the plot
     event.target.closest(".plot").remove();
-    updateSampleCounter();
+
+    // update sample
+    updateSampleCounter(parentGesture);
   }
 }
 
-function updateSampleCounter() {
+function updateSampleCounter(gestureName) {
   let counterContainer = document.querySelector(
-    `#${currentGesture} .sample-counter`
+    `#${gestureName} .sample-counter`
   );
   let sampleContainer = document.querySelector(
-    `#${currentGesture} .sample-container`
+    `#${gestureName} .sample-container`
   );
-  let gestureContainer = document.querySelector(`#${currentGesture}`);
+  let gestureContainer = document.querySelector(`#${gestureName}`);
 
   let sampleCount = sampleContainer.children.length;
   let minSamples = 3;

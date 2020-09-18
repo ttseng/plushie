@@ -9,6 +9,8 @@ let timerCountdownRunning = false;
 
 // generalized countdown timer
 let countdownTimer = (function (document) {
+  let myTimer;
+
   function start(timeLimit, display, atSetup, toDisplay, atEnd) {
     if(atSetup){
       atSetup(display); // funciton to run when setting up timer
@@ -17,7 +19,7 @@ let countdownTimer = (function (document) {
     let time = timeLimit;
     let startTime = new Date().getTime();
 
-    let myTimer = setInterval(myClock, 10);
+    myTimer = setInterval(myClock, 10);
 
     function myClock() {
       let remaining = time - (new Date().getTime() - startTime) / 1000; // in seconds
@@ -31,18 +33,37 @@ let countdownTimer = (function (document) {
       }
     }
   }
-  return { start: start };
+  function reset(timeLimit, display, atEnd){
+    clearInterval(myTimer);
+    atEnd(timeLimit, display, true);
+  }
+  return { start: start, reset: reset };
 })(document);
+
+String.prototype.toMMSS = function () {
+  var sec_num = parseInt(this, 10); // don't forget the second param
+  var hours = Math.floor(sec_num / 3600);
+  var minutes = Math.floor((sec_num - hours * 3600) / 60);
+  var seconds = sec_num - hours * 3600 - minutes * 60;
+
+  if (minutes < 10) {
+    minutes = "0" + minutes;
+  }
+  if (seconds < 10) {
+    seconds = "0" + seconds;
+  }
+  return minutes + ":" + seconds;
+};
 
 // gesture-triggered countdown timer
 function setTimer() {
-  let length = prompt(
+  let newTimerLength = prompt(
     "Enter new countdown time (in seconds)",
     timerCountdownTime
   );
-  if (parseInt(length) !== timerCountdownTime) {
-    timerCountownTime = parseInt(length);
-    event.target.innerHTML = length.toMMSS();
+  if (parseInt(newTimerLength) !== timerCountdownTime) {
+    timerCountdownTime = parseInt(newTimerLength);
+    event.target.innerHTML = newTimerLength.toMMSS();
   }
 }
 
@@ -71,5 +92,10 @@ function atPreRecordTimeEnd(defaulTime, display){
     recordTimerDisplay,
     atRecordTimeEnd);
 }
+
+document.getElementById('timer-countdown-reset-btn').onclick = function(){
+  console.log('clicked timer countdown reset');
+  countdownTimer.reset(timerCountdownTime, document.getElementById('timer-countdown'), atCountdownTimerEnd);
+};
 
 

@@ -403,16 +403,10 @@
           <div class="content">
             <div id="timer-countdown" onClick="setTimer()">00:10</div>
 
-            <div class="timer-countdown-btn-container">
-              <!-- <button class='start-countdown' onClick="countdown.start()">
-              Start
-            </button> -->
-
-              <button onClick="countdown.reset()" id="timer-reset-btn">
-                <span lang="en">Reset</span>
-                <span lang="ja">リセット</span>
-              </button>
-            </div>
+            <button id="timer-countdown-reset-btn">
+              <span lang="en">Reset</span>
+              <span lang="ja">リセット</span>
+            </button>
 
             <div class="action" id="timer-countdown-trigger-action">
               <input type="checkbox" id="timer-countdown-trigger-checkbox" />
@@ -615,12 +609,12 @@
 
     <!-- main javascript files-->
     <script type="text/javascript" src="src/microbit.js"></script>
-    <script type="text/javascript" src="src/ml.js"></script>
-    <script type="text/javascript" src="src/chart.js"></script>
-    <script type="text/javascript" src="src/audio.js"></script>
     <script type="text/javascript" src="src/countdown.js"></script>
+    <script type="text/javascript" src="src/audio.js"></script>
+    <script type="text/javascript" src="src/chart.js"></script>
     <script type="text/javascript" src="src/samples.js"></script>
     <script type="text/javascript" src="src/language.js"></script>
+    <script type="text/javascript" src="src/ml.js"></script>
 
     <script>
       window.addEventListener("DOMContentLoaded", (event) => {

@@ -511,11 +511,10 @@ input[type=checkbox]{
   align-items: baseline;
 }
 
-.timer-countdown-btn-container{
-  display: flex;
-  justify-content: center;
+#timer-countdown-reset-btn{
+  margin: 0 auto;
+  margin-bottom: 15px;
 }
-
 
 #timer-countdown-start-action{
   flex-wrap: wrap;
@@ -564,10 +563,6 @@ input[type=checkbox]{
 
 #timer-countdown:hover{
   cursor: pointer;
-}
-
-#timer-reset-btn{
-  margin-bottom: 20px;
 }
 
 .loop-container{

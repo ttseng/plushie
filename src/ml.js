@@ -484,7 +484,7 @@ function addNewData(id) {
   });
 
   // increment sample size
-  updateSampleCounter();
+  updateSampleCounter(targetGesture);
 
   // update training btns
   updateMLBtns();
@@ -800,10 +800,10 @@ function recordTimerDisplay(timeLeft) {
   return timeLeft.toFixed(2);
 }
 
-function atRecordTimeEnd(defaultTime, display) {
+function atRecordTimeEnd(timeLimit, display) {
   isCollectingData = false;
   recordCountdownRunning = false;
-  display.innerHTML = defaultTime.toFixed(2); // initial countdown time with two decimal places
+  display.innerHTML = timeLimit.toFixed(2); // initial countdown time with two decimal places
   display.classList.remove("active");
 
   let recordBtn = document.querySelector(`#${currentGesture} .record-btn`);
@@ -853,11 +853,13 @@ function countdownTimerDisplay(timeLeft) {
   return minutes + ":" + seconds;
 }
 
-function atCountdownTimerEnd(defaultTime, display) {
-  stopAllAudio();
-  timerCountdownRunning = false;
-  display.innerHTML = defaultTime.toString().toMMSS();
-  playAudio("timer-countdown-end");
+function atCountdownTimerEnd(defaultTime, display, isFromReset) {
+    stopAllAudio();
+    timerCountdownRunning = false;
+    display.innerHTML = defaultTime.toString().toMMSS();
+    if(!isFromReset){
+      playAudio("timer-countdown-end");
+    }
 }
 
 // CONFIDENCE ADJUSTMENTS - THRESHOLD TO TRIGGER NEW GESTURE
@@ -904,20 +906,6 @@ function toggleDescription(el){
   el.parentElement.querySelector('.description').classList.toggle('hidden');
 }
 
-String.prototype.toMMSS = function () {
-  var sec_num = parseInt(this, 10); // don't forget the second param
-  var hours = Math.floor(sec_num / 3600);
-  var minutes = Math.floor((sec_num - hours * 3600) / 60);
-  var seconds = sec_num - hours * 3600 - minutes * 60;
-
-  if (minutes < 10) {
-    minutes = "0" + minutes;
-  }
-  if (seconds < 10) {
-    seconds = "0" + seconds;
-  }
-  return minutes + ":" + seconds;
-};
 
 // FOR DEBUG MODE
 function debug(){
