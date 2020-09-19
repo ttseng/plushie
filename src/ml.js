@@ -195,6 +195,9 @@ function removeGesture(evt) {
         gestureLabelEl.remove();
       }
 
+      // removed from trainedGestures array
+      trainedGestures = trainedGestures.filter(gesture => gesture != gestureName);
+
       // remove corresponding trigger
       let actionEl = document.querySelector(`.action.${gestureName}`);
       if (actionEl) {
