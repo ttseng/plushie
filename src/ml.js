@@ -174,6 +174,12 @@ function updateConfidenceGestures(gestures){
 function removeGesture(evt) {
   let gestureLabelEl = evt.target.closest("label");
   let gestureName = gestureLabelEl.querySelector(".name").innerHTML;
+  
+  // check for default gestures if japanese!!
+  if(getKeyByValue(gestureTranslation, gestureName)){
+    gestureName = getKeyByValue(gestureTranslation, gestureName);
+  }
+
   let isTrained = gestureLabelEl.classList.contains("trained");
 
   let isTrainedAlert =
