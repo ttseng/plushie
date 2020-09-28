@@ -794,6 +794,22 @@ body.bluetooth li:last-of-type{
 }
 
 #debug-charts .plot{
+  margin: 10px;
+  width: 300px;
+}
+
+#debug-charts .peak-container{
+  display: flex;
+  flex-direction: row;
   border-bottom: 1px solid var(--grey);
-  margin-bottom: 10px;
+  padding-bottom: 15px;
+}
+
+#debug-charts .peak-container .plot{
+  margin-right: 5px;
+}
+
+.peaks-label{
+  text-align: center;
+  font-size: small;
 }

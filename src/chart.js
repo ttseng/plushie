@@ -135,6 +135,13 @@ function generatePlotly(id, container, dataX, dataY, dataZ) {
 
   let plot = document.createElement("div");
   let name = id; // default
+  let forDebug = false;
+  if(typeof id == 'string'){
+    forDebug = id.includes('debug');
+  }
+  
+  let plotTitle;
+  
   if(!forDebug){
     name =
     "gesture_" + currentGesture + "_sample_" + container.children.length;
@@ -146,31 +153,36 @@ function generatePlotly(id, container, dataX, dataY, dataZ) {
   }else{
     container.append(plot);
   }
-
-  let width = 300; // default for new gestures
-  if(forDebug){
-    width = 600;
-  }
-  
-
 //   console.log("generating plot for gesture", currentGesture, " ", name);
-  let layout = {
-    autosize: false,
-    width: width,
-    height: 200,
-    margin: {
-      l: 20,
-      r: 15,
-      pad: 0,
-      t: 15,
-      b: 20,
-    },
-    legend: {
-      orientation: "h",
-    },
-    yaxis: {fixedrange: true},
-    xaxis: {fixedrange: true}
-  };
+  let defaultWidth = 300;
+
+  if(forDebug){
+    if(id.includes('timeline')){
+      // 6 second window debug
+      defaultWidth = 600;
+      plotTitle = 'Last 10 seconds'
+    }else if(id.includes('subplot')){
+      // 2 second window debug
+      let window = parseInt(id.replace('debug-subplot_', ''));
+      switch(window){
+        case 0:
+          plotTitle = '0-2 seconds';
+          break;
+        case 1:
+          plotTitle = '2-4 seconds';
+          break;
+        case 2:
+          plotTitle = '4-6 seconds';
+          break;
+        case 3:
+          plotTitle = '6-8 seconds';
+          break;
+        case 4:
+          plotTitle = '8-10 seconds';
+          break;
+      }
+    }
+  }
 
   Plotly.newPlot(
     name,
@@ -194,13 +206,23 @@ function generatePlotly(id, container, dataX, dataY, dataZ) {
         name: "az",
       },
     ],
-    layout,
+    plotlyLayout(defaultWidth, plotTitle),
     { staticPlot: false,
     displayModeBar: false}
   );
 
-  // generate peaks data
+  // add remove btn
+  if(!forDebug){
+    let removeBtn = document.createElement("div");
+    removeBtn.classList.add("remove");
+    removeBtn.innerHTML = removeIcon;
+    removeBtn.addEventListener("click", function () {
+      removeData(id);
+    });
+    plot.append(removeBtn);
+  }
 
+  // generate peaks data
   let peaksData = peaks(dataX);
   peaksArr[0] = peaksData.numPeaks;
   peaksData = peaks(dataY);
@@ -208,74 +230,56 @@ function generatePlotly(id, container, dataX, dataY, dataZ) {
   peaksData = peaks(dataZ);
   peaksArr[2] = peaksData.numPeaks;
 
-  // add remove btn
-  let removeBtn = document.createElement("div");
-  removeBtn.classList.add("remove");
-  removeBtn.innerHTML = removeIcon;
-  removeBtn.addEventListener("click", function () {
-    removeData(id);
-  });
-  plot.append(removeBtn);
+  if(forDebug && id.includes('debug-subplot')){
+    // add debugging plots for peak detection
+    let peakContainer = document.createElement('div');
+    peakContainer.classList.add('peak-container');
+    container.append(peakContainer);
 
-  // peak detection plots
-  // x plot
-//   let plotXpeak = document.createElement('div');
-//   plotXpeak.setAttribute('id', name + 'x');
-//   container.append(plotXpeak);
+    createPeakChart(dataX, name+'x', 'X', peakContainer);
+    createPeakChart(dataY, name+'Y', 'Y', peakContainer);
+    createPeakChart(dataZ, name+'Z', 'Z', peakContainer);
+  }
+}
 
-//   peaksData = peaks(accelXSample);
-//   peaksArr[0] = peaksData.numPeaks;
+function createPeakChart(data, id, axis, parent){
+  // data is the raw accelerometer data
+  let plotContainer = document.createElement('div');
+  plotContainer.setAttribute('id', id);
+  parent.append(plotContainer);
+  let peaksData = peaks(data);
+  let peakColor;
+  switch(axis){
+    case 'X':
+      peakColor = 'red';
+      break;
+    case 'Y':
+      peakColor = 'green';
+      break;
+    case 'Z': 
+      peakColor = 'blue';
+      break;
+  }
 
-//   Plotly.newPlot(name+'x', [{
-//     y: peaksData.results,
-//     mode: 'lines',
-//     line: { color: 'red'}
-//   },{
-//     y: accelXSample,
-//     mode: 'lines',
-//     line: {color: 'green'}
-//   }],
-//   layout,
-//   { staticPlot: true});
+  Plotly.newPlot(id, [{
+    y: peaksData.results,
+    mode: 'lines', 
+    line: {color: 'black'},
+    name: 'peaks'
+  },{
+    y: data,
+    mode: 'lines',
+    line: {color: peakColor},
+    name: 'data'
+  }],
+  plotlyLayout(200, `Peaks ${axis}`),
+  {staticPlot: true});
 
-//   // yplot
-//   let plotYpeak = document.createElement('div');
-//   plotYpeak.setAttribute('id', name + 'y');
-//   container.append(plotYpeak);
-//   peaksData = peaks(accelYSample);
-//   peaksArr[1] = peaksData.numPeaks;
-
-//   Plotly.newPlot(name+'y', [{
-//     y: peaksData.results,
-//     mode: 'lines',
-//     line: {color: 'red'}
-//   },{
-//     y: accelYSample,
-//     mode: 'lines',
-//     line: {color: 'green'}
-//   }],
-//   layout,
-//   { staticPlot: true});
-
-//   // zplot
-//   let plotZpeak = document.createElement('div');
-//   plotZpeak.setAttribute('id', name + 'z');
-//   container.append(plotZpeak);
-
-//   peaksData = peaks(accelZSample);
-//   peaksArr[2] = peaksData.numPeaks;
-
-//   Plotly.newPlot(name+'z', [{
-//     y: peaksData.results,
-//     mode: 'lines',
-//     line: { color: 'red'}
-//   },{
-//     y: accelZSample,
-//     mode: 'lines',
-//     line: {color: 'green'}
-//   }],
-//   layout,
-//   { staticPlot: true});
+  // add peak info
+  let dataContainer = document.createElement('div');
+  dataContainer.classList.add('peaks-label')
+  dataContainer.innerHTML = `Peaks: ${peaksData.numPeaks}`;
+  plotContainer.append(dataContainer);
 }
 
 function removeData(id) {
@@ -283,7 +287,6 @@ function removeData(id) {
   if (remove) {
     gestureData = gestureData.filter((data) => data.id !== id);
     let parentGesture = event.target.closest('.gesture-container').id;
-    console.log("remove data ", id, 'with event.target', event.target);
 
     // remove the plot
     event.target.closest(".plot").remove();
@@ -323,11 +326,9 @@ function updateSampleCounter(gestureName) {
 
 // DEBUG 
 let debugIndex = 0;
-let forDebug = false;
 
 function showDebug(btn){
   debugIndex = 0;
-  forDebug = true;
   // display a chart with the last 6 seconds of data
   let sampleSize = 97;
   let sampleLength = sampleSize*5; // 97 samples in ~10 seconds
@@ -336,7 +337,7 @@ function showDebug(btn){
   let az = accelZArr.slice(accelZArr.length - sampleLength);  
   let container = document.getElementById('debug-timeline');
   container.innerHTML = '';  // clear contents
-  generatePlotly('timeline', container, ax, ay, az);
+  generatePlotly('debug-timeline', container, ax, ay, az);
 
   // display charts from 2 second samples
   let displayContainer = document.getElementById('debug-charts');
@@ -344,19 +345,19 @@ function showDebug(btn){
   // console.log('ax:', ax, 'ay:', ay, 'az:', az);
 
   for(i=0; i< sampleLength / sampleSize; i++){
-    console.log('generate plot for debug ', i);
+    // console.log('generate plot for debug ', i);
     let start = sampleSize * i;
     let ax_slice = ax.slice(start, sampleSize + start-1);
     let ay_slice = ay.slice(start, sampleSize + start-1);
     let az_slice = az.slice(start, sampleSize + start-1);
     // console.log('ax_slice:', ax_slice, 'ay_slice:', ay_slice, 'az_slice:', az_slice);
-    generatePlotly(`debug_${i}`, displayContainer, ax_slice, ay_slice, az_slice);
+    generatePlotly(`debug-subplot_${i}`, displayContainer, ax_slice, ay_slice, az_slice);
     runDebugPrediction(ax_slice, ay_slice, az_slice);
   }
-  forDebug = false;
 }
 
 function runDebugPrediction(ax, ay, az){
+  // console.log('run debug prediction for index ', debugIndex);
   let inputs = {
     ax_max: Math.max(...ax),
     ax_min: Math.min(...ax),
@@ -379,13 +380,44 @@ function debugPredictionResults(error, results){
   if(error){
     console.error(error);
   }
+
+  // console.log('debugPredictionResults for index ', debugIndex);
+
   let confidenceContainer = document.createElement('div');
   let body = '';
   results.forEach(function(gesture){
     body += `<label>${gesture.label}</label> ${(gesture.confidence*100).toFixed(0)}% `;
   });
   confidenceContainer.innerHTML = body;
-  let container = document.getElementById(`debug_${debugIndex}`);
+  let container = document.getElementById(`debug-subplot_${debugIndex}`);
   container.append(confidenceContainer);
   debugIndex++;
+}
+
+function plotlyLayout(width, title){
+  let topMargin = 15;
+  if(title){
+    topMargin = 30;
+  }
+  let layout = {
+    autosize: false,
+    width: width,
+    height: 200,
+    margin: {
+      l: 20,
+      r: 15,
+      pad: 0,
+      t: topMargin,
+      b: 20,
+    },
+    legend: {
+      orientation: "h",
+    },
+    yaxis: {fixedrange: true},
+    xaxis: {fixedrange: true},
+    title: {
+      text: title
+    }
+  };
+  return layout;
 }
