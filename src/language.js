@@ -1,3 +1,6 @@
+let textLang = 'en';
+let lang = "en-GB"; // target audio language
+
 // language translation for default gestures
 let gestureTranslation = {
   none: "なし",
@@ -28,7 +31,6 @@ let consoleBtns = {
 
 function setLanguage(el, language) {
   setUILanguage(language);
-  setAudioLanguage(language);
   document.querySelector(".lang-link.active").classList.remove("active");
   el.classList.add("active");
 }
@@ -49,17 +51,17 @@ function toggleDefaultGestureNames(el){
 
 function setUILanguage(languageInput) {
   if (languageInput) {
-    lang = languageInput;
+    textLang = languageInput;
   } else {
-    lang = navigator.language;
+    textLang = navigator.language;
     if (lang.includes("en")) {
-      lang = "en";
+      textLang = "en";
     }
   }
 
   // toggle language labels
   document.querySelectorAll("[lang]").forEach(function (el) {
-    if (el.lang != lang) {
+    if (el.lang != textLang) {
       el.classList.add("hidden");
     } else {
       el.classList.remove("hidden");
@@ -137,7 +139,7 @@ function setAudioLanguage(languageInput) {
 }
 
 function isJapanese() {
-  return lang.includes("ja");
+  return textLang.includes("ja");
 }
 
 // UTILS

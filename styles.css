@@ -281,7 +281,7 @@ button.round {
 #file-upload-label, #data-upload-label{
   color: var(--dark-grey);
   display: block;
-  padding: 2px 15px;
+  padding: 1px 15px;
   font-size: 16px;
   border-radius: 3px;
   background-color: #efefef;
@@ -298,7 +298,7 @@ button.round {
 
 .data-options-container{
   position: absolute;
-  top: 15;
+  top: 0;
   right: 15px;
   display: flex !important;
   align-items: baseline;

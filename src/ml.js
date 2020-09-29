@@ -1,21 +1,24 @@
 // MODEL LOADING PARAMETERS
+console.log('ml.js');
 let shouldLoadDefaultGestures = true;
 let shouldLoadModel = true;
 
 let debugMode = true;
 
 let dataDirectory = "data/none-bow-shake-peaks";
-let modelNeedsTrainng = false; // this is a flag to determine when the model needs to be retrained.  
+let modelNeedsTraining = false; // this is a flag to determine when the model needs to be retrained.  
 // it's used when a user adds new gestures / removes gestures that the model is already trained to recognize
 let dataFromJSON = false; // used to flag whether to add new default gestures
 
+let gestureData = []; // for retraining the model after adding new data
+
 // ml5js
 let model;
-const numEpochs = 120; // change to 120 when not testing
+const numEpochs = 50;
 
 let isCollectingData = false;
 let isTraining = false;
-let trainedGestures;
+let trainedGestures = [];
 
 let pencilIcon = "<i class='fas fa-pencil-alt'></i>";
 let showIcon = '<i class="fas fa-eye"></i>';
@@ -106,7 +109,6 @@ loadDataInput.addEventListener("change", loadData);
 function loadData(){
   const loadDataInput = document.getElementById("data-upload");  
   if (loadDataInput.files.length > 0) {
-    console.log('file uploaded')
     let confirmation = confirm(
       "The model will be retrained automatically, and all current gestures will be removed.  Are you sure you want to continue?"
     );
@@ -118,12 +120,14 @@ function loadData(){
       dataFromJSON = true;
 
       // remove current triggers
-      document.querySelector('#triggers-container .content').innerHTML = '';
+      let triggersContent = document.querySelector('#triggers-container .content');
+      if(triggersContent){ triggersContent.innerHTML = '';}
 
       model.loadData(loadDataInput.files, dataLoadedFromFile);
     }
   }
 }
+
 
 function addDefaultGestures() {
   let container = document.getElementById("default-gestures");
@@ -144,6 +148,7 @@ function updateConfidenceGestures(gestures){
   gestures.forEach(function (gestureName){
     // only add if the gesture doesn't already exist
     if(!document.querySelector(`label.${gestureName}`)){
+      // console.log('add new confidence container for ', gestureName);
       // add to the confidence container
       let gestureConfidenceContainer = document.createElement('div');
       gestureConfidenceContainer.classList.add(gestureName, 'gestureContainer');
@@ -506,14 +511,20 @@ function updateStatusContainer(status) {
   if(isJapanese()){
     statusLabel.innerHTML = "感知されたジェスチャー:";
   }else{
-    statusLabel.innerHTML = "Detected Gesture:";  
+    if(trainedGestures.length > 0){
+      statusLabel.innerHTML = "Detected Gesture:";  
+    }else{
+      statusLabel.innerHTML = 'Add some gestures!';
+    }    
   }
   
   // translate default gesture to Japanese if needed
   if(isJapanese() && gestureTranslation[status]){
     status = gestureTranslation[status];
   }
-  document.getElementById("status").innerHTML = status;
+  if(trainedGestures.length > 0){
+    document.getElementById("status").innerHTML = status;
+  }
 }
 
 function hideStatusContainer() {
@@ -522,6 +533,9 @@ function hideStatusContainer() {
 
 function showStatusContainer() {
   document.getElementById("status-container").classList.remove("hidden");
+  if(trainedGestures.length > 0){
+    document.getElementById('confidence-slider-container').classList.remove('hidden');
+  }
 }
 
 function dataLoaded() {
@@ -586,13 +600,12 @@ function trainModel() {
   updateMLBtns();
 
   model.train(options, whileTraining, finishedTraining);
+  hideTfConsole();
 }
 
 function whileTraining(epoch, loss) {
-  hideTfConsole();
-
   let trainProgress = document.getElementById("train-progress");
-  trainProgress.innerHTML = `${Math.round((epoch / 120) * 100)}%`;
+  trainProgress.innerHTML = `${Math.round((epoch / numEpochs) * 100)}%`;
 }
 
 function finishedTraining() {
@@ -606,14 +619,19 @@ function finishedTraining() {
   trainBtn.innerHTML = "Train Model";
   document.getElementById("train-progress").innerHTML = "";
 
+  // add new triggers
+  updateTriggers();  
+  
+  // update confidence gestures
+  updateConfidenceGestures(model.data.meta.outputs.gesture.uniqueValues);
+  showOptions();
+
   // show status container with prediction
   showStatusContainer();
 
-  // add new triggers
-  updateTriggers();  
-
-  // update confidence gestures
-  updateConfidenceGestures(model.data.meta.outputs.gesture.uniqueValues);
+  // enable debug
+  let debugContainer = document.getElementById('debug-container');
+  if(debugContainer) debugContainer.classList.remove('hidden');
 
   // update default gestures if loaded data from JSON
   if(dataFromJSON){
@@ -629,6 +647,12 @@ function finishedTraining() {
     el.querySelector(".toggle-data-btn").classList.remove("hidden");
     el.querySelector(".toggle-data-btn").click();
   });
+
+  // remove instructions if needed
+  let instructions = document.querySelector('#options-container .instructions');
+  if(instructions){
+    instructions.classList.add('hidden');
+  }
 
   // update training btns
   updateMLBtns();
@@ -682,8 +706,11 @@ function predictionResults(error, results) {
     return;
   }
 
+  // console.log('results: ', results);
+
   currentState = results[0].label.toLowerCase();
   let confidence = results[0].confidence;  
+  // console.log('currentState: ', currentState, ' confidence: ', confidence);
 
   showConfidence(results);
 
@@ -694,30 +721,34 @@ function predictionResults(error, results) {
       console.log("");
       console.log("new state: ", currentState);
       // logResults(results);
-   
-      playAudio(currentState);
+      if(document.getElementById("loud-select")){
+        playAudio(currentState);
+      }
   
       // check if should start countdown
-      let countdownChecked = document.getElementById(
+      let countdownCheckbox = document.getElementById(
         "timer-countdown-trigger-checkbox"
-      ).checked;
-      if (countdownChecked) {
-        let countdownTriggerSelect = document.getElementById(
-          "timer-countdown-trigger-select"
-        );
-        let countdownTrigger = countdownTriggerSelect.options[
-          countdownTriggerSelect.selectedIndex
-        ].value.toLowerCase();
-        // console.log('countdownTrigger: ', countdownTrigger);
-        if (countdownTrigger == currentState && !timerCountdownRunning) {
-  
-          countdownTimer.start(
-            timerCountdownTime,
-            document.getElementById("timer-countdown"),
-            atCountdownTimerStart,
-            countdownTimerDisplay,
-            atCountdownTimerEnd
+      );
+      if(countdownCheckbox){
+        let countdownChecked = countdownCheckbox.checked;
+        if (countdownChecked) {
+          let countdownTriggerSelect = document.getElementById(
+            "timer-countdown-trigger-select"
           );
+          let countdownTrigger = countdownTriggerSelect.options[
+            countdownTriggerSelect.selectedIndex
+          ].value.toLowerCase();
+          // console.log('countdownTrigger: ', countdownTrigger);
+          if (countdownTrigger == currentState && !timerCountdownRunning) {
+    
+            countdownTimer.start(
+              timerCountdownTime,
+              document.getElementById("timer-countdown"),
+              atCountdownTimerStart,
+              countdownTimerDisplay,
+              atCountdownTimerEnd
+            );
+          }
         }
       }
     }
@@ -725,7 +756,7 @@ function predictionResults(error, results) {
   }
 
   // check if volume confidenceThreshold is met
-  if (isLoud()) {
+  if (document.getElementById("loud-select") && isLoud()) {
     startPlayback();
     playAudio("loud");
   }
@@ -744,38 +775,41 @@ function updateTriggers() {
   ); // newly added gestures
 
   newGestures.forEach(function (gesture) {
-    console.log("adding trigger element for ", gesture);
-    // add a new trigger element
-    let triggersContainer = document.querySelector("#triggers-container .content");
-    let newTriggerContainer = document.createElement("div");
-    newTriggerContainer.classList.add("action", gesture);
+    if(document.getElementById('triggers-container')){
+      console.log("adding trigger element for ", gesture);
+      // add a new trigger element
+      let triggersContainer = document.querySelector("#triggers-container .content");
+      let newTriggerContainer = document.createElement("div");
+      newTriggerContainer.classList.add("action", gesture);
 
-    let descriptionContainer = document.createElement("div");
-    descriptionContainer.classList.add("description");
+      let descriptionContainer = document.createElement("div");
+      descriptionContainer.classList.add("description");
 
-    let gestureSelectContainer = document.createElement("select");
-    gestureSelectContainer.setAttribute("id", `${gesture}-select`);
-    // add defualt audio elements
-    gestureSelectContainer.innerHTML = `<option value="none"> None</option>
-      <option value="random">🔀 Random</option>
-      <option value="silence">🔇 Silence</option>
-      `;
-    gestureSelectContainer.classList.add("audio-select");
+      let gestureSelectContainer = document.createElement("select");
+      gestureSelectContainer.setAttribute("id", `${gesture}-select`);
+      // add defualt audio elements
+      gestureSelectContainer.innerHTML = `<option value="none"> None</option>
+        <option value="random">🔀 Random</option>
+        <option value="silence">🔇 Silence</option>
+        `;
+      gestureSelectContainer.classList.add("audio-select");
 
-    descriptionContainer.innerHTML = `On <label>${gesture}</label>, play sound<br/>`;
-    descriptionContainer.append(gestureSelectContainer);
-    newTriggerContainer.append(descriptionContainer);
-    triggersContainer.prepend(newTriggerContainer);
-    populateSelects();
+      descriptionContainer.innerHTML = `On <label>${gesture}</label>, play sound<br/>`;
+      descriptionContainer.append(gestureSelectContainer);
+      newTriggerContainer.append(descriptionContainer);
+      triggersContainer.prepend(newTriggerContainer);
+      populateSelects();
 
-    // update timer trigger
-    let timerTrigger = document.getElementById(
-      "timer-countdown-trigger-select"
-    );
-    timerTrigger.options.add(new Option(gesture, gesture));
+      // update timer trigger
+      let timerTrigger = document.getElementById(
+        "timer-countdown-trigger-select"
+      );
+      timerTrigger.options.add(new Option(gesture, gesture));
+    }
   });
 
   trainedGestures = getModelGestures();
+  console.log('trainedGestures: ', trainedGestures);
 }
 
 function saveModel() {
@@ -909,6 +943,13 @@ function toggleOptions(){
   }else{
     caret.innerHTML = '<i class="fas fa-chevron-down"></i>';
   }
+}
+
+function showOptions(){
+  let optionsContainer = document.querySelector('#options-container');
+  optionsContainer.classList.remove('minimized');
+  let caret = document.getElementById('options-expand-btn')
+  caret.innerHTML = '<i class="fas fa-chevron-up"></i>';	
 }
 
 function toggleDescription(el){

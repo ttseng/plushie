@@ -122,7 +122,9 @@ function onMicrobitDisconnected() {
   microbitPaired = false;
 
   // stop all sounds
-  stopAllAudio();
+  if(document.getElementById('sounds-container')){
+    stopAllAudio();
+  }
 
   // make pair button active
   let reconnectBtn = document.getElementById("reconnect-btn");

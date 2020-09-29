@@ -72,7 +72,7 @@
         <div id="options-container" class="minimized hidden-on-load">
           <div id="gesture-confidence-container"></div>
           <hr />
-          <div class="options">
+          <div class="options" id="confidence-slider-container">
             <div class="label">
               <span lang="en">Confidence Threshold:</span
               ><span lang="ja">信頼閾値:</span>
@@ -610,10 +610,10 @@
     <!-- main javascript files-->
     <script type="text/javascript" src="src/microbit.js"></script>
     <script type="text/javascript" src="src/countdown.js"></script>
+    <script type="text/javascript" src="src/language.js"></script>
     <script type="text/javascript" src="src/audio.js"></script>
     <script type="text/javascript" src="src/chart.js"></script>
     <script type="text/javascript" src="src/samples.js"></script>
-    <script type="text/javascript" src="src/language.js"></script>
     <script type="text/javascript" src="src/ml.js"></script>
 
     <script>
@@ -623,11 +623,10 @@
 
       window.onload = function () {
         getAudioPermission();
-        setAudioLanguage();
         populateSelects();
-
         setDefaultSounds();
       };
+
       window.onbeforeunload = function(){
         if(isEdited){
           return "If you refresh the page, you will lose any sounds you recorded.  Are you sure you want to continue?";

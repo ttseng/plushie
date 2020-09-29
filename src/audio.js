@@ -1,5 +1,4 @@
 // everything related ot audio features including audio recording and text-to-speech
-
 let mute = false; // for debugging purposes
 let isEdited = false;
 let isMuted = false; // for mute button
@@ -11,7 +10,6 @@ let sourceNode;
 
 // speech synthesis params
 let voices;
-let lang = "en-GB"; // target language
 let languageCodes = {
   en: "en-GB",
   ja: "ja-JP",
@@ -114,7 +112,7 @@ function populateSelects() {
     soundNameDiv
   ) {
     // only grab the ones in the current language
-    if (languageCodes[soundNameDiv.lang] == lang) {
+    if (soundNameDiv.lang == textLang) {
       let name = soundNameDiv.innerHTML.toLowerCase();
       addToSelects(name);
     }
@@ -353,6 +351,7 @@ function stopAllAudio() {
   for (i = 0; i < sounds.length; i++) {
     sounds[i].pause();
     sounds[i].currentTime = 0;
+    sounds[i].loop = false;
   }
   currentAudio = "";
 }
@@ -420,6 +419,9 @@ function setNoiseThreshold(newThreshold) {
 // TEXT TO SPEECH
 
 function showTextSpeechModal() {
+  // load language
+  setAudioLanguage(textLang);
+
   $("#textToSpeechModal").modal("show");
 }
 

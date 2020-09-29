@@ -93,9 +93,12 @@ function atPreRecordTimeEnd(defaulTime, display){
     atRecordTimeEnd);
 }
 
-document.getElementById('timer-countdown-reset-btn').onclick = function(){
-  console.log('clicked timer countdown reset');
-  countdownTimer.reset(timerCountdownTime, document.getElementById('timer-countdown'), atCountdownTimerEnd);
-};
+let timerCountdownResetBtn = document.getElementById('timer-countdown-reset-btn');
+
+if(timerCountdownResetBtn){
+  timerCountdownResetBtn.onclick = function(){
+    countdownTimer.reset(timerCountdownTime, document.getElementById('timer-countdown'), atCountdownTimerEnd);
+  };  
+}
 
 
