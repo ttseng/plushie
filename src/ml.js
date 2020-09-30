@@ -524,6 +524,8 @@ function updateStatusContainer(status) {
   }
   if(trainedGestures.length > 0){
     document.getElementById("status").innerHTML = status;
+  }else{
+    document.getElementById("status").innerHTML = "";
   }
 }
 
