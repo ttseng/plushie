@@ -14,7 +14,7 @@ let gestureData = []; // for retraining the model after adding new data
 
 // ml5js
 let model;
-const numEpochs = 50;
+const numEpochs = 80;
 
 let isCollectingData = false;
 let isTraining = false;
