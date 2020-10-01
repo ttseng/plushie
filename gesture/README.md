@@ -5,14 +5,14 @@ A gesture recognition tool using the Microbit's accelerometer, built using [ml5j
 
 ## Instructions
 1. Load [this Hex file](https://raw.githubusercontent.com/ttseng/plushie/master/firmware/plushie.hex) onto your Microbit.  The firmware is setup so that the Microbit can continually stream accelerometer data via bluetooth.
-<img src="hex-code.png">
+<img src="hex-code.png" width="500">
 2. Open up the [Gesture Recognizer app](https://ttseng.github.io/plushie/gesture/) in a Chrome browser (full info on system requirements for Web BLE [here](https://github.com/WebBluetoothCG/web-bluetooth/blob/gh-pages/implementation-status.md)).
 3. Click `Pair Your Microbit.`  If your Microbit is successfully paired, you should see a smiley face on the Microbit's LED array.
 4. `+ Add New Gesture` to record samples of your gesture.  You have 2 seconds to record each sample, and there is a 3 second lead-in countdown.  You'll be able to view the x, y, and z accelerometer plot after each sample and remove individual samples as needed.
-<img src="gesture-sample.png">
+<img src="gesture-sample.png" width="500">
 5. When you have at least 3 samples of 2 or more gestures, click `Train Model` to build the machine learning model.
 6. After the model is trained, you can test out the gesture recognizer.
-<img src="prediction.gif">
+<img src="prediction.gif" width="300">
 
 
 ## Tips
