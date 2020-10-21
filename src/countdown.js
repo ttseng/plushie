@@ -82,7 +82,7 @@ function preRecordTimeLeft(timeLeft){
   return `......${timeToDisplay}......`;
 }
 
-function atPreRecordTimeEnd(defaulTime, display){
+function atPreRecordTimeEnd(defaultTime, display){
   display.innerHTML = `Recording...`;
 
   // run countdown timer

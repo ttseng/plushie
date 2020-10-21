@@ -293,6 +293,9 @@ function removeData(id) {
 
     // update sample
     updateSampleCounter(parentGesture);
+    
+    // update analytics
+    logRemovedSample(parentGesture);
   }
 }
 

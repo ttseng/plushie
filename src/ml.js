@@ -228,6 +228,9 @@ function removeGesture(evt) {
       gestureLabelEl.closest(".gesture-container").remove();
     }
 
+    // update analytics
+    logRemovedGesture(gestureName);
+
     // clean gestureData of this gesture's info
     gestureData = gestureData.filter((data) => data.ys.gesture !== gestureName);
 
@@ -308,7 +311,7 @@ function addNewGesture(evt) {
         // label.addEventListener("click", renameGesture);
         gestureContainer.append(gestureLabel(gestureName, false));
 
-        // show / hide button
+        // show / hide data button
         let toggleDataBtn = document.createElement("button");
         toggleDataBtn.classList.add("toggle-data-btn", "hidden");
         toggleDataBtn.innerHTML = hideIcon + "Hide Data";
@@ -316,6 +319,7 @@ function addNewGesture(evt) {
           toggleDataVisibility(gestureName);
         });
 
+        // add new gesture container
         gestureContainer.append(toggleDataBtn);
 
         let dataContainer = document.createElement("div");
@@ -350,6 +354,9 @@ function addNewGesture(evt) {
 
         let parentContainer = document.getElementById("custom-gestures");
         parentContainer.prepend(gestureContainer);
+
+        // update analytics
+        logAddedGesture(gestureName);
 
         updateMLBtns();
       }
@@ -588,11 +595,6 @@ function trainModel() {
     });
   }
 
-  // export the dataset
-  // if(!dataFromJSON){
-  //   exportData();
-  // }
-
   model.normalizeData();
 
   let options = {
@@ -658,6 +660,9 @@ function finishedTraining() {
 
   // update training btns
   updateMLBtns();
+
+  // update analytics 
+  logTrainedModel();
 
   runPrediction();
 }
@@ -845,6 +850,7 @@ function recordTimerDisplay(timeLeft) {
   return timeLeft.toFixed(2);
 }
 
+// atRecordTimeEnd - finished recording gesture
 function atRecordTimeEnd(timeLimit, display) {
   isCollectingData = false;
   recordCountdownRunning = false;
@@ -862,6 +868,9 @@ function atRecordTimeEnd(timeLimit, display) {
 
   // add data
   addNewData(dataId);
+
+  // update analytics
+  logAddedSample(currentGesture);
 }
 
 // countdown timer functions

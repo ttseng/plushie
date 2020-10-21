@@ -38,3 +38,9 @@ The ML model is a neural network with 8 distinct inputs, all captured over a 2 s
 When predicting gestures from live data, the application takes 2 second samples from incoming data and runs a prediction based on the trained gestures.
 
 The Debugging interface lets you see how the model performs based on 10 seconds of data and can be accesssed by clicking `Debug last 10 seconds` after the model has been trained.
+
+
+## Running Locally
+To run the app, download `index.html` on this page and the relevant javascript files located in `../src` (`microbit`, `countdown`, `chart`, `ml`).
+
+If you're running the app locally, you'll need to run a web server ([more info](https://github.com/processing/p5.js/wiki/Local-server)).  An easy way to do that is with the Chrome App [Web Server for Chrome](https://chrome.google.com/webstore/detail/web-server-for-chrome/ofhbbkphhbklhfoeikjpcbhemlocgigb).  With Web Server for Chrome, choose the folder that your source code is in and it'll let you know the URL to open your app.
