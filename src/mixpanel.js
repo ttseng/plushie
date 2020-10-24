@@ -35,27 +35,23 @@ function logTrainedModel(){
 
 function logAddedGesture(gestureName){
     let user = getUser();
-
     mixpanel.track('Added Gesture', {'Name': gestureName});
 }
 
 function logRemovedGesture(gestureName){
     let user = getUser();
-
-    mixpanel.track('Remove Gesture', {'Name': gestureName});
+    mixpanel.track('Remove Gesture', {'Name': gestureName}, {'ip': false});
 }
 
 // this should be called after a sample has been added
 function logAddedSample(gestureName){
     let user = getUser();
-
     let samples = getNumSamples(gestureName);
     mixpanel.track('Add Sample', {'Gesture Name': gestureName, 'Samples': samples});
 }
 
 function logRemovedSample(gestureName){
     let user = getUser();
-
     let samples = getNumSamples(gestureName);
     mixpanel.track('Remove Sample', {'Gesture Name': gestureName, 'Samples': samples});
 }
