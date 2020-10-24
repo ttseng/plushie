@@ -1,6 +1,10 @@
 # Microbit Gesture Recognizer
 
-A gesture recognition tool using the Microbit's accelerometer, built using [ml5js](https://learn.ml5js.org/#/reference/neural-network).  Ml5js is built on top of [TensorFlow.js](https://www.tensorflow.org/js).
+A gesture recognition tool using the Microbit's accelerometer, built using [ml5js](https://learn.ml5js.org/#/reference/neural-network).
+
+**DEMO**: https://ttseng.github.io/plushie/gesture/
+
+Ml5js is built on top of [TensorFlow.js](https://www.tensorflow.org/js).
 
 
 ## Instructions
