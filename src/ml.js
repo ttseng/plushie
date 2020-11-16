@@ -25,6 +25,8 @@ let showIcon = '<i class="fas fa-eye"></i>';
 let hideIcon = '<i class="fas fa-eye-slash"></i>';
 let confidenceThreshold = 0.55; // default confidenceThreshold to trigger new gesture
 
+let gestureLog = []; // for storing the detected gestures
+
 // warning messages
 let insufficientDataWarning =
   "You need at least 3 samples for each gesture to train the model.";
@@ -634,8 +636,8 @@ function finishedTraining() {
   showStatusContainer();
 
   // enable debug
-  let debugContainer = document.getElementById('debug-container');
-  if(debugContainer) debugContainer.classList.remove('hidden');
+  // let debugContainer = document.getElementById('debug-container');
+  // if(debugContainer) debugContainer.classList.remove('hidden');
 
   // update default gestures if loaded data from JSON
   if(dataFromJSON){
@@ -714,17 +716,29 @@ function predictionResults(error, results) {
   }
 
   // console.log('results: ', results);
-
   currentState = results[0].label.toLowerCase();
+  gestureLog.push(currentState);
   let confidence = results[0].confidence;  
   // console.log('currentState: ', currentState, ' confidence: ', confidence);
 
   showConfidence(results);
+  let stateChanged = false;
 
   if(confidence > confidenceThreshold){
     updateStatusContainer(currentState);
 
-    if(currentState != prevState){
+    if(gestureLog.length < 3){
+      if(currentState != prevState){
+        stateChanged = true;
+      }
+    }else{
+      if(currentState == gestureLog[gestureLog.length-1] && currentState != gestureLog[gestureLog.length-2]){
+        // a gesture has consistently been detected over exactly 2 cycles
+        stateChanged = true;
+      }
+    }
+
+    if(stateChanged){
       console.log("");
       console.log("new state: ", currentState);
       // logResults(results);
@@ -759,6 +773,7 @@ function predictionResults(error, results) {
         }
       }
     }
+
     prevState = currentState;
   }
 

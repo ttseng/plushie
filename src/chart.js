@@ -164,23 +164,8 @@ function generatePlotly(id, container, dataX, dataY, dataZ) {
     }else if(id.includes('subplot')){
       // 2 second window debug
       let window = parseInt(id.replace('debug-subplot_', ''));
-      switch(window){
-        case 0:
-          plotTitle = '0-2 seconds';
-          break;
-        case 1:
-          plotTitle = '2-4 seconds';
-          break;
-        case 2:
-          plotTitle = '4-6 seconds';
-          break;
-        case 3:
-          plotTitle = '6-8 seconds';
-          break;
-        case 4:
-          plotTitle = '8-10 seconds';
-          break;
-      }
+      let start = window*2;      
+      plotTitle = `${start}-${start+2} seconds`;
     }
   }
 
@@ -328,12 +313,14 @@ function updateSampleCounter(gestureName) {
 }
 
 // DEBUG 
-let debugIndex = 0;
+let debugIndex = 0; // i index for debugging
 
 function showDebug(btn){
+  // reset indexing values
   debugIndex = 0;
-  // display a chart with the last 6 seconds of data
-  let sampleSize = 97;
+
+  // display a chart with the last 10 seconds of data
+  let sampleSize = 96; // ~ 2 second sample
   let sampleLength = sampleSize*5; // 97 samples in ~10 seconds
   let ax = accelXArr.slice(accelXArr.length - sampleLength);
   let ay = accelYArr.slice(accelYArr.length - sampleLength);
@@ -350,6 +337,7 @@ function showDebug(btn){
   for(i=0; i< sampleLength / sampleSize; i++){
     // console.log('generate plot for debug ', i);
     let start = sampleSize * i;
+    console.log('start: ', start);
     let ax_slice = ax.slice(start, sampleSize + start-1);
     let ay_slice = ay.slice(start, sampleSize + start-1);
     let az_slice = az.slice(start, sampleSize + start-1);
@@ -383,9 +371,8 @@ function debugPredictionResults(error, results){
   if(error){
     console.error(error);
   }
-
+  
   // console.log('debugPredictionResults for index ', debugIndex);
-
   let confidenceContainer = document.createElement('div');
   let body = '';
   results.forEach(function(gesture){
