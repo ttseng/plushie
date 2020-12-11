@@ -967,7 +967,7 @@ function showConfidence(confidences) {
 
     let labelEl = document.querySelector(`#gesture-confidence-container label.${labelName}`);
 
-    if (confidence > confidenceThreshold) {
+    if (confidences[labelName] > confidenceThreshold) {
       labelEl.classList.add('active');
     } else{
       labelEl.classList.remove('active');
