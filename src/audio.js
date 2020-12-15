@@ -269,7 +269,7 @@ function playAudio(name) {
 
         currentAudio = audioFileName;
 
-        console.log("play ", audioFileName);
+        // console.log("play ", audioFileName);
 
         audioEl.play();
       } else if (audioFileName == "random") {

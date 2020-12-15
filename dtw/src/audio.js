@@ -112,10 +112,8 @@ function populateSelects() {
     soundNameDiv
   ) {
     // only grab the ones in the current language
-    if (soundNameDiv.lang == textLang) {
       let name = soundNameDiv.innerHTML.toLowerCase();
       addToSelects(name);
-    }
   });
 }
 

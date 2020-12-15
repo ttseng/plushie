@@ -303,6 +303,7 @@ function updateSampleCounter(gestureName) {
   if (sampleCount > 0) {
     gestureContainer.classList.remove('incomplete');
     gestureContainer.querySelector('button.toggle-data-btn').classList.remove('hidden');
+    populateSelects();
   } else {
     gestureContainer.classList.add('incomplete');
     // remove from gesture container

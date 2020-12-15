@@ -180,10 +180,6 @@ function removeGestureOnClick(evt) {
   var gestureLabelEl = evt.target.closest("label");
   var gestureName = gestureLabelEl.querySelector(".name").innerHTML; // check for default gestures if japanese!!
 
-  if (getKeyByValue(gestureTranslation, gestureName)) {
-    gestureName = getKeyByValue(gestureTranslation, gestureName);
-  }
-
   var alertMsg = "Are you sure you want to remove this gesture?";
   var remove = confirm(alertMsg);
 
@@ -392,20 +388,13 @@ function updateStatusContainer(status) {
   var statusLabel = document.getElementById("status-label");
   var trainedGestures = getCurrentGestures();
 
-  if (isJapanese()) {
-    statusLabel.innerHTML = "感知されたジェスチャー:";
+
+  if (trainedGestures.length > 0) {
+    statusLabel.innerHTML = "Detected Gesture:";
   } else {
-    if (trainedGestures.length > 0) {
-      statusLabel.innerHTML = "Detected Gesture:";
-    } else {
-      statusLabel.innerHTML = 'Add some gestures!';
-    }
-  } // translate default gesture to Japanese if needed
-
-
-  if (isJapanese() && gestureTranslation[status]) {
-    status = gestureTranslation[status];
+    statusLabel.innerHTML = 'Add some gestures!';
   }
+
 
   if (trainedGestures.length > 0) {
     document.getElementById("status").innerHTML = status;
