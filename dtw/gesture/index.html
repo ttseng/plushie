@@ -1,0 +1,295 @@
+<html>
+  <head>
+    <title>Microbit Gesture Recognition</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="shortcut icon" type="image/ico" href="../assets/img/favicon.ico" />
+
+    <!-- mixpanel -->
+  
+    <script type="text/javascript">
+    (function(c,a){if(!a.__SV){var b=window;try{var d,m,j,k=b.location,f=k.hash;d=function(a,b){return(m=a.match(RegExp(b+"=([^&]*)")))?m[1]:null};f&&d(f,"state")&&(j=JSON.parse(decodeURIComponent(d(f,"state"))),"mpeditor"===j.action&&(b.sessionStorage.setItem("_mpcehash",f),history.replaceState(j.desiredHash||"",c.title,k.pathname+k.search)))}catch(n){}var l,h;window.mixpanel=a;a._i=[];a.init=function(b,d,g){function c(b,i){var a=i.split(".");2==a.length&&(b=b[a[0]],i=a[1]);b[i]=function(){b.push([i].concat(Array.prototype.slice.call(arguments,
+0)))}}var e=a;"undefined"!==typeof g?e=a[g]=[]:g="mixpanel";e.people=e.people||[];e.toString=function(b){var a="mixpanel";"mixpanel"!==g&&(a+="."+g);b||(a+=" (stub)");return a};e.people.toString=function(){return e.toString(1)+".people (stub)"};l="disable time_event track track_pageview track_links track_forms track_with_groups add_group set_group remove_group register register_once alias unregister identify name_tag set_config reset opt_in_tracking opt_out_tracking has_opted_in_tracking has_opted_out_tracking clear_opt_in_out_tracking people.set people.set_once people.unset people.increment people.append people.union people.track_charge people.clear_charges people.delete_user people.remove".split(" ");
+for(h=0;h<l.length;h++)c(e,l[h]);var f="set set_once union unset remove delete".split(" ");e.get_group=function(){function a(c){b[c]=function(){call2_args=arguments;call2=[c].concat(Array.prototype.slice.call(call2_args,0));e.push([d,call2])}}for(var b={},d=["get_group"].concat(Array.prototype.slice.call(arguments,0)),c=0;c<f.length;c++)a(f[c]);return b};a._i.push([b,d,g])};a.__SV=1.2;b=c.createElement("script");b.type="text/javascript";b.async=!0;b.src="undefined"!==typeof MIXPANEL_CUSTOM_LIB_URL?
+MIXPANEL_CUSTOM_LIB_URL:"file:"===c.location.protocol&&"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js".match(/^\/\//)?"https://cdn.mxpnl.com/libs/mixpanel-2-latest.min.js":"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";d=c.getElementsByTagName("script")[0];d.parentNode.insertBefore(b,d)}})(document,window.mixpanel||[]);
+mixpanel.init("7b1e13dd3db76bbc559124b213f64879",{'batch_requests': true, 'ip': false});
+    </script>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-180643459-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-180643459-1');
+    </script>
+
+
+    <!-- load smoothie.js -->
+    <script
+      type="text/javascript"
+      src="https://cdnjs.cloudflare.com/ajax/libs/smoothie/1.34.0/smoothie.js"
+    ></script>
+
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+      crossorigin="anonymous"
+    />
+
+    <link rel="stylesheet" href="../styles.css" />
+
+    <!-- FontAwesome for icons (https://fontawesome.com/cheatsheet)-->
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
+      integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU"
+      crossorigin="anonymous"
+    />
+
+    <!-- load p5js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/p5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/addons/p5.dom.min.js"></script>
+
+    <!-- load m5js -->
+    <script src="https://unpkg.com/ml5@0.4.3/dist/ml5.min.js"></script>
+
+    <!-- plotly -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+    <!-- pluralize -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pluralize/8.0.0/pluralize.min.js"></script>
+
+    <!-- google fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500&display=swap"
+      rel="stylesheet"
+    />
+
+  </head>
+
+  <body>
+    <div id="console" class="container">
+      <div class="heading" lang="en">Console</div>
+
+      <div class="content">
+
+        <button onclick="pair(true)" id="pair-btn">Pair Your Microbit</button>
+
+        <button id="reconnect-btn" onClick="pair(true)" class="hidden">
+          Reconnect Microbit
+        </button>
+
+        <div id="status-container" class="hidden">
+          <div><b id="status-label">Status:</b></div>
+          <span id="status">Awaiting pairing...</span>
+        </div>
+
+        <div id="options-container" class="minimized hidden-on-load">
+          <div id="gesture-confidence-container" class="hidden-on-load"></div>
+          <hr />
+          <div class="options hidden" id="confidence-slider-container">
+            <div class="label">
+              <span lang="en">Confidence Threshold:</span>
+            </div>
+            <div class="option">
+              <input
+                type="range"
+                min="40"
+                max="95"
+                value="55"
+                class="slider"
+                id="confidence-slider"
+                onInput="adjustConfidence(this.value)"
+                onChange="adjustConfidence(this.value)"
+              />
+              <div id="confidence-threshold">55%</div>
+              <div class="info-container" onClick="toggleDescription(this)">
+                <i class="fas fa-info-circle info"></i>
+              </div>
+              <div class="break"></div>
+              <div class="description hidden">
+                Increasing the confidence threshold can make gesture detection
+                less noisy but may make it harder trigger any given gesture.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div
+          id="options-expand-btn"
+          class="hidden-on-load"
+          onClick="toggleOptions()"
+        >
+          <i class="fas fa-chevron-down"></i>
+        </div>
+
+        <hr />
+
+        <div id="instructions">
+          <p>A sandbox for testing gesture recognition using ml5.js and the Microbit.</p>
+
+          <p class="desktop-instructions" lang="en">
+            Before you begin, save
+            <a href="firmware/plushie.hex" target="_blank">this firmware</a>,
+            load it onto your Microbit, and then click the
+            <b>Pair Your Microbit</b> button.
+          </p>
+
+          <p class="mobile-instructions" lang="en">
+            Plushie is not currently mobile compatible –- try it out on Chrome
+            on your laptop or desktop computer!
+          </p>
+
+          <p>
+            <span lang="en">Full instructions can be found at</span>
+            <a
+              href="https://github.com/ttseng/plushie/blob/master/gesture/README.md"
+              target="_blank"
+            >
+              <label lang="en">README</label>
+            </a>
+          </p>
+        </div>
+
+        <div class="hidden-on-load">
+          <div class="training-container">
+
+            <div id="train-progress"></div>
+          </div>
+
+          <div id="warning" class="hidden"></div>
+
+          <hr />
+
+          <canvas id="smoothie-chart" width="250" height="150"></canvas>
+
+          <div id="p5js-container"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="main-content">
+      <div class="container" id="gestures-container">
+        <div class="heading" lang="en">Gestures</div> 
+
+        <div class="data-options-container hidden-on-load">
+          <button
+            id="export-data-btn"
+            onclick="exportData()"
+            title="export data"
+          >
+            <i class="fas fa-file-download"></i><span lang="en">Export</span>
+          </button>
+          <label id="data-upload-label" for="data-upload" title="load data">
+            <i class="fas fa-file-upload"></i><span lang="en">Load</span>
+          </label>
+          <input type="file" id="data-upload" accept="application/JSON" />
+        </div>
+
+        <div id="default-gestures"></div>
+
+        <hr />
+
+        <button onClick="addNewGesture()" id="new-gesture-btn" lang="en">
+          + Add New Gesture
+        </button>
+
+        <div id="custom-gestures"></div>
+      </div>
+
+      <!-- DEBUG CONTAINER -->
+      <div id="debug-container" class="container hidden">
+        <div class="heading">Debug</div>
+        <div class="content">
+          <button onClick="showDebug(this)">Debug last 10 seconds</button>
+          <div id="debug-timeline"></div>
+          <hr>
+          <div id="debug-charts"></div>
+        </div>
+      </div> <!-- end debug container-->
+    </div>
+
+    <!-- Error Modal -->
+    <div
+      class="modal fade"
+      id="myModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="myModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="myModalLabel">Error</h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body" name="modal-message"></div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- countdown audio container -->
+    <audio id="pre-countdown-audio" style="display: none">
+        <source src="../assets/sounds/countdown.mp3" type="audio/mpeg" />
+    </audio>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script
+      src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+      integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+      integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+      integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+      crossorigin="anonymous"
+    ></script>
+
+    <!-- main javascript files-->
+    <script type="text/javascript" src="../src/microbit.js"></script>
+    <script type="text/javascript" src="../src/countdown.js"></script>
+    <script type="text/javascript" src="../src/chart.js"></script>
+    <script type="text/javascript" src="../src/language.js"></script>
+    <script type="text/javascript" src="../src/ml.js"></script>
+      
+    <script>
+
+      window.onload = function(){
+        shouldLoadDefaultGestures = false;
+        shouldLoadModel = false;
+      };
+      window.onbeforeunload = function(){
+        if(isEdited){
+          return "If you refresh the page, you will lose any sounds you recorded.  Are you sure you want to continue?";
+        }
+      }
+    </script>
+  </body>
+</html>
