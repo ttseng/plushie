@@ -763,7 +763,11 @@ label.gesture .remove{
 /* Bluetooth Pairing Page */
 
 body.bluetooth{
-  width: 350px;
+  width: 400px;
+}
+
+body.bluetooth label{
+  cursor: pointer;
 }
 
 body.bluetooth #status-container{
@@ -772,6 +776,7 @@ body.bluetooth #status-container{
 
 body.bluetooth .content{
   margin-top: 20px;
+  font-size: small;
 }
 
 body.bluetooth ol{

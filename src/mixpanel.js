@@ -58,6 +58,6 @@ function logRemovedSample(gestureName){
 
 // helper functions
 function getNumSamples(gestureName){
-    return gestureData.filter((sample) => sample.ys.gesture == gestureName).length;
+    return gestureData.filter((sample) => sample.label == gestureName).length;
 }
 

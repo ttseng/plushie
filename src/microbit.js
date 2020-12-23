@@ -105,12 +105,13 @@ async function pair(fromIndex) {
 }
 
 function showUI() {
-  console.log("show ui");
+  // console.log("show ui");
   Array.from(document.getElementsByClassName("hidden-on-load")).forEach(
     function (el, index, array) {
       el.classList.remove("hidden-on-load");
     }
   );
+  showOptions();
 }
 
 function onMicrobitDisconnected() {

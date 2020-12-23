@@ -37,29 +37,26 @@
   <body class="bluetooth">
 
     <div class="container">
-        <button onclick="pair()" id="pair-btn" class="active">Pair Your Microbit</button>
+        
+        <p>1. Load this <a href="../firmware/plushie.hex" target="_blank"><label>Hex File</label></a> onto your Microbit.</p>
+        <p>2. <button onclick="pair()" id="pair-btn" class="active">Pair Your Microbit</button></p>
 
         <div id="status-container" class="hidden">
             <div><b id="status-label">Status:</b></div>
             <span id="status">Awaiting pairing...</span>
           </div>
 
+        <hr>
+        <p><b>System Requirements</b></p>
         <div class="content">
-          <p><b>System Requirements</b></p>
-
-          <p>Web Bluetooth is currently supported in Google Chrome only with the following system requirements:</p>
-          <p><b>Mac</b>: Requires OS X Yosemite or later.  Check under About this Mac > System Report > Bluetooth > Bluetooth Low Energy Supported</p>
-          <p><b>Windows</b>: Requires Windows 10 version 1706 or later</p>
+          <p>Web Bluetooth is currently supported in <b>Google Chrome only</b> with the following system requirements:</p>
+          <p><b><u>Mac</u></b>:<br>
+          Requires OS X Yosemite or later. (About this Mac > System Report > Bluetooth > Bluetooth Low Energy Supported)</p>
+          <p><b><u>Windows</u></b>:<br>
+          Requires Windows 10 version 1706 or later</p>
 
           <p>For more details, check out <a target="_blank" href="https://github.com/WebBluetoothCG/web-bluetooth/blob/gh-pages/implementation-status.md">Web BLE Implementation Status</a>.</p>
 
-          
-            <b>Troubleshooting</b>
-            <ol>
-                <li>Make sure you are using the latest version of Chrome (v56 or newer)</li>
-                <li>Turn Bluetooth On on your computer</li>
-                <li>Ensure you have loaded the following Hex file onto your Microbit:  <a href="../firmware/plushie.hex" target="_blank"><label>Hex File</label></a> </li>
-            </ol>
         </div>
 
     </div>

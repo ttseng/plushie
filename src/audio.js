@@ -112,10 +112,8 @@ function populateSelects() {
     soundNameDiv
   ) {
     // only grab the ones in the current language
-    if (soundNameDiv.lang == textLang) {
       let name = soundNameDiv.innerHTML.toLowerCase();
       addToSelects(name);
-    }
   });
 }
 
@@ -273,7 +271,7 @@ function playAudio(name) {
 
         audioEl.play();
       } else if (audioFileName == "random") {
-        console.log("play random");
+        // console.log("play random");
         playRandomSound();
       } else if (audioFileName == "silence") {
         // fade out track if there is one playing

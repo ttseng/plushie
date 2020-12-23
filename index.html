@@ -19,7 +19,7 @@
       crossorigin="anonymous"
     />
 
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="scss/styles.css" />
 
     <!-- FontAwesome for icons (https://fontawesome.com/cheatsheet)-->
     <link
@@ -48,6 +48,9 @@
       rel="stylesheet"
     />
 
+    <!-- dynamic time warping -->
+    <script src="src/dynamic-time-warping.js"></script>
+
     <!-- mixpanel -->
     <script>(function(c,a){if(!a.__SV){var b=window;try{var d,m,j,k=b.location,f=k.hash;d=function(a,b){return(m=a.match(RegExp(b+"=([^&]*)")))?m[1]:null};f&&d(f,"state")&&(j=JSON.parse(decodeURIComponent(d(f,"state"))),"mpeditor"===j.action&&(b.sessionStorage.setItem("_mpcehash",f),history.replaceState(j.desiredHash||"",c.title,k.pathname+k.search)))}catch(n){}var l,h;window.mixpanel=a;a._i=[];a.init=function(b,d,g){function c(b,i){var a=i.split(".");2==a.length&&(b=b[a[0]],i=a[1]);b[i]=function(){b.push([i].concat(Array.prototype.slice.call(arguments,
       0)))}}var e=a;"undefined"!==typeof g?e=a[g]=[]:g="mixpanel";e.people=e.people||[];e.toString=function(b){var a="mixpanel";"mixpanel"!==g&&(a+="."+g);b||(a+=" (stub)");return a};e.people.toString=function(){return e.toString(1)+".people (stub)"};l="disable time_event track track_pageview track_links track_forms track_with_groups add_group set_group remove_group register register_once alias unregister identify name_tag set_config reset opt_in_tracking opt_out_tracking has_opted_in_tracking has_opted_out_tracking clear_opt_in_out_tracking start_batch_senders people.set people.set_once people.unset people.increment people.append people.union people.track_charge people.clear_charges people.delete_user people.remove".split(" ");
@@ -60,7 +63,6 @@
   <body>
     <div id="console" class="container">
       <div class="heading" lang="en">Console</div>
-      <div class="heading" lang="ja">制御盤</div>
 
       <div class="content">
 
@@ -79,33 +81,6 @@
 
         <div id="options-container" class="minimized hidden-on-load">
           <div id="gesture-confidence-container"></div>
-          <hr />
-          <div class="options" id="confidence-slider-container">
-            <div class="label">
-              <span lang="en">Confidence Threshold:</span
-              ><span lang="ja">信頼閾値:</span>
-            </div>
-            <div class="option">
-              <input
-                type="range"
-                min="40"
-                max="95"
-                value="55"
-                class="slider"
-                id="confidence-slider"
-                onInput="adjustConfidence(this.value)"
-                onChange="adjustConfidence(this.value)"
-              />
-              <div id="confidence-threshold">55%</div>
-              <div class="info-container" onClick="toggleDescription(this)">
-                <i class="fas fa-info-circle info"></i>
-              </div>
-              <div class="break"></div>
-              <div class="description hidden">
-                Increasing the confidence threshold can make gesture detection
-                less noisy but may make it harder trigger any given gesture.
-              </div>
-            </div>
           </div>
         </div>
 
@@ -124,18 +99,11 @@
             <b>Plushie</b> is a tool for creating interactive toys using the
             Microbit!
           </p>
-          <p lang="ja">
-            <b>Plushie</b>
-            はMicrobitを使ってインタラクティブなおもちゃをつくるためのツールです!
-          </p>
           <img src="assets/img/froggy-wave-5x.gif" />
 
           <p lang="en">
             Using Plushie, you can program your stuffed animal to respond with
             sounds based on custom gestures you create.
-          </p>
-          <p lang="ja">
-            Plushieを使えば、あなたのぬいぐるみを、独自のジェスチャーに音で反応するようにプログラムすることができます.
           </p>
 
           <p class="desktop-instructions" lang="en">
@@ -143,12 +111,6 @@
             <a href="firmware/plushie.hex" target="_blank">this firmware</a>,
             load it onto your Microbit, and then click the
             <b>Pair Your Microbit</b> button.
-          </p>
-          <p class="desktop-instructions" lang="ja">
-            始める前に、このフ<a href="firmware/plushie.hex" target="_blank"
-              >ァーム ウェアを 保存</a
-            >して、Microbitに読み込んでください。それから
-            <b>Microbitをつなげる</b> ボタンをおしてください.
           </p>
 
           <p class="mobile-instructions" lang="en">
@@ -158,29 +120,16 @@
 
           <p>
             <span lang="en">Full instructions can be found at</span>
-            <span lang="ja">詳細なガイドはこちら：</span>
             <a
               href="https://www.notion.so/scientiffic/Plushie-Tutorial-38eb5fb5bda84e60b7faa8412e7e6870"
               target="_blank"
             >
               <label lang="en">Plushie Guide</label>
-              <label lang="ja">Plushieガイド</label>
             </a>
           </p>
         </div>
 
         <div class="hidden-on-load">
-          <div class="training-container">
-            <button id="train-btn" onClick="trainModel()" disabled>
-              Train Model
-            </button>
-
-            <div id="train-progress"></div>
-          </div>
-
-          <div id="warning" class="hidden"></div>
-
-          <hr />
 
           <canvas id="smoothie-chart" width="250" height="150"></canvas>
 
@@ -192,7 +141,6 @@
     <div class="main-content">
       <div class="container" id="gestures-container">
         <div class="heading" lang="en">Gestures</div>
-        <div class="heading" lang="ja">ジェスチャー</div>
 
         <div class="data-options-container hidden-on-load">
           <button
@@ -201,39 +149,30 @@
             title="export data"
           >
             <i class="fas fa-file-download"></i><span lang="en">Export</span
-            ><span lang="ja">書き出す</span>
+            >
           </button>
           <label id="data-upload-label" for="data-upload" title="load data">
             <i class="fas fa-file-upload"></i><span lang="en">Load</span
-            ><span lang="ja">読み込む</span>
+            >
           </label>
           <input type="file" id="data-upload" accept="application/JSON" />
         </div>
 
-        <div id="default-gestures"></div>
-
-        <hr />
-
         <button onClick="addNewGesture()" id="new-gesture-btn" lang="en">
           + Add New Gesture
         </button>
-        <button onClick="addNewGesture()" id="new-gesture-btn" lang="ja">
-          + 新しいジェスチャーを加える
-        </button>
 
-        <div id="custom-gestures"></div>
+        <div id="custom-gestures" class="hidden-on-load"></div>
       </div>
 
       <!-- SOUNDS CONTAINER -->
       <div class="row-container">
         <div class="container" id="sounds-container">
           <div class="heading" lang="en">Sounds</div>
-          <div class="heading" lang="ja">音</div>
           <div class="content">
 
             <div class="sound">
               <div class="name" lang="en">wow</div>
-              <div class="name" lang="ja">ワオ</div>
               <div class="play" onclick="onClickPlay()">
                 <audio
                   id="wow-audio"
@@ -251,7 +190,6 @@
 
             <div class="sound">
               <div class="name" lang="en">applause</div>
-              <div class="name" lang="ja">拍手</div>
               <div class="play" onclick="onClickPlay()">
                 <audio
                   id="applause-audio"
@@ -269,7 +207,6 @@
 
             <div class="sound">
               <div class="name" lang="en">tick-tock</div>
-              <div class="name" lang="ja">チクタク</div>
               <div class="play" onclick="onClickPlay()">
                 <audio id="tick-tock-audio" onended="stopPlayback()">
                   <source src="assets/sounds/tick-tock.mp3" type="audio/mpeg" />
@@ -298,13 +235,13 @@
             <div class="sound-options">
               <label id="file-upload-label" for="file-upload">
                 <i class="fas fa-file-upload"></i> <span lang="en">Upload</span
-                ><span lang="ja">アップロード</span>
+                >
               </label>
               <input type="file" id="file-upload" accept="audio/*" />
               <button onclick="showTextSpeechModal()">
                 <i class="far fa-comments"></i>
                 <span lang="en">Text to Speech</span
-                ><span lang="ja">音声合成</span>
+                >
               </button>
             </div>
 
@@ -312,7 +249,6 @@
             <button onClick="stopAllAudio()">
               <i class="fas fa-square"></i>
               <span lang="en">Stop All Sounds</span>
-              <span lang="ja">すべての音を止める</span>
             </button>
           </div>
         </div>
@@ -321,31 +257,26 @@
 
         <div class="container" id="triggers-container">
           <div class="heading" lang="en">Triggers</div>
-          <div class="heading" lang="ja">きっかけ</div>
           <div class="content">
             <div class="action shake">
               <div class="description">
                 <span lang="en">On <label>Shake</label>, play sound<br /></span>
-                <span lang="ja"><label>振る</label>,</span>
                 <select id="shake-select" class="audio-select">
                   <option value="none">None</option>
                   <option value="random">🔀 Random</option>
                   <option value="silence">🔇 Silence</option>
                 </select>
-                <span lang="ja">をきっかけに、音を鳴らす</span>
               </div>
             </div>
 
             <div class="action bow">
               <div class="description">
                 <span lang="en">On <label>Bow</label>, play sound<br /></span>
-                <span lang="ja"><label>おじぎする</label>,</span>
                 <select id="bow-select" class="audio-select">
                   <option value="none">None</option>
                   <option value="random">🔀 Random</option>
                   <option value="silence">🔇 Silence</option>
                 </select>
-                <span lang="ja">をきっかけに、音を鳴らす</span>
               </div>
             </div>
 
@@ -354,13 +285,11 @@
                 <span lang="en"
                   >On <label>No Gesture</label>, play sound<br
                 /></span>
-                <span lang="ja"><label>ジェスチャーなし</label>,</span>
                 <select id="none-select" class="audio-select">
                   <option value="none">None</option>
                   <option value="random">🔀 Random</option>
                   <option value="silence">🔇 Silence</option>
                 </select>
-                <span lang="ja">をきっかけに、音を鳴らす</span>
               </div>
             </div>
           </div>
@@ -371,11 +300,10 @@
       <div class="row-container">
         <div class="container" id="hearing-container">
           <div class="heading" lang="en">Hearing</div>
-          <div class="heading" lang="ja">聴く</div>
 
           <div id="noise-level-display">
             🔊 <span lang="en">Current noise levels: </span
-            ><span lang="ja">現在の騒音レベル: </span>
+            >
             <br />
             <div id="noise-level"></div>
           </div>
@@ -384,7 +312,6 @@
             <div class="icon">📢</div>
             <div style="margin-left: 15px">
               <span lang="en">If noise louder than</span>
-              <span lang="ja">騒音が</span>
               <input
                 type="text"
                 id="noise-input-threshold"
@@ -392,7 +319,6 @@
                 oninput="setNoiseThreshold(this.value)"
               />
               <span lang="en">, play sound</span>
-              <span lang="ja">より大きいとき、音を鳴らす</span>
             </div>
             <div>
               <select class="audio-select" id="loud-select">
@@ -406,14 +332,12 @@
         <!-- TIMER -->
         <div id="timer-container" class="container">
           <div class="heading" lang="en">Timer</div>
-          <div class="heading" lang="ja">タイマー</div>
 
           <div class="content">
             <div id="timer-countdown" onClick="setTimer()">00:10</div>
 
             <button id="timer-countdown-reset-btn">
               <span lang="en">Reset</span>
-              <span lang="ja">リセット</span>
             </button>
 
             <div class="action" id="timer-countdown-trigger-action">
@@ -421,30 +345,20 @@
               <label for="countdown-checkbox" lang="en"> Trigger on </label>
               <select id="timer-countdown-trigger-select">
                 <option value="shake" selected lang="en">shake</option>
-                <option value="shake" lang="ja">振る</option>
                 <option value="bow" lang="en">bow</option>
-                <option value="bow" lang="ja">おじぎする</option>
               </select>
-              <span for="countdown-checkbox" lang="ja">
-                &nbsp; をきっかけに始める
-              </span>
             </div>
 
             <div class="action" id="timer-countdown-start-action">
               <div class="icon">⏲️</div>
               <div class="description">
                 <span lang="en">At start, play sound</span>
-                <span lang="ja">はじまったら、</span>
               </div>
               <div>
                 <select class="audio-select" id="timer-countdown-start-select">
                   <option value="none" lang="en">🔇 None</option>
-                  <option value="none" lang="ja">🔇 なし</option>
                 </select>
               </div>
-              <span lang="ja" style="margin-left: 60px; margin-top: -10px"
-                >の音を鳴らす</span
-              >
 
               <div class="loop-container">
                 <input
@@ -455,23 +369,16 @@
                 <label for="loop-countdown-start-checkbox" lang="en"
                   >Loop audio</label
                 >
-                <label for="loop-countdown-start-checkbox" lang="ja"
-                  >繰り返す</label
-                >
               </div>
             </div>
 
             <div class="action">
               <div class="icon">🏁</div>
               <span lang="en">When done, play sound</span>
-              <span lang="ja">終わったら、</span>
               <select class="audio-select" id="timer-countdown-end-select">
                 <option value="none" lang="en">🔇 None</option>
-                <option value="none" lang="ja">🔇 なし</option>
                 <option value="random" lang="en">🔀 Random</option>
-                <option value="random" lang="ja">🔀 ランダム</option>
               </select>
-              <span lang="ja">の音を鳴らす</span>
             </div>
           </div>
         </div>
@@ -491,13 +398,6 @@
       </div> <!-- end debug container-->
     </div>
 
-    <div id="language-select">
-      <span class="lang-link active" onClick="setLanguage(this, 'en')"
-        >English</span
-      >
-      <span class="lang-link" onClick="setLanguage(this, 'ja')">日本語</span>
-    </div>
-
     <!-- text-to-speech modal -->
     <div
       class="modal fade"
@@ -511,7 +411,6 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="myModalLabel" lang="en">Text to Speech</h5>
-            <h5 class="modal-title" id="myModalLabel" lang="ja">音声合成</h5>
             <button
               type="button"
               class="close"
@@ -626,9 +525,6 @@
     <script type="text/javascript" src="src/mixpanel.js"></script>
 
     <script>
-      window.addEventListener("DOMContentLoaded", (event) => {
-        setUILanguage("en");
-      });
 
       window.onload = function () {
         getAudioPermission();
