@@ -1,184 +1,165 @@
 <html>
-  <head>
-    <title>Plushie Microbit</title>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="shortcut icon" type="image/ico" href="assets/img/favicon.ico" />
 
-    <!-- load smoothie.js -->
-    <script
-      type="text/javascript"
-      src="https://cdnjs.cloudflare.com/ajax/libs/smoothie/1.34.0/smoothie.js"
-    ></script>
+<head>
+  <title>Plushie Microbit</title>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="shortcut icon" type="image/ico" href="assets/img/favicon.ico" />
 
-    <link
-      rel="stylesheet"
-      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
-      crossorigin="anonymous"
-    />
+  <!-- load smoothie.js -->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/smoothie/1.34.0/smoothie.js"></script>
 
-    <link rel="stylesheet" href="scss/styles.css" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
 
-    <!-- FontAwesome for icons (https://fontawesome.com/cheatsheet)-->
-    <link
-      rel="stylesheet"
-      href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
-      integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU"
-      crossorigin="anonymous"
-    />
+  <link rel="stylesheet" href="scss/styles.css" />
 
-    <!-- load p5js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/p5.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/addons/p5.dom.min.js"></script>
+  <!-- FontAwesome for icons (https://fontawesome.com/cheatsheet)-->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
+    integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous" />
 
-    <!-- load m5js -->
-    <script src="https://unpkg.com/ml5@0.4.3/dist/ml5.min.js"></script>
+  <!-- load p5js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/p5.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/addons/p5.dom.min.js"></script>
 
-    <!-- plotly -->
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <!-- load m5js -->
+  <script src="https://unpkg.com/ml5@0.4.3/dist/ml5.min.js"></script>
 
-    <!-- pluralize -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pluralize/8.0.0/pluralize.min.js"></script>
+  <!-- plotly -->
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 
-    <!-- google fonts -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500&display=swap"
-      rel="stylesheet"
-    />
+  <!-- pluralize -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pluralize/8.0.0/pluralize.min.js"></script>
 
-    <!-- dynamic time warping -->
-    <script src="src/dynamic-time-warping.js"></script>
+  <!-- google fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500&display=swap" rel="stylesheet" />
 
-    <!-- mixpanel -->
-    <script>(function(c,a){if(!a.__SV){var b=window;try{var d,m,j,k=b.location,f=k.hash;d=function(a,b){return(m=a.match(RegExp(b+"=([^&]*)")))?m[1]:null};f&&d(f,"state")&&(j=JSON.parse(decodeURIComponent(d(f,"state"))),"mpeditor"===j.action&&(b.sessionStorage.setItem("_mpcehash",f),history.replaceState(j.desiredHash||"",c.title,k.pathname+k.search)))}catch(n){}var l,h;window.mixpanel=a;a._i=[];a.init=function(b,d,g){function c(b,i){var a=i.split(".");2==a.length&&(b=b[a[0]],i=a[1]);b[i]=function(){b.push([i].concat(Array.prototype.slice.call(arguments,
-      0)))}}var e=a;"undefined"!==typeof g?e=a[g]=[]:g="mixpanel";e.people=e.people||[];e.toString=function(b){var a="mixpanel";"mixpanel"!==g&&(a+="."+g);b||(a+=" (stub)");return a};e.people.toString=function(){return e.toString(1)+".people (stub)"};l="disable time_event track track_pageview track_links track_forms track_with_groups add_group set_group remove_group register register_once alias unregister identify name_tag set_config reset opt_in_tracking opt_out_tracking has_opted_in_tracking has_opted_out_tracking clear_opt_in_out_tracking start_batch_senders people.set people.set_once people.unset people.increment people.append people.union people.track_charge people.clear_charges people.delete_user people.remove".split(" ");
-      for(h=0;h<l.length;h++)c(e,l[h]);var f="set set_once union unset remove delete".split(" ");e.get_group=function(){function a(c){b[c]=function(){call2_args=arguments;call2=[c].concat(Array.prototype.slice.call(call2_args,0));e.push([d,call2])}}for(var b={},d=["get_group"].concat(Array.prototype.slice.call(arguments,0)),c=0;c<f.length;c++)a(f[c]);return b};a._i.push([b,d,g])};a.__SV=1.2;b=c.createElement("script");b.type="text/javascript";b.async=!0;b.src="undefined"!==typeof MIXPANEL_CUSTOM_LIB_URL?
-      MIXPANEL_CUSTOM_LIB_URL:"file:"===c.location.protocol&&"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js".match(/^\/\//)?"https://cdn.mxpnl.com/libs/mixpanel-2-latest.min.js":"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";d=c.getElementsByTagName("script")[0];d.parentNode.insertBefore(b,d)}})(document,window.mixpanel||[]);
-      mixpanel.init("7b1e13dd3db76bbc559124b213f64879", {batch_requests: true})</script>
+  <!-- dynamic time warping -->
+  <script src="src/dynamic-time-warping.js"></script>
 
-  </head>
+  <!-- mixpanel -->
+  <script>(function (c, a) {
+      if (!a.__SV) {
+        var b = window; try { var d, m, j, k = b.location, f = k.hash; d = function (a, b) { return (m = a.match(RegExp(b + "=([^&]*)"))) ? m[1] : null }; f && d(f, "state") && (j = JSON.parse(decodeURIComponent(d(f, "state"))), "mpeditor" === j.action && (b.sessionStorage.setItem("_mpcehash", f), history.replaceState(j.desiredHash || "", c.title, k.pathname + k.search))) } catch (n) { } var l, h; window.mixpanel = a; a._i = []; a.init = function (b, d, g) {
+          function c(b, i) {
+            var a = i.split("."); 2 == a.length && (b = b[a[0]], i = a[1]); b[i] = function () {
+              b.push([i].concat(Array.prototype.slice.call(arguments,
+                0)))
+            }
+          } var e = a; "undefined" !== typeof g ? e = a[g] = [] : g = "mixpanel"; e.people = e.people || []; e.toString = function (b) { var a = "mixpanel"; "mixpanel" !== g && (a += "." + g); b || (a += " (stub)"); return a }; e.people.toString = function () { return e.toString(1) + ".people (stub)" }; l = "disable time_event track track_pageview track_links track_forms track_with_groups add_group set_group remove_group register register_once alias unregister identify name_tag set_config reset opt_in_tracking opt_out_tracking has_opted_in_tracking has_opted_out_tracking clear_opt_in_out_tracking start_batch_senders people.set people.set_once people.unset people.increment people.append people.union people.track_charge people.clear_charges people.delete_user people.remove".split(" ");
+          for (h = 0; h < l.length; h++)c(e, l[h]); var f = "set set_once union unset remove delete".split(" "); e.get_group = function () { function a(c) { b[c] = function () { call2_args = arguments; call2 = [c].concat(Array.prototype.slice.call(call2_args, 0)); e.push([d, call2]) } } for (var b = {}, d = ["get_group"].concat(Array.prototype.slice.call(arguments, 0)), c = 0; c < f.length; c++)a(f[c]); return b }; a._i.push([b, d, g])
+        }; a.__SV = 1.2; b = c.createElement("script"); b.type = "text/javascript"; b.async = !0; b.src = "undefined" !== typeof MIXPANEL_CUSTOM_LIB_URL ?
+          MIXPANEL_CUSTOM_LIB_URL : "file:" === c.location.protocol && "//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js".match(/^\/\//) ? "https://cdn.mxpnl.com/libs/mixpanel-2-latest.min.js" : "//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js"; d = c.getElementsByTagName("script")[0]; d.parentNode.insertBefore(b, d)
+      }
+    })(document, window.mixpanel || []);
+    mixpanel.init("7b1e13dd3db76bbc559124b213f64879", { batch_requests: true })</script>
 
-  <body>
-    <div id="console" class="container">
-      <div class="heading" lang="en">Console</div>
+</head>
 
-      <div class="content">
+<body>
+  <div id="console" class="container">
+    <div class="heading" lang="en">Console</div>
 
-        <button id="mute-btn" onClick="toggleMute(this)" class="hidden-on-load">🔇</button>
+    <div class="content">
 
-        <button onclick="pair(true)" id="pair-btn">Pair Your Microbit</button>
+      <button id="mute-btn" onClick="toggleMute(this)" class="hidden-on-load">🔇</button>
 
-        <button id="reconnect-btn" onClick="pair(true)" class="hidden">
-          Reconnect Microbit
-        </button>
+      <button onclick="pair(true)" id="pair-btn">Pair Your Microbit</button>
 
-        <div id="status-container" class="hidden">
-          <div><b id="status-label">Status:</b></div>
-          <span id="status">Awaiting pairing...</span>
-        </div>
+      <button id="reconnect-btn" onClick="pair(true)" class="hidden">
+        Reconnect Microbit
+      </button>
 
-        <div id="options-container" class="minimized hidden-on-load">
-          <div id="gesture-confidence-container"></div>
-          </div>
-        </div>
+      <div id="status-container" class="hidden">
+        <div><b id="status-label">Status:</b></div>
+        <span id="status">Awaiting pairing...</span>
+      </div>
 
-        <div
-          id="options-expand-btn"
-          class="hidden-on-load"
-          onClick="toggleOptions()"
-        >
-          <i class="fas fa-chevron-down"></i>
-        </div>
-
-        <hr />
-
-        <div id="instructions">
-          <p lang="en">
-            <b>Plushie</b> is a tool for creating interactive toys using the
-            Microbit!
-          </p>
-          <img src="assets/img/froggy-wave-5x.gif" />
-
-          <p lang="en">
-            Using Plushie, you can program your stuffed animal to respond with
-            sounds based on custom gestures you create.
-          </p>
-
-          <p class="desktop-instructions" lang="en">
-            Before you begin, save
-            <a href="firmware/plushie.hex" target="_blank">this firmware</a>,
-            load it onto your Microbit, and then click the
-            <b>Pair Your Microbit</b> button.
-          </p>
-
-          <p class="mobile-instructions" lang="en">
-            Plushie is not currently mobile compatible –- try it out on Chrome
-            on your laptop or desktop computer!
-          </p>
-
-          <p>
-            <span lang="en">Full instructions can be found at</span>
-            <a
-              href="https://www.notion.so/scientiffic/Plushie-Tutorial-38eb5fb5bda84e60b7faa8412e7e6870"
-              target="_blank"
-            >
-              <label lang="en">Plushie Guide</label>
-            </a>
-          </p>
-        </div>
-
-        <div class="hidden-on-load">
-
-          <canvas id="smoothie-chart" width="250" height="150"></canvas>
-
-          <div id="p5js-container"></div>
-        </div>
+      <div id="options-container" class="minimized hidden-on-load">
+        <div id="gesture-confidence-container"></div>
       </div>
     </div>
 
-    <div class="main-content">
-      <div class="container" id="gestures-container">
-        <div class="heading" lang="en">Gestures</div>
+    <div id="options-expand-btn" class="hidden-on-load" onClick="toggleOptions()">
+      <i class="fas fa-chevron-down"></i>
+    </div>
 
-        <div class="data-options-container hidden-on-load">
-          <button
-            id="export-data-btn"
-            onclick="exportData()"
-            title="export data"
-          >
-            <i class="fas fa-file-download"></i><span lang="en">Export</span
-            >
-          </button>
-          <label id="data-upload-label" for="data-upload" title="load data">
-            <i class="fas fa-file-upload"></i><span lang="en">Load</span
-            >
-          </label>
-          <input type="file" id="data-upload" accept="application/JSON" />
-        </div>
+    <hr />
 
-        <button onClick="addNewGesture()" id="new-gesture-btn" lang="en">
-          + Add New Gesture
+    <div id="instructions">
+      <p lang="en">
+        <b>Plushie</b> is a tool for creating interactive toys using the
+        Microbit!
+      </p>
+      <img src="assets/img/froggy-wave-5x.gif" />
+
+      <p lang="en">
+        Using Plushie, you can program your stuffed animal to respond with
+        sounds based on custom gestures you create.
+      </p>
+
+      <p class="desktop-instructions" lang="en">
+        Before you begin, save
+        <a href="firmware/plushie.hex" target="_blank">this firmware</a>,
+        load it onto your Microbit, and then click the
+        <b>Pair Your Microbit</b> button.
+      </p>
+
+      <p class="mobile-instructions" lang="en">
+        Plushie is not currently mobile compatible –- try it out on Chrome
+        on your laptop or desktop computer!
+      </p>
+
+      <p>
+        <span lang="en">Full instructions can be found at</span>
+        <a href="https://www.notion.so/scientiffic/Plushie-Tutorial-38eb5fb5bda84e60b7faa8412e7e6870" target="_blank">
+          <label lang="en">Plushie Guide</label>
+        </a>
+      </p>
+    </div>
+
+    <div class="hidden-on-load">
+
+      <canvas id="smoothie-chart" width="250" height="150"></canvas>
+
+      <div id="p5js-container"></div>
+    </div>
+  </div>
+  </div>
+
+  <div class="main-content">
+    <div class="container" id="gestures-container">
+      <div class="heading" lang="en">Gestures</div>
+
+      <div class="data-options-container hidden-on-load">
+        <button id="export-data-btn" onclick="exportData()" title="export data">
+          <i class="fas fa-file-download"></i><span lang="en">Export</span>
         </button>
-
-        <div id="custom-gestures" class="hidden-on-load"></div>
+        <label id="data-upload-label" for="data-upload" title="load data">
+          <i class="fas fa-file-upload"></i><span lang="en">Load</span>
+        </label>
+        <input type="file" id="data-upload" accept="application/JSON" />
       </div>
 
-      <!-- SOUNDS CONTAINER -->
-      <div class="row-container">
-        <div class="container" id="sounds-container">
-          <div class="heading" lang="en">Sounds</div>
-          <div class="content">
+      <button onClick="addNewGesture()" id="new-gesture-btn" lang="en">
+        + Add New Gesture
+      </button>
+
+      <div id="custom-gestures" class="hidden-on-load"></div>
+    </div>
+
+    <!-- SOUNDS CONTAINER -->
+    <div class="row-container">
+      <div class="container" id="sounds-container">
+        <div class="heading" lang="en">Sounds</div>
+        <div class="content">
+          <div class="sound-items">
 
             <div class="sound">
               <div class="name" lang="en">wow</div>
               <div class="play" onclick="onClickPlay()">
-                <audio
-                  id="wow-audio"
-                  onended="stopPlayback()"
-                  onplay="startPlayback()"
-                >
+                <audio id="wow-audio" onended="stopPlayback()" onplay="startPlayback()">
                   <source src="assets/sounds/wow.mp3" type="audio/mpeg" />
                 </audio>
                 <i class="fas fa-play"></i>
@@ -191,11 +172,7 @@
             <div class="sound">
               <div class="name" lang="en">applause</div>
               <div class="play" onclick="onClickPlay()">
-                <audio
-                  id="applause-audio"
-                  onended="stopPlayback()"
-                  onplay="startPlayback()"
-                >
+                <audio id="applause-audio" onended="stopPlayback()" onplay="startPlayback()">
                   <source src="assets/sounds/applause.mp3" type="audio/mpeg" />
                 </audio>
                 <i class="fas fa-play"></i>
@@ -221,322 +198,254 @@
             <audio id="pre-countdown-audio" style="display: none">
               <source src="assets/sounds/countdown.mp3" type="audio/mpeg" />
             </audio>
+          </div>
 
-            <button
-              id="record-btn"
-              class="round"
-              onclick="toggleRecordingState()"
-            >
-              <i class="fas fa-microphone" id="record-icon"></i>
-            </button>
+          <button id="record-btn" class="round" onclick="toggleRecordingState()">
+            <i class="fas fa-microphone" id="record-icon"></i>
+          </button>
 
-            <hr />
+          <hr />
 
-            <div class="sound-options">
-              <label id="file-upload-label" for="file-upload">
-                <i class="fas fa-file-upload"></i> <span lang="en">Upload</span
-                >
-              </label>
-              <input type="file" id="file-upload" accept="audio/*" />
-              <button onclick="showTextSpeechModal()">
-                <i class="far fa-comments"></i>
-                <span lang="en">Text to Speech</span
-                >
-              </button>
-            </div>
-
-            <hr />
-            <button onClick="stopAllAudio()">
-              <i class="fas fa-square"></i>
-              <span lang="en">Stop All Sounds</span>
+          <div class="sound-options">
+            <label id="file-upload-label" for="file-upload">
+              <i class="fas fa-file-upload"></i> <span lang="en">Upload</span>
+            </label>
+            <input type="file" id="file-upload" accept="audio/*" />
+            <button onclick="showTextSpeechModal()">
+              <i class="far fa-comments"></i>
+              <span lang="en">Text to Speech</span>
             </button>
           </div>
+
+          <hr />
+          <button onClick="stopAllAudio()">
+            <i class="fas fa-square"></i>
+            <span lang="en">Stop All Sounds</span>
+          </button>
         </div>
+      </div>
 
-        <!-- TRIGGERS CONTAINER -->
+      <!-- TRIGGERS CONTAINER -->
 
-        <div class="container" id="triggers-container">
-          <div class="heading" lang="en">Triggers</div>
-          <div class="content">
-            <div class="action shake">
-              <div class="description">
-                <span lang="en">On <label>Shake</label>, play sound<br /></span>
-                <select id="shake-select" class="audio-select">
-                  <option value="none">None</option>
-                  <option value="random">🔀 Random</option>
-                  <option value="silence">🔇 Silence</option>
-                </select>
-              </div>
+      <div class="container" id="triggers-container">
+        <div class="heading" lang="en">Triggers</div>
+        <div class="content">
+          <div class="action shake">
+            <div class="description">
+              <span lang="en">On <label>Shake</label>, play sound<br /></span>
+              <select id="shake-select" class="audio-select">
+                <option value="none">None</option>
+                <option value="random">🔀 Random</option>
+                <option value="silence">🔇 Silence</option>
+              </select>
             </div>
+          </div>
 
-            <div class="action bow">
-              <div class="description">
-                <span lang="en">On <label>Bow</label>, play sound<br /></span>
-                <select id="bow-select" class="audio-select">
-                  <option value="none">None</option>
-                  <option value="random">🔀 Random</option>
-                  <option value="silence">🔇 Silence</option>
-                </select>
-              </div>
+          <div class="action bow">
+            <div class="description">
+              <span lang="en">On <label>Bow</label>, play sound<br /></span>
+              <select id="bow-select" class="audio-select">
+                <option value="none">None</option>
+                <option value="random">🔀 Random</option>
+                <option value="silence">🔇 Silence</option>
+              </select>
             </div>
+          </div>
 
-            <div class="action none">
-              <div class="description">
-                <span lang="en"
-                  >On <label>No Gesture</label>, play sound<br
-                /></span>
-                <select id="none-select" class="audio-select">
-                  <option value="none">None</option>
-                  <option value="random">🔀 Random</option>
-                  <option value="silence">🔇 Silence</option>
-                </select>
-              </div>
+          <div class="action none">
+            <div class="description">
+              <span lang="en">On <label>No Gesture</label>, play sound<br /></span>
+              <select id="none-select" class="audio-select">
+                <option value="none">None</option>
+                <option value="random">🔀 Random</option>
+                <option value="silence">🔇 Silence</option>
+              </select>
             </div>
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- HEARING -->
-      <div class="row-container">
-        <div class="container" id="hearing-container">
-          <div class="heading" lang="en">Hearing</div>
+    <!-- HEARING -->
+    <div class="row-container">
+      <div class="container" id="hearing-container">
+        <div class="heading" lang="en">Hearing</div>
 
-          <div id="noise-level-display">
-            🔊 <span lang="en">Current noise levels: </span
-            >
-            <br />
-            <div id="noise-level"></div>
+        <div id="noise-level-display">
+          🔊 <span lang="en">Current noise levels: </span>
+          <br />
+          <div id="noise-level"></div>
+        </div>
+
+        <div class="action">
+          <div class="icon">📢</div>
+          <div style="margin-left: 15px">
+            <span lang="en">If noise louder than</span>
+            <input type="text" id="noise-input-threshold" value="100" oninput="setNoiseThreshold(this.value)" />
+            <span lang="en">, play sound</span>
+          </div>
+          <div>
+            <select class="audio-select" id="loud-select">
+              <option value="none">🔇 None</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <!-- end hearing container-->
+
+      <!-- TIMER -->
+      <div id="timer-container" class="container">
+        <div class="heading" lang="en">Timer</div>
+
+        <div class="content">
+          <div id="timer-countdown" onClick="setTimer()">00:10</div>
+
+          <button id="timer-countdown-reset-btn">
+            <span lang="en">Reset</span>
+          </button>
+
+          <div class="action" id="timer-countdown-trigger-action">
+            <input type="checkbox" id="timer-countdown-trigger-checkbox" />
+            <label for="countdown-checkbox" lang="en"> Trigger on </label>
+            <select id="timer-countdown-trigger-select">
+              <option value="shake" selected lang="en">shake</option>
+              <option value="bow" lang="en">bow</option>
+            </select>
+          </div>
+
+          <div class="action" id="timer-countdown-start-action">
+            <div class="icon">⏲️</div>
+            <div class="description">
+              <span lang="en">At start, play sound</span>
+            </div>
+            <div>
+              <select class="audio-select" id="timer-countdown-start-select">
+                <option value="none" lang="en">🔇 None</option>
+              </select>
+            </div>
+
+            <div class="loop-container">
+              <input type="checkbox" id="timer-countdown-start-loop-checkbox" checked />
+              <label for="loop-countdown-start-checkbox" lang="en">Loop audio</label>
+            </div>
           </div>
 
           <div class="action">
-            <div class="icon">📢</div>
-            <div style="margin-left: 15px">
-              <span lang="en">If noise louder than</span>
-              <input
-                type="text"
-                id="noise-input-threshold"
-                value="100"
-                oninput="setNoiseThreshold(this.value)"
-              />
-              <span lang="en">, play sound</span>
-            </div>
-            <div>
-              <select class="audio-select" id="loud-select">
-                <option value="none">🔇 None</option>
-              </select>
-            </div>
+            <div class="icon">🏁</div>
+            <span lang="en">When done, play sound</span>
+            <select class="audio-select" id="timer-countdown-end-select">
+              <option value="none" lang="en">🔇 None</option>
+              <option value="random" lang="en">🔀 Random</option>
+            </select>
           </div>
-        </div>
-        <!-- end hearing container-->
-
-        <!-- TIMER -->
-        <div id="timer-container" class="container">
-          <div class="heading" lang="en">Timer</div>
-
-          <div class="content">
-            <div id="timer-countdown" onClick="setTimer()">00:10</div>
-
-            <button id="timer-countdown-reset-btn">
-              <span lang="en">Reset</span>
-            </button>
-
-            <div class="action" id="timer-countdown-trigger-action">
-              <input type="checkbox" id="timer-countdown-trigger-checkbox" />
-              <label for="countdown-checkbox" lang="en"> Trigger on </label>
-              <select id="timer-countdown-trigger-select">
-                <option value="shake" selected lang="en">shake</option>
-                <option value="bow" lang="en">bow</option>
-              </select>
-            </div>
-
-            <div class="action" id="timer-countdown-start-action">
-              <div class="icon">⏲️</div>
-              <div class="description">
-                <span lang="en">At start, play sound</span>
-              </div>
-              <div>
-                <select class="audio-select" id="timer-countdown-start-select">
-                  <option value="none" lang="en">🔇 None</option>
-                </select>
-              </div>
-
-              <div class="loop-container">
-                <input
-                  type="checkbox"
-                  id="timer-countdown-start-loop-checkbox"
-                  checked
-                />
-                <label for="loop-countdown-start-checkbox" lang="en"
-                  >Loop audio</label
-                >
-              </div>
-            </div>
-
-            <div class="action">
-              <div class="icon">🏁</div>
-              <span lang="en">When done, play sound</span>
-              <select class="audio-select" id="timer-countdown-end-select">
-                <option value="none" lang="en">🔇 None</option>
-                <option value="random" lang="en">🔀 Random</option>
-              </select>
-            </div>
-          </div>
-        </div>
-        <!-- end timer container-->
-      </div>
-      <!-- end row-->
-
-      <!-- DEBUG CONTAINER -->
-      <div id="debug-container" class="container hidden">
-        <div class="heading">Debug</div>
-        <div class="content">
-          <button onClick="showDebug(this)">Debug last 10 seconds</button>
-          <div id="debug-timeline"></div>
-          <hr>
-          <div id="debug-charts"></div>
-        </div>
-      </div> <!-- end debug container-->
-    </div>
-
-    <!-- text-to-speech modal -->
-    <div
-      class="modal fade"
-      id="textToSpeechModal"
-      tabindex="-1"
-      role="dialog"
-      aria-labelledby="myModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="myModalLabel" lang="en">Text to Speech</h5>
-            <button
-              type="button"
-              class="close"
-              data-dismiss="modal"
-              aria-label="Close"
-            >
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body" name="modal-message"></div>
-
-          <form id="text-to-speech-form">
-            <label for="text">Text to say:</label><br />
-            <div style="width: 100%">
-              <input
-                id="text"
-                name="text"
-                type="text"
-                onInput="textOnChange()"
-                onkeypress="checkSubmit()"
-              />
-            </div>
-
-            <button
-              id="preview-btn"
-              onclick="previewTTS()"
-              type="button"
-              disabled
-            >
-              <i class="fas fa-play"></i> &nbsp; Preview
-            </button>
-
-            <div class="modal-footer">
-              <button
-                disabled
-                id="add-tts-btn"
-                type="submit"
-                class="btn btn-primary"
-                data-dismiss="modal"
-                onClick="addTTS()"
-              >
-                Add
-              </button>
-            </div>
-          </form>
         </div>
       </div>
+      <!-- end timer container-->
     </div>
+    <!-- end row-->
 
-    <!-- Error Modal -->
-    <div
-      class="modal fade"
-      id="myModal"
-      tabindex="-1"
-      role="dialog"
-      aria-labelledby="myModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="myModalLabel">Error</h5>
-            <button
-              type="button"
-              class="close"
-              data-dismiss="modal"
-              aria-label="Close"
-            >
-              <span aria-hidden="true">&times;</span>
-            </button>
+    <!-- DEBUG CONTAINER -->
+    <div id="debug-container" class="container hidden">
+      <div class="heading">Debug</div>
+      <div class="content">
+        <button onClick="showDebug(this)">Debug last 10 seconds</button>
+        <div id="debug-timeline"></div>
+        <hr>
+        <div id="debug-charts"></div>
+      </div>
+    </div> <!-- end debug container-->
+  </div>
+
+  <!-- text-to-speech modal -->
+  <div class="modal fade" id="textToSpeechModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="myModalLabel" lang="en">Text to Speech</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" name="modal-message"></div>
+
+        <form id="text-to-speech-form">
+          <label for="text">Text to say:</label><br />
+          <div style="width: 100%">
+            <input id="text" name="text" type="text" onInput="textOnChange()" onkeypress="checkSubmit()" />
           </div>
-          <div class="modal-body" name="modal-message"></div>
+
+          <button id="preview-btn" onclick="previewTTS()" type="button" disabled>
+            <i class="fas fa-play"></i> &nbsp; Preview
+          </button>
+
           <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-dismiss="modal"
-            >
-              Close
+            <button disabled id="add-tts-btn" type="submit" class="btn btn-primary" data-dismiss="modal"
+              onClick="addTTS()">
+              Add
             </button>
           </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error Modal -->
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="myModalLabel">Error</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" name="modal-message"></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">
+            Close
+          </button>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script
-      src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-      integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-      integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-      integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-      crossorigin="anonymous"
-    ></script>
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    crossorigin="anonymous"></script>
 
-    <!-- main javascript files-->
-    <script type="text/javascript" src="src/microbit.js"></script>
-    <script type="text/javascript" src="src/countdown.js"></script>
-    <script type="text/javascript" src="src/language.js"></script>
-    <script type="text/javascript" src="src/audio.js"></script>
-    <script type="text/javascript" src="src/chart.js"></script>
-    <script type="text/javascript" src="src/samples.js"></script>
-    <script type="text/javascript" src="src/ml.js"></script>
-    <script type="text/javascript" src="src/mixpanel.js"></script>
+  <!-- main javascript files-->
+  <script type="text/javascript" src="src/microbit.js"></script>
+  <script type="text/javascript" src="src/countdown.js"></script>
+  <script type="text/javascript" src="src/language.js"></script>
+  <script type="text/javascript" src="src/audio.js"></script>
+  <script type="text/javascript" src="src/chart.js"></script>
+  <script type="text/javascript" src="src/samples.js"></script>
+  <script type="text/javascript" src="src/ml.js"></script>
+  <script type="text/javascript" src="src/mixpanel.js"></script>
 
-    <script>
+  <script>
 
-      window.onload = function () {
-        getAudioPermission();
-        populateSelects();
-        setDefaultSounds();
-      };
+    window.onload = function () {
+      getAudioPermission();
+      populateSelects();
+      setDefaultSounds();
+    };
 
-      window.onbeforeunload = function(){
-        if(isEdited){
-          return "If you refresh the page, you will lose any sounds you recorded.  Are you sure you want to continue?";
-        }
+    window.onbeforeunload = function () {
+      if (isEdited) {
+        return "If you refresh the page, you will lose any sounds you recorded.  Are you sure you want to continue?";
       }
-    </script>
-  </body>
+    }
+  </script>
+</body>
+
 </html>

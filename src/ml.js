@@ -296,6 +296,7 @@ function addNewGesture(evt) {
 }
 
 function buildNewGestureUI(gestureName) {
+  console.log('build gesture container for ', gestureName);
   // create gesture container UI
   let gestureContainer = document.createElement("div");
   gestureContainer.classList.add(
@@ -306,7 +307,9 @@ function buildNewGestureUI(gestureName) {
   gestureContainer.setAttribute("id", gestureName);
 
   // label.addEventListener("click", renameGesture);
-  gestureContainer.append(gestureLabel(gestureName, false));
+  let leftContainer = document.createElement('div');
+  leftContainer.classList.add('left-container')
+  leftContainer.append(gestureLabel(gestureName, false));
 
   // show / hide data button
   let toggleDataBtn = document.createElement("button");
@@ -316,8 +319,11 @@ function buildNewGestureUI(gestureName) {
     toggleDataVisibility(gestureName);
   });
 
+  leftContainer.append(toggleDataBtn);
+  console.log(leftContainer);
+
   // add new gesture container
-  gestureContainer.append(toggleDataBtn);
+  gestureContainer.append(leftContainer);
 
   let dataContainer = document.createElement("div");
   dataContainer.classList.add("data-container");

@@ -678,9 +678,14 @@ input[type=checkbox] {
   background-color: var(--light-grey);
 }
 
-.gesture-container .title {
-  font-size: larger;
-  font-weight: bold;
+.gesture-container .left-container {
+  margin-top: -27px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
 }
 
 label {
@@ -713,8 +718,7 @@ label.gesture .remove {
 }
 
 .toggle-data-btn {
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin: 5px 0px;
   border-bottom: 1px solid var(--border-color);
 }
 
@@ -749,21 +753,17 @@ label.gesture .remove {
   position: relative;
 }
 
-.custom-gesture label {
-  margin-top: -25px !important;
-}
-
-.custom-gesture label:hover {
-  cursor: pointer;
-  background-color: var(--hover-blue);
-}
-
 .custom-gesture.incomplete {
   background-color: var(--yellow);
 }
 
 .custom-gesture.ready {
   background-color: var(--green);
+}
+
+.custom-gesture label:hover {
+  cursor: pointer;
+  background-color: var(--hover-blue);
 }
 
 .sample-container {

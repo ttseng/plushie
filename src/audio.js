@@ -216,9 +216,8 @@ function addSound(data, shouldSpeak = true) {
     soundDiv.append(removeDiv);
 
     // add to page
-    const soundsContainer = document.getElementById("sounds-container");
-    const targetContainer = soundsContainer.querySelectorAll(".content")[0];
-    targetContainer.prepend(soundDiv);
+    const soundsContainer = document.querySelector("#sounds-container .sound-items");
+    soundsContainer.append(soundDiv);
 
     // add event listeners
     addAudioEvtListeners();
