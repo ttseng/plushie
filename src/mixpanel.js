@@ -56,6 +56,29 @@ function logRemovedSample(gestureName){
     mixpanel.track('Remove Sample', {'Gesture Name': gestureName, 'Samples': samples});
 }
 
+// this actually isn't a mixpanel function
+function emailLog(){
+    let mailToContents = `mailto:scientiffic@gmail.com?subject=My Plushie Project ${getUser()}`;
+    let link = document.createElement('a');
+    link.href = mailToContents;
+    link.target = "_blank";
+    link.style.display = 'none';
+
+    // copy body to clipboard
+    let dataToCopy = JSON.stringify({ data: gestureData });
+    // console.log('dataToCopy: ', dataToCopy);
+    let textArea = document.createElement('textarea');
+    textArea.value = dataToCopy;
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand('copy'); // copy the json contents to clipboard
+    document.body.removeChild(textArea);
+    
+    document.body.appendChild(link);
+    link.click(); // trigger email 
+    document.body.removeChild(link);
+}
+
 // helper functions
 function getNumSamples(gestureName){
     return gestureData.filter((sample) => sample.label == gestureName).length;

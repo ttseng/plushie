@@ -59,7 +59,7 @@
 
 <body>
   <div id="console" class="container">
-    <div class="heading" lang="en">Console</div>
+    <div class="heading">Console</div>
 
     <div class="content">
 
@@ -88,33 +88,33 @@
     <hr />
 
     <div id="instructions">
-      <p lang="en">
+      <p>
         <b>Plushie</b> is a tool for creating interactive toys using the
         Microbit!
       </p>
       <img src="assets/img/froggy-wave-5x.gif" />
 
-      <p lang="en">
+      <p>
         Using Plushie, you can program your stuffed animal to respond with
         sounds based on custom gestures you create.
       </p>
 
-      <p class="desktop-instructions" lang="en">
+      <p class="desktop-instructions">
         Before you begin, save
         <a href="firmware/plushie.hex" target="_blank">this firmware</a>,
         load it onto your Microbit, and then click the
         <b>Pair Your Microbit</b> button.
       </p>
 
-      <p class="mobile-instructions" lang="en">
+      <p class="mobile-instructions">
         Plushie is not currently mobile compatible –- try it out on Chrome
         on your laptop or desktop computer!
       </p>
 
       <p>
-        <span lang="en">Full instructions can be found at</span>
+        <span>Full instructions can be found at</span>
         <a href="https://www.notion.so/scientiffic/Plushie-Tutorial-38eb5fb5bda84e60b7faa8412e7e6870" target="_blank">
-          <label lang="en">Plushie Guide</label>
+          <label>Plushie Guide</label>
         </a>
       </p>
     </div>
@@ -130,19 +130,23 @@
 
   <div class="main-content">
     <div class="container" id="gestures-container">
-      <div class="heading" lang="en">Gestures</div>
+      <div class="heading">Gestures</div>
 
       <div class="data-options-container hidden-on-load">
         <button id="export-data-btn" onclick="exportData()" title="export data">
-          <i class="fas fa-file-download"></i><span lang="en">Export</span>
+          <i class="fas fa-file-download"></i><span>Export</span>
         </button>
         <label id="data-upload-label" for="data-upload" title="load data">
-          <i class="fas fa-file-upload"></i><span lang="en">Load</span>
+          <i class="fas fa-file-upload"></i><span>Load</span>
         </label>
         <input type="file" id="data-upload" accept="application/JSON" />
+
+        <button id="log-data-btn" onclick="emailLog()" title="share-data">
+          <span>Share Log</span>
+        </button>
       </div>
 
-      <button onClick="addNewGesture()" id="new-gesture-btn" lang="en">
+      <button onClick="addNewGesture()" id="new-gesture-btn">
         + Add New Gesture
       </button>
 
@@ -152,12 +156,12 @@
     <!-- SOUNDS CONTAINER -->
     <div class="row-container">
       <div class="container" id="sounds-container">
-        <div class="heading" lang="en">Sounds</div>
+        <div class="heading">Sounds</div>
         <div class="content">
           <div class="sound-items">
 
             <div class="sound">
-              <div class="name" lang="en">wow</div>
+              <div class="name">wow</div>
               <div class="play" onclick="onClickPlay()">
                 <audio id="wow-audio" onended="stopPlayback()" onplay="startPlayback()">
                   <source src="assets/sounds/wow.mp3" type="audio/mpeg" />
@@ -170,7 +174,7 @@
             </div>
 
             <div class="sound">
-              <div class="name" lang="en">applause</div>
+              <div class="name">applause</div>
               <div class="play" onclick="onClickPlay()">
                 <audio id="applause-audio" onended="stopPlayback()" onplay="startPlayback()">
                   <source src="assets/sounds/applause.mp3" type="audio/mpeg" />
@@ -183,7 +187,7 @@
             </div>
 
             <div class="sound">
-              <div class="name" lang="en">tick-tock</div>
+              <div class="name">tick-tock</div>
               <div class="play" onclick="onClickPlay()">
                 <audio id="tick-tock-audio" onended="stopPlayback()">
                   <source src="assets/sounds/tick-tock.mp3" type="audio/mpeg" />
@@ -208,19 +212,19 @@
 
           <div class="sound-options">
             <label id="file-upload-label" for="file-upload">
-              <i class="fas fa-file-upload"></i> <span lang="en">Upload</span>
+              <i class="fas fa-file-upload"></i> <span>Upload</span>
             </label>
             <input type="file" id="file-upload" accept="audio/*" />
             <button onclick="showTextSpeechModal()">
               <i class="far fa-comments"></i>
-              <span lang="en">Text to Speech</span>
+              <span>Text to Speech</span>
             </button>
           </div>
 
           <hr />
           <button onClick="stopAllAudio()">
             <i class="fas fa-square"></i>
-            <span lang="en">Stop All Sounds</span>
+            <span>Stop All Sounds</span>
           </button>
         </div>
       </div>
@@ -228,11 +232,11 @@
       <!-- TRIGGERS CONTAINER -->
 
       <div class="container" id="triggers-container">
-        <div class="heading" lang="en">Triggers</div>
+        <div class="heading">Triggers</div>
         <div class="content">
           <div class="action shake">
             <div class="description">
-              <span lang="en">On <label>Shake</label>, play sound<br /></span>
+              <span>On <label>Shake</label>, play sound<br /></span>
               <select id="shake-select" class="audio-select">
                 <option value="none">None</option>
                 <option value="random">🔀 Random</option>
@@ -243,7 +247,7 @@
 
           <div class="action bow">
             <div class="description">
-              <span lang="en">On <label>Bow</label>, play sound<br /></span>
+              <span>On <label>Bow</label>, play sound<br /></span>
               <select id="bow-select" class="audio-select">
                 <option value="none">None</option>
                 <option value="random">🔀 Random</option>
@@ -254,7 +258,7 @@
 
           <div class="action none">
             <div class="description">
-              <span lang="en">On <label>No Gesture</label>, play sound<br /></span>
+              <span>On <label>No Gesture</label>, play sound<br /></span>
               <select id="none-select" class="audio-select">
                 <option value="none">None</option>
                 <option value="random">🔀 Random</option>
@@ -269,10 +273,10 @@
     <!-- HEARING -->
     <div class="row-container">
       <div class="container" id="hearing-container">
-        <div class="heading" lang="en">Hearing</div>
+        <div class="heading">Hearing</div>
 
         <div id="noise-level-display">
-          🔊 <span lang="en">Current noise levels: </span>
+          🔊 <span>Current noise levels: </span>
           <br />
           <div id="noise-level"></div>
         </div>
@@ -280,9 +284,9 @@
         <div class="action">
           <div class="icon">📢</div>
           <div style="margin-left: 15px">
-            <span lang="en">If noise louder than</span>
+            <span>If noise louder than</span>
             <input type="text" id="noise-input-threshold" value="100" oninput="setNoiseThreshold(this.value)" />
-            <span lang="en">, play sound</span>
+            <span>, play sound</span>
           </div>
           <div>
             <select class="audio-select" id="loud-select">
@@ -295,47 +299,47 @@
 
       <!-- TIMER -->
       <div id="timer-container" class="container">
-        <div class="heading" lang="en">Timer</div>
+        <div class="heading">Timer</div>
 
         <div class="content">
           <div id="timer-countdown" onClick="setTimer()">00:10</div>
 
           <button id="timer-countdown-reset-btn">
-            <span lang="en">Reset</span>
+            <span>Reset</span>
           </button>
 
           <div class="action" id="timer-countdown-trigger-action">
             <input type="checkbox" id="timer-countdown-trigger-checkbox" />
-            <label for="countdown-checkbox" lang="en"> Trigger on </label>
+            <label for="countdown-checkbox"> Trigger on </label>
             <select id="timer-countdown-trigger-select">
-              <option value="shake" selected lang="en">shake</option>
-              <option value="bow" lang="en">bow</option>
+              <option value="shake" selected>shake</option>
+              <option value="bow">bow</option>
             </select>
           </div>
 
           <div class="action" id="timer-countdown-start-action">
             <div class="icon">⏲️</div>
             <div class="description">
-              <span lang="en">At start, play sound</span>
+              <span>At start, play sound</span>
             </div>
             <div>
               <select class="audio-select" id="timer-countdown-start-select">
-                <option value="none" lang="en">🔇 None</option>
+                <option value="none">🔇 None</option>
               </select>
             </div>
 
             <div class="loop-container">
               <input type="checkbox" id="timer-countdown-start-loop-checkbox" checked />
-              <label for="loop-countdown-start-checkbox" lang="en">Loop audio</label>
+              <label for="loop-countdown-start-checkbox">Loop audio</label>
             </div>
           </div>
 
           <div class="action">
             <div class="icon">🏁</div>
-            <span lang="en">When done, play sound</span>
+            <span>When done, play sound</span>
             <select class="audio-select" id="timer-countdown-end-select">
-              <option value="none" lang="en">🔇 None</option>
-              <option value="random" lang="en">🔀 Random</option>
+              <option value="none">🔇 None</option>
+              <option value="random">🔀 Random</option>
             </select>
           </div>
         </div>
@@ -362,7 +366,7 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="myModalLabel" lang="en">Text to Speech</h5>
+          <h5 class="modal-title" id="myModalLabel">Text to Speech</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>

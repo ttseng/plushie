@@ -342,7 +342,7 @@ function buildNewGestureUI(gestureName) {
 
   let sampleCounter = document.createElement("div");
   sampleCounter.classList.add("sample-counter");
-  dataContainer.append(sampleCounter);
+  gestureContainer.append(sampleCounter);
 
   let sampleContainer = document.createElement("div");
   sampleContainer.classList.add("sample-container");

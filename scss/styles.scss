@@ -334,7 +334,7 @@ button.round {
 }
 
 .data-options-container button {
-  margin-right: 5px;
+  margin: 5px;
   height: fit-content;
 }
 
@@ -628,6 +628,7 @@ input[type=checkbox] {
 .gesture-container {
   padding: 10px 0px;
   background-color: var(--light-grey);
+  min-height: 40px;
   .left-container{
     margin-top: -27px;
     display: flex;
@@ -672,7 +673,7 @@ label.gesture .remove {
   top: 0;
   right: 0;
   background: grey;
-  border-top-right-radius: 15px;
+  border-top-right-radius: 13px;
   padding: 0 10px;
   border-bottom-left-radius: 5px;
   color: white;
