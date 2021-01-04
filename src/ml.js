@@ -99,7 +99,6 @@ function loadData() {
       }
 
       // remove current default gestures
-      document.getElementById('default-gestures').innerHTML = '';
       document.getElementById('gesture-confidence-container').innerHTML = '';
 
       let reader = new FileReader();
@@ -296,7 +295,6 @@ function addNewGesture(evt) {
 }
 
 function buildNewGestureUI(gestureName) {
-  console.log('build gesture container for ', gestureName);
   // create gesture container UI
   let gestureContainer = document.createElement("div");
   gestureContainer.classList.add(
@@ -320,7 +318,6 @@ function buildNewGestureUI(gestureName) {
   });
 
   leftContainer.append(toggleDataBtn);
-  console.log(leftContainer);
 
   // add new gesture container
   gestureContainer.append(leftContainer);
