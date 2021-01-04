@@ -56,13 +56,33 @@ function logRemovedSample(gestureName){
     mixpanel.track('Remove Sample', {'Gesture Name': gestureName, 'Samples': samples});
 }
 
-// this actually isn't a mixpanel function
+// this actually isn't a mixpanel function - use to copy gesture JSON data to clipboard
+let copyBtn = new ClipboardJS('#copy-btn', {
+    text: function(){
+        return JSON.stringify({data: gestureData});
+    }
+});
+
+tippy('#copy-btn', {
+    content: 'Copy Gesture Data'
+});
+
+let tooltip = tippy(document.querySelector('#copy-btn'));
+
+copyBtn.on('success', function(e){
+    tooltip.setContent('Copied to Clipboard!');
+    tooltip.show();
+    setInterval(function(){
+        tooltip.setContent('Copy Gesture Data');
+    }, 5000);
+});
+
 function emailLog(){
-    let mailToContents = `mailto:scientiffic@gmail.com?subject=My Plushie Project ${getUser()}`;
-    let link = document.createElement('a');
-    link.href = mailToContents;
-    link.target = "_blank";
-    link.style.display = 'none';
+    // let mailToContents = `mailto:scientiffic@gmail.com?subject=My Plushie Project ${getUser()}`;
+    // let link = document.createElement('a');
+    // link.href = mailToContents;
+    // link.target = "_blank";
+    // link.style.display = 'none';
 
     // copy body to clipboard
     let dataToCopy = JSON.stringify({ data: gestureData });
@@ -74,9 +94,9 @@ function emailLog(){
     document.execCommand('copy'); // copy the json contents to clipboard
     document.body.removeChild(textArea);
     
-    document.body.appendChild(link);
-    link.click(); // trigger email 
-    document.body.removeChild(link);
+    // document.body.appendChild(link);
+    // link.click(); // trigger email 
+    // document.body.removeChild(link);
 }
 
 // helper functions

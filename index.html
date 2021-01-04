@@ -38,6 +38,13 @@
   <!-- dynamic time warping -->
   <script src="src/dynamic-time-warping.js"></script>
 
+  <!-- clipboard.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js"></script>
+
+  <!-- tippy -->
+  <script src="https://unpkg.com/@popperjs/core@2"></script>
+  <script src="https://unpkg.com/tippy.js@6"></script>
+
   <!-- mixpanel -->
   <script>(function (c, a) {
       if (!a.__SV) {
@@ -141,8 +148,8 @@
         </label>
         <input type="file" id="data-upload" accept="application/JSON" />
 
-        <button id="log-data-btn" onclick="emailLog()" title="share-data">
-          <span>Share Log</span>
+        <button id="copy-btn" title="Copy to Clipboard">
+          <span>Copy</span>
         </button>
       </div>
 
