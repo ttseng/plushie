@@ -140,7 +140,8 @@ i {
   padding: 0;
 }
 
-#options-container #gesture-confidence-container .gesture-container.active label, #options-container #gesture-confidence-container .gesture-container.active .confidence {
+#options-container #gesture-confidence-container .gesture-container.active label,
+#options-container #gesture-confidence-container .gesture-container.active .confidence {
   background: var(--purple);
 }
 
@@ -484,10 +485,6 @@ canvas {
   margin: 10px 0;
 }
 
-video {
-  width: 100%;
-}
-
 #counter-container h2 {
   font-size: 100px;
   font-family: "consolas";
@@ -501,6 +498,13 @@ video {
 .main-content {
   width: 700px;
   float: right;
+  position: relative;
+}
+
+#toggle-video-btn {
+  position: absolute;
+  top: -35px;
+  right: 0px;
 }
 
 div.container {
@@ -878,6 +882,24 @@ body.bluetooth li {
 
 body.bluetooth li:last-of-type {
   margin-bottom: 0px;
+}
+
+#video-container {
+  position: absolute;
+  left: 465px;
+  bottom: 100px;
+  z-index: 100;
+  border-radius: var(--border-radius);
+}
+
+#video-container video {
+  width: 600px;
+  height: 337.5px;
+  background: white;
+  cursor: move;
+  border-radius: var(--border-radius);
+  -webkit-box-shadow: 0 13px 27px -5px rgba(50, 50, 93, 0.25), 0 8px 16px -8px rgba(0, 0, 0, 0.3), 0 -6px 16px -6px rgba(0, 0, 0, 0.025);
+          box-shadow: 0 13px 27px -5px rgba(50, 50, 93, 0.25), 0 8px 16px -8px rgba(0, 0, 0, 0.3), 0 -6px 16px -6px rgba(0, 0, 0, 0.025);
 }
 
 /* DEBUG */
