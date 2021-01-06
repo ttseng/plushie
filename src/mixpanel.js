@@ -29,7 +29,6 @@ function logRemovedGesture(gestureName){
 
 function logAddedSound(name, type){
     let user = getUser();
-    console.log('logged ', name, ' ', type);
     mixpanel.track('Added Sound', {'Name': name, 'type': type}, {'ip': false});
 }
 
