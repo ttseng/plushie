@@ -164,6 +164,7 @@ function soundAvailable(e) {
 function addSound(data, shouldSpeak = true) {
   let name;
   let isTTS = false;
+  let isUpload = false;
 
   if (isString(data)) {
     // created from text to speech - skip name prompt
@@ -171,6 +172,10 @@ function addSound(data, shouldSpeak = true) {
     isTTS = true;
   } else {
     name = prompt("Please enter a name for your sound", "");
+  }
+
+  if(inputFile.files.length > 0){
+    isUpload = true;
   }
 
   // ask for name of file
@@ -224,6 +229,20 @@ function addSound(data, shouldSpeak = true) {
 
     // update selects
     addToSelects(name);
+
+    // log adding new sound
+    let type;
+    if(isTTS){
+      type = "TTS"
+    }else if(isUpload){
+      type = 'upload'
+    }else{
+      type = 'recording';
+    }
+    logAddedSound(name, type);
+
+    // clear file field
+    inputFile.value = '';
 
     isEdited = true;
   }
@@ -419,7 +438,7 @@ function showTextSpeechModal() {
   // load language
   setAudioLanguage(textLang);
 
-  $("#textToSpeechModal").modal("show");
+  $('#textToSpeechModal').modal('show');
 }
 
 function getVoices() {

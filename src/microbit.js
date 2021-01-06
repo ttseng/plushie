@@ -165,7 +165,11 @@ function accelChanged(event) {
 }
 
 function showModal(message) {
-  document.getElementsByName("modal-message")[0].innerHTML = message;
-  $("#myModal").modal("show");
+  console.log(message);
+  if(!message){
+    message = "Please click Pair Your Microbit again."
+  }
+  document.querySelector("#errorModal .modal-body").innerHTML = message;
+  $('#errorModal').modal('show');
   document.getElementById("pair-btn").classList.remove('hidden');
 }

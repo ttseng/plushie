@@ -52,7 +52,6 @@ function toggleVideoBtnTxt(){
 }
 
 function startVideo(){
-    console.log('start video');
     let videoParams = {video: {width: 1280, height: 720}};
     navigator.mediaDevices.getUserMedia(videoParams).then(function(stream){
         let video = document.querySelector('video');
@@ -64,7 +63,6 @@ function startVideo(){
 }
 
 function stopVideo(){
-    console.log('stop video');
     document.querySelector('video').srcObject.getTracks()[0].stop();
 }
 

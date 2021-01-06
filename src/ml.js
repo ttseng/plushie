@@ -65,7 +65,6 @@ function draw() {
 }
 
 function loadDefaultGestures() {
-  console.log('load default gestures');
   var request = new XMLHttpRequest();
   request.open("GET", "data/default-gestures.json");
   request.send(null);
@@ -831,6 +830,40 @@ function debug() {
   debugMode = !debugMode;
   document.getElementById('debug-container').classList.toggle('hidden');
 }
+
+// COPYING DATA SAMPLE FOR LOGGING PURPOSES
+function logAddedSample(gestureName){
+  let user = getUser();
+  let samples = getNumSamples(gestureName);
+  mixpanel.track('Add Sample', {'Gesture Name': gestureName, 'Samples': samples});
+}
+
+function logRemovedSample(gestureName){
+  let user = getUser();
+  let samples = getNumSamples(gestureName);
+  mixpanel.track('Remove Sample', {'Gesture Name': gestureName, 'Samples': samples});
+}
+
+// this actually isn't a mixpanel function - use to copy gesture JSON data to clipboard
+let copyBtn = new ClipboardJS('#copy-btn', {
+  text: function(){
+      return JSON.stringify({data: gestureData});
+  }
+});
+
+tippy('#copy-btn', {
+  content: 'Copy Gesture Data'
+});
+
+let tooltip = tippy(document.querySelector('#copy-btn'));
+
+copyBtn.on('success', function(e){
+  tooltip.setContent('Copied to Clipboard!');
+  tooltip.show();
+  setInterval(function(){
+      tooltip.setContent('Copy Gesture Data');
+  }, 5000);
+});
 
 // UTILS
 
