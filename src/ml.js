@@ -204,8 +204,15 @@ function removeGestureOnClick(evt) {
 }
 
 function removeGesture(gestureName) {
+  console.log('removeGesture ', gestureName);
   // remove all samples of it from the data
   gestureData = gestureData.filter((data) => data.label !== gestureName);
+
+  // remove it from the gestures container
+  let gestureContainer = document.querySelector(`#gestures-container #${gestureName}`);
+  if(gestureContainer){
+    gestureContainer.remove();
+  }
 
   // remove from the predictions container in the console
   let confidenceGestureUI = document.querySelector(`#gesture-confidence-container .gesture-container.${gestureName}`);
