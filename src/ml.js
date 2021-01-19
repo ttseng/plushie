@@ -78,6 +78,20 @@ function loadDefaultGestures() {
   });
 }
 
+function loadExerciseSampleGestures(){
+  var request = new XMLHttpRequest();
+  request.open("GET", "data/exercising-froggy.json");
+  request.send(null);
+  request.addEventListener('load', function () {
+    var jsonData = JSON.parse(this.responseText);
+    gestureData = jsonData.data;
+
+    addDefaultGestures();
+
+    startClassification();
+  });
+}
+
 // load data from JSON file
 const loadDataInput = document.getElementById("data-upload");
 loadDataInput.addEventListener("change", loadData);
@@ -92,13 +106,7 @@ function loadData() {
     );
     if (confirmation) {
 
-      let currentGestures = getCurrentGestures();
-      for (i = 0; i < currentGestures.length; i++) {
-        removeGesture(currentGestures[i]);
-      }
-
-      // remove current default gestures
-      document.getElementById('gesture-confidence-container').innerHTML = '';
+      removeGestures();
 
       let reader = new FileReader();
       reader.readAsText(loadDataInput.files[0]);
@@ -112,6 +120,16 @@ function loadData() {
       }
     }
   }
+}
+
+function removeGestures(){
+  let currentGestures = getCurrentGestures();
+  for (i = 0; i < currentGestures.length; i++) {
+    removeGesture(currentGestures[i]);
+  }
+
+  // remove current default gestures
+  document.getElementById('gesture-confidence-container').innerHTML = '';
 }
 
 function addDefaultGestures() {
