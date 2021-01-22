@@ -49,7 +49,7 @@ function loadExercise() {
     loadExerciseSampleGestures();
 
     // load sounds
-    let dir = "/samples/exercise-froggy";
+    let dir = "samples/exercise-froggy";
     let tracks = [
         'jumping-jacks',
         'ready',
