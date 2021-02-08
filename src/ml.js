@@ -1,6 +1,7 @@
 // MODEL LOADING PARAMETERS
 let shouldLoadDefaultGestures = true;
 let debugMode = true;
+let shouldClassifySamples = true;
 
 let classifyFrequency = 300; // time between checking accelerometer data
 let timeout = 6; // number of times in which we consider the gesture new
@@ -427,6 +428,10 @@ function addNewData(id) {
   // update traning btns
   updateMLBtns();
   console.log(" ");
+
+  if(shouldClassifySamples){
+    classifySamples();
+  }
 }
 
 
@@ -548,7 +553,7 @@ function runPrediction() {
     }
 
     let distByGesture = [];
-    // now detremine the total distance per label
+    // now determine the total distance per label
     let currentGestures = getCurrentGestures();
     for (i = 0; i < currentGestures.length; i++) {
       let avgDist = getAverageDist(dist.filter((item) => item.label == currentGestures[i]).map(item => item.dist));
@@ -792,13 +797,12 @@ function atCountdownTimerEnd(defaultTime, display, isFromReset) {
   }
 }
 
-// CONFIDENCE ADJUSTMENTS - THRESHOLD TO TRIGGER NEW GESTURE
+// CONFIDENCE IN CONSOLE
 
 function showConfidence(confidences) {
   let labels = confidences.map((item) => item.label);
 
   labels.forEach(function (labelName, index) {
-    let gestureContainer = document.querySelector(`#gesture-confidence-container .gesture-container.${labelName}`);
     let confidenceEl = document.querySelector(`#gesture-confidence-container .confidence.${labelName}`);
     let confidence = confidences[index].dist;
     confidenceEl.style.width = confidence + "%";
@@ -826,10 +830,60 @@ function showOptions() {
   caret.innerHTML = '<i class="fas fa-chevron-up"></i>';
 }
 
-function toggleDescription(el) {
-  el.parentElement.querySelector('.description').classList.toggle('hidden');
+// for sampling each data sample
+function classify(x, y, z){
+  let t0 = performance.now();
+
+  let minDist = 0;
+  let prediction;
+  for (i = 0; i < gestureData.length; i++) {
+    let trainingData = gestureData[i];
+    let xDist = new DynamicTimeWarping(trainingData.x, x, distFunc).getDistance();
+    let yDist = new DynamicTimeWarping(trainingData.y, y, distFunc).getDistance();
+    let zDist = new DynamicTimeWarping(trainingData.z, z, distFunc).getDistance();
+    let totalDist = xDist + yDist + zDist;
+    // console.log('distance for label', trainingData.label, ': ', totalDist);
+
+    if (i == 0 || totalDist < minDist) {
+      minDist = totalDist;
+      prediction = trainingData.label;
+    }
+  }
+  let t1 = performance.now();
+  console.log('min dist: ', minDist);
+  console.log('time to calc: ', t1-t0); // log the time it took to calculate
+
+  return prediction;
 }
 
+function classifySamples(){
+  for (k= 0; k < gestureData.length; k++) {
+    let sample = gestureData[k];
+    let label = sample.label;
+    console.log('id: ', sample.id, ' label: ', label); // log the id of the gesture data
+    // classify the sample
+    let prediction = classify(sample.x, sample.y, sample.z);
+    
+    // add to the chart
+    let plot = document.getElementById(sample.id);
+
+    if(label !== prediction){
+      console.log('label does not match prediction!');
+      plot.parentElement.classList.add('warning');
+      let warningLabel = document.createElement('div');
+      warningLabel.classList.add('warning-label');
+      warningLabel.innerHTML = `this is being identified as ${prediction}`;
+      plot.parentElement.append(warningLabel);
+    }else{
+      plot.parentElement.classList.remove('warning');
+      let warningLabel = plot.parentElement.querySelector('.warning-label');
+      if(warningLabel){
+        warningLabel.remove();
+      }
+    }
+    
+  }
+}
 
 // FOR DEBUG MODE
 function debug() {

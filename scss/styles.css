@@ -791,6 +791,10 @@ label.gesture .remove {
   overflow: hidden;
 }
 
+.plot.warning {
+  background-color: var(--pink);
+}
+
 .plot .remove {
   position: absolute;
   right: 0;
