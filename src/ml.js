@@ -589,7 +589,7 @@ function showPrediction(result) {
     if (currentState != prevState) {
       stateChanged = true;
     }
-  } else if (allEqual(lastSlice(gestureLog, threshold)) && (currentState != prevState) || (currentCycle >= timeout)) {
+  } else if (allEqual(lastSlice(gestureLog, threshold)) && (currentState != prevState) || (currentCycle >= timeout && !isPlaying)) {
     stateChanged = true;
     if(currentCycle >= timeout){
       currentCycle = 0;
