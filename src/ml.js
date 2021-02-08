@@ -10,7 +10,7 @@ let currentCycle = 0;
 // it's used when a user adds new gestures / removes gestures that the model is already trained to recognize
 let dataFromJSON = false; // used to flag whether to add new default gestures
 
-let gestureData = []; // for retraining the model after adding new data
+let gestureData = []; // for storing all gesture samples
 
 let isCollectingData = false;
 let isClassifying = false;
@@ -44,7 +44,7 @@ function setup() {
 
 // currently drawing box to show microbit orientation
 function draw() {
-  background(0);
+  background(255);
   orbitControl();
   translate(0, 0, 0);
   normalMaterial();
@@ -344,7 +344,7 @@ function buildNewGestureUI(gestureName) {
   recordContainer.classList.add("record-btn-container");
 
   let recordGestureBtn = document.createElement("button");
-  recordGestureBtn.innerHTML = "Record Gesture";
+  recordGestureBtn.innerHTML = "Record Example";
   recordGestureBtn.classList.add("record-btn");
   recordGestureBtn.addEventListener("click", recordGesture);
   recordContainer.append(recordGestureBtn);
@@ -388,15 +388,36 @@ function renameGesture(evt) {
 }
 
 function updateMLBtns() {
+  // allow users to add new gestures + add new samples
   let newGestureBtn = document.getElementById("new-gesture-btn");
   let recordGestureBtns = document.getElementsByClassName("record-btn");
 
-  // allow users to add new gestures + add new samples
   newGestureBtn.disabled = false;
   Array.from(recordGestureBtns).forEach(function (btn) {
     btn.disabled = false;
   });
+  
+  // check if you should display any warnings
+  checkWarnings();
+}
 
+function checkWarnings(){
+  let currentGestures = getCurrentGestures();
+  if(currentGestures.length > 3){
+    // check if there are 3 or less samples for any
+    let shouldShowWarning = false;
+    for(i=0; i<currentGestures.length; i++){
+      if(gestureData.filter(gesture => gesture.label == currentGestures[i]).length <=3 ){
+        shouldShowWarning = true;
+        break;
+      }
+    }
+    if(shouldShowWarning){
+      document.getElementById('sample-warning').classList.remove('hidden');
+    }else{
+      document.getElementById('sample-warning').classList.add('hidden');
+    }
+  }
 }
 
 function addNewData(id) {
@@ -428,10 +449,6 @@ function addNewData(id) {
   // update traning btns
   updateMLBtns();
   console.log(" ");
-
-  if(shouldClassifySamples){
-    classifySamples();
-  }
 }
 
 
@@ -537,6 +554,8 @@ function runPrediction() {
     let dist = [];
     let minDist = 0;
     let prediction;
+    let matchId;
+
     for (i = 0; i < gestureData.length; i++) {
       let trainingData = gestureData[i];
       let xDist = new DynamicTimeWarping(trainingData.x, axData, distFunc).getDistance();
@@ -548,6 +567,7 @@ function runPrediction() {
       if (i == 0 || totalDist < minDist) {
         minDist = totalDist;
         prediction = trainingData.label;
+        matchId = gestureData[i].id;
       }
       dist.push({ dist: totalDist, label: trainingData.label });
     }
@@ -576,8 +596,20 @@ function runPrediction() {
     }
 
     updateConfidenceGestures(normalizedDistByGesture);
+    
     // display prediction
     showPrediction(prediction);
+
+    // TESTING PURPOSES - HIGHLIGHT THE CURRENT CLOSEST MATCH        
+    // clear all highlights
+    let plots = document.querySelectorAll('.plot');
+    for(i=0; i< plots.length; i++){
+      plots[i].classList.remove('prediction');
+    }
+
+    // highlight the closest match
+    let plot = document.getElementById(matchId);
+    plot.parentElement.classList.add('prediction');    
   }
 }
 
@@ -740,7 +772,7 @@ function atRecordTimeEnd(timeLimit, display) {
 
   let recordBtn = document.querySelector(`#${currentGesture} .record-btn`);
   recordBtn.disabled = false;
-  recordBtn.innerHTML = "Record Gesture";
+  recordBtn.innerHTML = "Record Example";
 
   let dataId = new Date().getTime();
 
@@ -856,6 +888,7 @@ function classify(x, y, z){
   return prediction;
 }
 
+// classify samples - currently unused
 function classifySamples(){
   for (k= 0; k < gestureData.length; k++) {
     let sample = gestureData[k];
@@ -864,23 +897,30 @@ function classifySamples(){
     // classify the sample
     let prediction = classify(sample.x, sample.y, sample.z);
     
-    // add to the chart
-    let plot = document.getElementById(sample.id);
-
-    if(label !== prediction){
-      console.log('label does not match prediction!');
-      plot.parentElement.classList.add('warning');
-      let warningLabel = document.createElement('div');
-      warningLabel.classList.add('warning-label');
-      warningLabel.innerHTML = `this is being identified as ${prediction}`;
-      plot.parentElement.append(warningLabel);
-    }else{
-      plot.parentElement.classList.remove('warning');
-      let warningLabel = plot.parentElement.querySelector('.warning-label');
-      if(warningLabel){
-        warningLabel.remove();
-      }
+    // clear all highlights
+    let plots = document.querySelector('.plot');
+    for(i=0; i< plots.length; i++){
+      plots[i].classList.remove('prediction');
     }
+
+    // highlight the closest match
+    let plot = document.getElementById(sample.id);
+    plot.parentElement.classList.add('prediction');    
+
+    // if(label !== prediction){
+    //   console.log('label does not match prediction!');
+    //   plot.parentElement.classList.add('warning');
+    //   let warningLabel = document.createElement('div');
+    //   warningLabel.classList.add('warning-label');
+    //   warningLabel.innerHTML = `this is being identified as ${prediction}`;
+    //   plot.parentElement.append(warningLabel);
+    // }else{
+    //   plot.parentElement.classList.remove('warning');
+    //   let warningLabel = plot.parentElement.querySelector('.warning-label');
+    //   if(warningLabel){
+    //     warningLabel.remove();
+    //   }
+    // }
     
   }
 }

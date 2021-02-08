@@ -74,6 +74,19 @@ i {
       cursor: pointer;
     }
   }
+
+  #warnings{
+    div{
+      background: var(--yellow);
+      padding: 15px;
+      border-radius: 3px;
+      line-height: 20px;
+      margin: 10px 0;
+    }
+  }
+  .p5canvas{
+    border: 1px solid lightgrey;
+  }
 }
 
 #options-container {
@@ -279,7 +292,7 @@ button.round {
 }
 
 .record-btn {
-  width: 130px;
+  width: 140px;
 }
 
 #record-icon {
@@ -735,6 +748,10 @@ label.gesture .remove {
   
   &.warning{
     background-color: var(--pink);
+  }
+
+  &.prediction{
+    background-color: var(--purple);
   }
 }
 
