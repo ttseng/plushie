@@ -1,22 +1,17 @@
 // MODEL LOADING PARAMETERS
 let shouldLoadDefaultGestures = true;
-let shouldLoadModel = true;
-
 let debugMode = true;
 
-let dataDirectory = "data/";
-let modelNeedsTraining = false; // this is a flag to determine when the model needs to be retrained.  
+let classifyFrequency = 300; // time between checking accelerometer data
+let timeout = 6; // number of times in which we consider the gesture new
+let currentCycle = 0;
+
 // it's used when a user adds new gestures / removes gestures that the model is already trained to recognize
 let dataFromJSON = false; // used to flag whether to add new default gestures
 
 let gestureData = []; // for retraining the model after adding new data
 
-// ml5js
-let model;
-const numEpochs = 80;
-
 let isCollectingData = false;
-let isTraining = false;
 let isClassifying = false;
 
 let pencilIcon = "<i class='fas fa-pencil-alt'></i>";
@@ -46,11 +41,6 @@ function setup() {
   }
 }
 
-function createClassifier() {
-  // create KNN classifier
-  model = ml5.KNNClassifier();
-}
-
 // currently drawing box to show microbit orientation
 function draw() {
   background(0);
@@ -78,7 +68,7 @@ function loadDefaultGestures() {
   });
 }
 
-function loadExerciseSampleGestures(){
+function loadExerciseSampleGestures() {
   var request = new XMLHttpRequest();
   request.open("GET", "data/exercising-froggy.json");
   request.send(null);
@@ -122,7 +112,7 @@ function loadData() {
   }
 }
 
-function removeGestures(){
+function removeGestures() {
   let currentGestures = getCurrentGestures();
   for (i = 0; i < currentGestures.length; i++) {
     removeGesture(currentGestures[i]);
@@ -228,7 +218,7 @@ function removeGesture(gestureName) {
 
   // remove it from the gestures container
   let gestureContainer = document.querySelector(`#gestures-container #${gestureName}`);
-  if(gestureContainer){
+  if (gestureContainer) {
     gestureContainer.remove();
   }
 
@@ -400,21 +390,12 @@ function updateMLBtns() {
   let newGestureBtn = document.getElementById("new-gesture-btn");
   let recordGestureBtns = document.getElementsByClassName("record-btn");
 
-  if (isTraining) {
-    // don't allow user to restart training if it's already in progress
-    disableTrainBtn;
-    newGestureBtn.disabled = true;
+  // allow users to add new gestures + add new samples
+  newGestureBtn.disabled = false;
+  Array.from(recordGestureBtns).forEach(function (btn) {
+    btn.disabled = false;
+  });
 
-    Array.from(recordGestureBtns).forEach(function (btn) {
-      btn.disabled = true;
-    });
-  } else {
-    // allow users to add new gestures + add new samples
-    newGestureBtn.disabled = false;
-    Array.from(recordGestureBtns).forEach(function (btn) {
-      btn.disabled = false;
-    });
-  }
 }
 
 function addNewData(id) {
@@ -489,9 +470,7 @@ function dataLoaded() {
 function dataLoadedFromFile() {
   console.log("loaded data from file ", model.data);
 
-  // gestureData = model.data.data.raw.slice();
   trainedGestures = [];
-  modelNeedsTraining = true;
 
   // train the model
   trainModel();
@@ -502,9 +481,6 @@ function modelLoaded() {
 
   // populate default gestures container based on model data
   addDefaultGestures();
-
-  // gestureData = model.data.data.raw.slice();
-  modelNeedsTraining = true;
 
   runPrediction();
 }
@@ -531,15 +507,16 @@ function startClassification() {
     let prediction = setInterval(function () {
       if (gestureData.length > 0) {
         runPrediction();
+        currentCycle += 1;
       }
-    }, 300);
+    }, classifyFrequency);
   }
 }
 
 function runPrediction() {
   let num_samples = 90; // about 2 seconds worth of data
 
-  if (microbitPaired && !isTraining && accelXArr.length > num_samples) {
+  if (microbitPaired && accelXArr.length > num_samples) {
     // let num_samples = 1;
     let axData = accelXArr.slice(
       Math.max(accelXArr.length - num_samples, 1)
@@ -608,11 +585,15 @@ function showPrediction(result) {
   let stateChanged = false;
 
   if (gestureLog.length < threshold) {
+    // we don't have enough data yet
     if (currentState != prevState) {
       stateChanged = true;
     }
-  } else if (allEqual(lastSlice(gestureLog, threshold)) && currentState != prevState) {
+  } else if (allEqual(lastSlice(gestureLog, threshold)) && (currentState != prevState) || (currentCycle >= timeout)) {
     stateChanged = true;
+    if(currentCycle >= timeout){
+      currentCycle = 0;
+    }
   }
 
   // console.log('currentState: ', currentState, ' prevState: ', prevState, ' gestureLog: ' , lastSlice(gestureLog, 3));
@@ -629,9 +610,9 @@ function showPrediction(result) {
     console.log("");
     console.log("new state: ", currentState);
 
-    if (document.getElementById("loud-select")) {
-      playAudio(currentState);
-    }
+    // play the sound associated with the current audio
+    playAudio(currentState);
+    
 
     // check if should start countdown
     let countdownCheckbox = document.getElementById(
@@ -857,22 +838,22 @@ function debug() {
 }
 
 // COPYING DATA SAMPLE FOR LOGGING PURPOSES
-function logAddedSample(gestureName){
+function logAddedSample(gestureName) {
   let user = getUser();
   let samples = getNumSamples(gestureName);
-  mixpanel.track('Add Sample', {'Gesture Name': gestureName, 'Samples': samples});
+  mixpanel.track('Add Sample', { 'Gesture Name': gestureName, 'Samples': samples });
 }
 
-function logRemovedSample(gestureName){
+function logRemovedSample(gestureName) {
   let user = getUser();
   let samples = getNumSamples(gestureName);
-  mixpanel.track('Remove Sample', {'Gesture Name': gestureName, 'Samples': samples});
+  mixpanel.track('Remove Sample', { 'Gesture Name': gestureName, 'Samples': samples });
 }
 
 // this actually isn't a mixpanel function - use to copy gesture JSON data to clipboard
 let copyBtn = new ClipboardJS('#copy-btn', {
-  text: function(){
-      return JSON.stringify({data: gestureData});
+  text: function () {
+    return JSON.stringify({ data: gestureData });
   }
 });
 
@@ -882,11 +863,11 @@ tippy('#copy-btn', {
 
 let tooltip = tippy(document.querySelector('#copy-btn'));
 
-copyBtn.on('success', function(e){
+copyBtn.on('success', function (e) {
   tooltip.setContent('Copied to Clipboard!');
   tooltip.show();
-  setInterval(function(){
-      tooltip.setContent('Copy Gesture Data');
+  setInterval(function () {
+    tooltip.setContent('Copy Gesture Data');
   }, 5000);
 });
 
