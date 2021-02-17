@@ -1,7 +1,7 @@
 // everything related ot audio features including audio recording and text-to-speech
 let mute = false; // for debugging purposes
 let isEdited = false;
-let isMuted = false; // for mute button
+let isMuted = true; // for mute button
 
 let currentAudio;
 let audioContext;

@@ -17,12 +17,14 @@ let accelZSample = [];
 // for plot.ly
 let peaksArr = [];
 
+let shouldDebug = true; // FOR TESTING DEBUG INTERFACE
+
 function setupDataCollection() {
   accelXArr = [];
   accelYArr = [];
   accelZArr = [];
 
-  smoothie = new SmoothieChart({ tooltip: false, grid:{fillStyle:'#ffffff',strokeStyle:'#c4c4c4'}, labels:{fillStyle:'#000000'} });
+  smoothie = new SmoothieChart({ tooltip: false, grid: { fillStyle: '#ffffff', strokeStyle: '#c4c4c4' }, labels: { fillStyle: '#000000' } });
   smoothie.addTimeSeries(accelXSeries, { strokeStyle: "red" });
   smoothie.addTimeSeries(accelYSeries, { strokeStyle: "green" });
   smoothie.addTimeSeries(accelZSeries, { strokeStyle: "blue" });
@@ -271,7 +273,7 @@ function createPeakChart(data, id, axis, parent) {
 }
 
 function removeData(id) {
-  let remove = confirm("Are you sure you want to remove this data?");
+  let remove = confirm("Are you sure you want to remove this example?");
   if (remove) {
     gestureData = gestureData.filter((data) => data.id !== id);
     let parentGesture = event.target.closest('.gesture-container').id;
@@ -284,6 +286,12 @@ function removeData(id) {
 
     // update analytics
     logRemovedSample(parentGesture);
+
+    // update debug if needed
+    if (shouldDebug) {
+      let row = document.querySelector(`#debug-container .debug-row.id-${id}`);
+      row.remove();
+    }
   }
 }
 
@@ -324,77 +332,68 @@ function updateSampleCounter(gestureName) {
   return sampleCount;
 }
 
-// DEBUG 
-let debugIndex = 0; // i index for debugging
+// DEBUGGING UI
 
-function showDebug(btn) {
-  // reset indexing values
-  debugIndex = 0;
+function showDebug() {
+  // show debug UI
+  document.getElementById('debug-container').classList.remove('hidden');
 
-  // display a chart with the last 10 seconds of data
-  let sampleSize = 96; // ~ 2 second sample
-  let sampleLength = sampleSize * 5; // 97 samples in ~10 seconds
-  let ax = accelXArr.slice(accelXArr.length - sampleLength);
-  let ay = accelYArr.slice(accelYArr.length - sampleLength);
-  let az = accelZArr.slice(accelZArr.length - sampleLength);
-  let container = document.getElementById('debug-timeline');
-  container.innerHTML = '';  // clear contents
-  generatePlotly('debug-timeline', container, ax, ay, az);
-
-
-  // display charts from 2 second samples
-  let displayContainer = document.getElementById('debug-charts');
-  displayContainer.innerHTML = '';
-  // console.log('ax:', ax, 'ay:', ay, 'az:', az);
-
-  for (i = 0; i < sampleLength / sampleSize; i++) {
-    // console.log('generate plot for debug ', i);
-    let start = sampleSize * i;
-    console.log('start: ', start);
-    let ax_slice = ax.slice(start, sampleSize + start - 1);
-    let ay_slice = ay.slice(start, sampleSize + start - 1);
-    let az_slice = az.slice(start, sampleSize + start - 1);
-    // console.log('ax_slice:', ax_slice, 'ay_slice:', ay_slice, 'az_slice:', az_slice);
-    generatePlotly(`debug-subplot_${i}`, displayContainer, ax_slice, ay_slice, az_slice);
-    runDebugPrediction(ax_slice, ay_slice, az_slice);
+  if (shouldDebug) {
+    generateDebugTable();
   }
 }
 
-function runDebugPrediction(ax, ay, az) {
-  // console.log('run debug prediction for index ', debugIndex);
-  let inputs = {
-    ax_max: Math.max(...ax),
-    ax_min: Math.min(...ax),
-    ax_std: standardDeviation(ax),
-    ax_peaks: peaks(ax).numPeaks,
-    ay_max: Math.max(...ay),
-    ay_min: Math.min(...ay),
-    ay_std: standardDeviation(ay),
-    ay_peaks: peaks(ay).numPeaks,
-    az_max: Math.max(...az),
-    az_min: Math.min(...az),
-    az_std: standardDeviation(az),
-    az_peaks: peaks(az).numPeaks,
-  };
+function generateDebugTable(){
+    let debugTable = document.getElementById('debug-table');
+    debugTable.innerHTML = ''; // clear contents
 
-  model.classify(inputs, debugPredictionResults);
+    // fill in debug table by gesture
+    let currentGestures = getCurrentGestures();
+    for (i = 0; i < currentGestures.length; i++) {
+      let currentGesture = currentGestures[i];
+      let currentGestureData = gestureData.filter((sample) => sample.label == currentGesture);
+      currentGestureData = currentGestureData.sort((a, b) => a.id - b.id); // sort by id
+
+      // add gesture name to table
+      createDebugSection(currentGesture); 
+      for (k = 0; k < currentGestureData.length; k++) {
+        let currentSample = currentGestureData[k];
+        createDebugRow(currentSample.label, currentSample.id);
+      }
+    }
 }
 
-function debugPredictionResults(error, results) {
-  if (error) {
-    console.error(error);
-  }
+function createDebugSection(gestureName) {
+  let debugTable = document.getElementById('debug-table');
+  let gestureNameRow = document.createElement('div');
+  gestureNameRow.classList.add('gesture-name', gestureName);
+  let label = document.createElement('label');
+  label.innerHTML = gestureName;
+  gestureNameRow.append(label);
+  let gestureDataContainer = document.createElement('div');
+  gestureDataContainer.classList.add('data');
+  gestureNameRow.append(gestureDataContainer);
+  debugTable.append(gestureNameRow);
+}
 
-  // console.log('debugPredictionResults for index ', debugIndex);
-  let confidenceContainer = document.createElement('div');
-  let body = '';
-  results.forEach(function (gesture) {
-    body += `<label>${gesture.label}</label> ${(gesture.confidence * 100).toFixed(0)}% `;
-  });
-  confidenceContainer.innerHTML = body;
-  let container = document.getElementById(`debug-subplot_${debugIndex}`);
-  container.append(confidenceContainer);
-  debugIndex++;
+function createDebugRow(gestureName, gestureId) {
+  let row = document.createElement('div');
+  row.classList.add('debug-row', gestureName, `id-${gestureId}`);
+
+  let label = document.createElement('div');
+  label.innerHTML = gestureId;
+  label.classList.add('label');
+  row.append(label);
+
+  let confidence = document.createElement('div');
+  confidence.classList.add('confidence', `id-${gestureId}`);
+  row.append(confidence);
+  
+  let distance = document.createElement('div');
+  distance.classList.add('distance', `id-${gestureId}`);
+
+  row.append(distance);
+  document.querySelector(`#debug-table .${gestureName} .data`).prepend(row);
 }
 
 function plotlyLayout(width, title) {

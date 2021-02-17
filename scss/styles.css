@@ -171,7 +171,6 @@ i {
 }
 
 #options-container #gesture-confidence-container .gesture-container .confidence {
-  background: black;
   margin-bottom: 0.5rem;
   width: 50%;
   margin-left: auto;
@@ -923,29 +922,34 @@ body.bluetooth li:last-of-type {
 }
 
 /* DEBUG */
-#debug-charts .plot {
-  margin: 10px;
-  width: 300px;
+#debug-table .gesture-name {
+  margin-top: 15px;
 }
 
-#debug-charts .peak-container {
+#debug-table .gesture-name .debug-row {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: row;
-          flex-direction: row;
-  border-bottom: 1px solid var(--grey);
-  padding-bottom: 15px;
 }
 
-#debug-charts .peak-container .plot {
-  margin-right: 5px;
+#debug-table .gesture-name .debug-row.active .confidence {
+  background: var(--purple);
 }
 
-.peaks-label {
-  text-align: center;
-  font-size: small;
+#debug-table .gesture-name .debug-row .label {
+  margin-right: 20px;
+  font-weight: normal;
+}
+
+#debug-table .gesture-name .debug-row .label.warning {
+  background-color: var(--pink);
+}
+
+#debug-table .gesture-name .debug-row .confidence {
+  margin-bottom: 0.5rem;
+  width: 50%;
+  margin-left: auto;
+  background: var(--box-shadow-grey);
+  border-radius: 5px;
 }
 /*# sourceMappingURL=styles.css.map */

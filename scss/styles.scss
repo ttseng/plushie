@@ -75,8 +75,8 @@ i {
     }
   }
 
-  #warnings{
-    div{
+  #warnings {
+    div {
       background: var(--yellow);
       padding: 15px;
       border-radius: 3px;
@@ -84,7 +84,8 @@ i {
       margin: 10px 0;
     }
   }
-  .p5canvas{
+
+  .p5canvas {
     border: 1px solid lightgrey;
   }
 }
@@ -159,7 +160,6 @@ i {
       }
 
       .confidence {
-        background: black;
         margin-bottom: 0.5rem;
         width: 50%;
         margin-left: auto;
@@ -745,12 +745,12 @@ label.gesture .remove {
   border-radius: 5px;
   position: relative;
   overflow: hidden;
-  
-  &.warning{
+
+  &.warning {
     background-color: var(--pink);
   }
 
-  &.prediction{
+  &.prediction {
     background-color: var(--purple);
   }
 }
@@ -876,25 +876,35 @@ body.bluetooth li:last-of-type {
 
 /* DEBUG */
 
-#debug-timeline {}
+#debug-table {
+  .gesture-name{
+    margin-top: 15px;
+    .debug-row {
+      display: flex;
+      &.active{
+        .confidence{
+          background: var(--purple);
+        }
+      }
+      .label{
+        margin-right: 20px;
+        font-weight: normal;
+        &.warning{
+          background-color: var(--pink);
+        }
+      }
+      
+      .confidence {
+        margin-bottom: 0.5rem;
+        width: 50%;
+        margin-left: auto;
+        background: var(--box-shadow-grey);
+        border-radius: 5px;
+      }
+      .distance{
+        margin-left: 20px;
+      }
+    }
 
-#debug-charts .plot {
-  margin: 10px;
-  width: 300px;
-}
-
-#debug-charts .peak-container {
-  display: flex;
-  flex-direction: row;
-  border-bottom: 1px solid var(--grey);
-  padding-bottom: 15px;
-}
-
-#debug-charts .peak-container .plot {
-  margin-right: 5px;
-}
-
-.peaks-label {
-  text-align: center;
-  font-size: small;
+  }
 }

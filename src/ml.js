@@ -96,8 +96,11 @@ function loadData() {
       "All current gestures will be removed.  Are you sure you want to continue?"
     );
     if (confirmation) {
+      console.log('start remove gestures');
 
       removeGestures();
+
+      console.log('end remove gestures');
 
       let reader = new FileReader();
       reader.readAsText(loadDataInput.files[0]);
@@ -108,6 +111,11 @@ function loadData() {
         gestureData = resultJSON.data;
         addDefaultGestures();
         updateTriggers();
+
+        // update debug
+        if (shouldDebug) {
+          generateDebugTable();
+        }
       }
     }
   }
@@ -145,7 +153,6 @@ function addDefaultGestures() {
       let z = gestureTrainingData[i].z;
 
       let parentContainer = gestureContainer.querySelector('.sample-container');
-      let plotContainer = document.createElement('div');
       generatePlotly(id, parentContainer, x, y, z);
     }
     // update sample count
@@ -201,7 +208,6 @@ function removeGestureOnClick(evt) {
 
   let remove = confirm(alertMsg);
   if (remove) {
-    console.log("remove ", gestureName);
     removeGesture(gestureName);
     // remove the gesture container (from the Gesture secction)
     if (gestureLabelEl.closest('.gesture-container')) {
@@ -209,11 +215,19 @@ function removeGestureOnClick(evt) {
     }
     // remove the label (for default gestures)
     gestureLabelEl.remove();
+
+    // remove from debug if needed
+    if (shouldDebug) {
+      let debugEls = document.querySelectorAll(`#debug-table .${gestureName}`);
+      for (i = 0; i < debugEls.length; i++) {
+        console.log(i);
+        debugEls[i].remove();
+      }
+    }
   }
 }
 
 function removeGesture(gestureName) {
-  console.log('removeGesture ', gestureName);
   // remove all samples of it from the data
   gestureData = gestureData.filter((data) => data.label !== gestureName);
 
@@ -302,6 +316,11 @@ function addNewGesture(evt) {
 
         // update analytics
         logAddedGesture(gestureName);
+
+        // update debug if needed
+        if (shouldDebug) {
+          createDebugSection(gestureName);
+        }
 
         updateMLBtns();
       }
@@ -396,25 +415,25 @@ function updateMLBtns() {
   Array.from(recordGestureBtns).forEach(function (btn) {
     btn.disabled = false;
   });
-  
+
   // check if you should display any warnings
   checkWarnings();
 }
 
-function checkWarnings(){
+function checkWarnings() {
   let currentGestures = getCurrentGestures();
-  if(currentGestures.length > 3){
+  if (currentGestures.length > 3) {
     // check if there are 3 or less samples for any
     let shouldShowWarning = false;
-    for(i=0; i<currentGestures.length; i++){
-      if(gestureData.filter(gesture => gesture.label == currentGestures[i]).length <=3 ){
+    for (i = 0; i < currentGestures.length; i++) {
+      if (gestureData.filter(gesture => gesture.label == currentGestures[i]).length <= 3) {
         shouldShowWarning = true;
         break;
       }
     }
-    if(shouldShowWarning){
+    if (shouldShowWarning) {
       document.getElementById('sample-warning').classList.remove('hidden');
-    }else{
+    } else {
       document.getElementById('sample-warning').classList.add('hidden');
     }
   }
@@ -444,7 +463,12 @@ function addNewData(id) {
   });
 
   // increment sample size
-  let newSampleSize = updateSampleCounter(targetGesture);
+  updateSampleCounter(targetGesture);
+
+  // add to debug
+  if (shouldDebug) {
+    createDebugRow(currentGesture, id);
+  }
 
   // update traning btns
   updateMLBtns();
@@ -499,7 +523,6 @@ function dataLoadedFromFile() {
 }
 
 function modelLoaded() {
-  console.log("default gestures loaded");
 
   // populate default gestures container based on model data
   addDefaultGestures();
@@ -569,7 +592,55 @@ function runPrediction() {
         prediction = trainingData.label;
         matchId = gestureData[i].id;
       }
-      dist.push({ dist: totalDist, label: trainingData.label });
+      dist.push({ dist: totalDist, label: trainingData.label, id: trainingData.id });
+    }
+
+    // IF DEBUG -> also show these distances in the debug console
+    if (shouldDebug) {
+      // determine maxDist for normalization purposes
+      // TODO - maybe this shouldn't be normalized relative to the range but relative to absolute distances, but I'm finding if I do absolute distances, it looks like the gestures are really close to one another
+      let maxDist = Math.max(...dist.map((gesture => gesture.dist)));
+
+      // determine average and standard deviation by gesture to highlight problematic samples
+      // TODO - probably shouldn't be repeating the code below...
+      let byGestureSummary = [];
+      let currentGestures = getCurrentGestures();
+      for (i = 0; i < currentGestures.length; i++) {
+        let gestureDistances = dist.filter((item) => item.label == currentGestures[i]).map(item => 100 - normalize(item.dist, minDist, maxDist, 1, 100));
+        let avgDist = getAverageDist(gestureDistances);
+        let std = standardDeviation(gestureDistances);
+        byGestureSummary.push({ label: currentGestures[i], avg: avgDist, std: std });
+      }
+
+      // display these distances in the debug console
+      for (i = 0; i < dist.length; i++) {
+        let sample = dist[i];
+        let confidenceEl = document.querySelector(`#debug-container .confidence.id-${sample.id}`);
+        let confidence = 100 - normalize(sample.dist, minDist, maxDist, 1, 100);
+        if (confidenceEl) {
+          confidenceEl.style.width = confidence + "%";
+        }
+        // highlight any problematic samples that are more than 1.5 standard deviations beyond the mean for a given gesture
+        let gestureStats = byGestureSummary.filter((item) => item.label == sample.label)[0];
+        let idEl = document.querySelector(`#debug-container .debug-row.id-${sample.id} .label`);
+        let factor = 1.5;
+        let highStd = 10;
+
+        let lowerLimit = Math.max(gestureStats.avg - factor * gestureStats.std, 0);
+        let upperLimit = Math.min(gestureStats.avg + factor * gestureStats.std, 100);
+
+        if (idEl !== null && (confidence < lowerLimit || confidence > upperLimit) && gestureStats.std > highStd) {
+          idEl.classList.add('warning');
+        } else if (idEl !== null) {
+          idEl.classList.remove('warning');
+        }
+
+        // display numeric distance value
+        let distEl = document.querySelector(`#debug-container .debug-row.id-${sample.id} .distance`);
+        if (distEl !== null) {
+          distEl.innerHTML = Math.floor(sample.dist);
+        }
+      }
     }
 
     let distByGesture = [];
@@ -577,7 +648,7 @@ function runPrediction() {
     let currentGestures = getCurrentGestures();
     for (i = 0; i < currentGestures.length; i++) {
       let avgDist = getAverageDist(dist.filter((item) => item.label == currentGestures[i]).map(item => item.dist));
-      distByGesture.push({ label: currentGestures[i], dist: avgDist }); // TODO - maybe we can use this to find samples that are particularly off?
+      distByGesture.push({ label: currentGestures[i], dist: avgDist, id: dist.id }); // TODO - maybe we can use this to find samples that are particularly off?
     }
 
     // console.log('distByGesture before normalization: ', distByGesture);
@@ -592,24 +663,38 @@ function runPrediction() {
       let normalizedDist = 100 - normalize(distByGesture[i].dist, minDist, maxDist, 1, 100);
       gestureObj.label = distByGesture[i].label;
       gestureObj.dist = normalizedDist;
+      gestureObj.id = distByGesture[i].id;
       normalizedDistByGesture.push(gestureObj);
     }
 
     updateConfidenceGestures(normalizedDistByGesture);
-    
+
     // display prediction
     showPrediction(prediction);
 
-    // TESTING PURPOSES - HIGHLIGHT THE CURRENT CLOSEST MATCH        
+    // HIGHLIGHT THE GRAPH OF THE CURRENT CLOSEST MATCH        
     // clear all highlights
     let plots = document.querySelectorAll('.plot');
-    for(i=0; i< plots.length; i++){
+    for (i = 0; i < plots.length; i++) {
       plots[i].classList.remove('prediction');
     }
 
     // highlight the closest match
     let plot = document.getElementById(matchId);
-    plot.parentElement.classList.add('prediction');    
+    plot.parentElement.classList.add('prediction');
+
+    // update debug section
+    if (shouldDebug) {
+      let rows = document.querySelectorAll('.debug-row');
+      for (i = 0; i < rows.length; i++) {
+        rows[i].classList.remove('active');
+      }
+
+      let activeRow = document.querySelector(`.debug-row.id-${matchId}`);
+      if (activeRow) {
+        activeRow.classList.add('active');
+      }
+    }
   }
 }
 
@@ -628,7 +713,7 @@ function showPrediction(result) {
     }
   } else if (allEqual(lastSlice(gestureLog, threshold)) && (currentState != prevState) || (currentCycle >= timeout && !isPlaying)) {
     stateChanged = true;
-    if(currentCycle >= timeout){
+    if (currentCycle >= timeout) {
       currentCycle = 0;
     }
   }
@@ -637,7 +722,7 @@ function showPrediction(result) {
 
   if (stateChanged) {
     updateStatusContainer(currentState);
-    // set prediction label to active
+    // set prediction label to active in the console
     document.querySelector(`#gesture-confidence-container .gesture-container.${currentState}`).classList.add('active');
     let otherGestureContainers = document.querySelectorAll(`#gesture-confidence-container .gesture-container:not(.${currentState})`);
     otherGestureContainers.forEach((el) => {
@@ -649,7 +734,7 @@ function showPrediction(result) {
 
     // play the sound associated with the current audio
     playAudio(currentState);
-    
+
 
     // check if should start countdown
     let countdownCheckbox = document.getElementById(
@@ -701,7 +786,6 @@ function updateTriggers() {
   );
 
   addedGestures.forEach(function (gesture) {
-    console.log("adding trigger element for ", gesture);
     // add a new trigger element
     let triggersContainer = document.querySelector("#triggers-container .content");
     let newTriggerContainer = document.createElement("div");
@@ -763,7 +847,7 @@ function recordTimerDisplay(timeLeft) {
   return timeLeft.toFixed(2);
 }
 
-// atRecordTimeEnd - finished recording gesture
+// atRecordTimeEnd - finished recording an example
 function atRecordTimeEnd(timeLimit, display) {
   isCollectingData = false;
   recordCountdownRunning = false;
@@ -830,7 +914,7 @@ function atCountdownTimerEnd(defaultTime, display, isFromReset) {
 }
 
 // CONFIDENCE IN CONSOLE
-
+// receives an array of objects containing the average distance for a given gesture, noramlized from 1-10
 function showConfidence(confidences) {
   let labels = confidences.map((item) => item.label);
 
@@ -863,7 +947,7 @@ function showOptions() {
 }
 
 // for sampling each data sample
-function classify(x, y, z){
+function classify(x, y, z) {
   let t0 = performance.now();
 
   let minDist = 0;
@@ -883,29 +967,28 @@ function classify(x, y, z){
   }
   let t1 = performance.now();
   console.log('min dist: ', minDist);
-  console.log('time to calc: ', t1-t0); // log the time it took to calculate
+  console.log('time to calc: ', t1 - t0); // log the time it took to calculate
 
   return prediction;
 }
 
 // classify samples - currently unused
-function classifySamples(){
-  for (k= 0; k < gestureData.length; k++) {
+function classifySamples() {
+  for (k = 0; k < gestureData.length; k++) {
     let sample = gestureData[k];
     let label = sample.label;
-    console.log('id: ', sample.id, ' label: ', label); // log the id of the gesture data
     // classify the sample
     let prediction = classify(sample.x, sample.y, sample.z);
-    
+
     // clear all highlights
     let plots = document.querySelector('.plot');
-    for(i=0; i< plots.length; i++){
+    for (i = 0; i < plots.length; i++) {
       plots[i].classList.remove('prediction');
     }
 
     // highlight the closest match
     let plot = document.getElementById(sample.id);
-    plot.parentElement.classList.add('prediction');    
+    plot.parentElement.classList.add('prediction');
 
     // if(label !== prediction){
     //   console.log('label does not match prediction!');
@@ -921,7 +1004,7 @@ function classifySamples(){
     //     warningLabel.remove();
     //   }
     // }
-    
+
   }
 }
 
