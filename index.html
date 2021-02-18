@@ -85,7 +85,9 @@
 
       <div id="options-container" class="minimized hidden-on-load">
         <div id="gesture-confidence-container"></div>
+        <button id="show-debugger-btn" onClick="toggleDebugger()" class="hidden">Show Details</button>
       </div>
+
     </div>
 
     <div id="options-expand-btn" class="hidden-on-load" onClick="toggleOptions()">
@@ -364,13 +366,6 @@
     </div>
     <!-- end row-->
 
-    <!-- DEBUG CONTAINER -->
-    <div id="debug-container" class="container hidden">
-      <div class="heading">Debug</div>
-      <div class="content">
-        <div id="debug-table"></div>
-      </div>
-    </div> <!-- end debug container-->
   </div>
 
   <!-- text-to-speech modal -->
@@ -426,6 +421,29 @@
       </div>
     </div>
   </div>
+
+  <!-- ML debugger / details container -->
+  <div class="hidden" id="debug-container">
+    <div class="title-bar">
+      Model Details
+      <button class="close-debug-btn" onClick="closeDebugger()"><i class="fas fa-times"></i></button>
+    </div>
+    <div id="debug-table">
+    </div>
+    <div id="distance-label"><i class="fas fa-ruler-horizontal"></i></div>
+    <div class="debugger-explanation" onClick="toggleDebuggerExplanation()">
+      <div class="explanation-label">
+        <i class="fas fa-question-circle"></i>
+      </div>
+      <div class="explanation-body">
+        <p>To guess what gesture it sees, the machine learning model calculates a distance between new sensor data and every example you've recorded.  
+        </p>
+        <p>The detected gesture is the example with the smallest distance.</p>
+        <p>Distances highlighted in <span class="red">red</span> are examples look different from the others – it may be helpful to re-record these examples or record more examples like it.</p>
+      </div>
+    </div>
+  </div>
+
 
   <!-- Optional JavaScript -->
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->

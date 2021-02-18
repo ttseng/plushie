@@ -334,13 +334,13 @@ function updateSampleCounter(gestureName) {
 
 // DEBUGGING UI
 
-function showDebug() {
+function toggleDebugger() {
   // show debug UI
-  document.getElementById('debug-container').classList.remove('hidden');
-
-  if (shouldDebug) {
-    generateDebugTable();
-  }
+  let detailsContainer = document.getElementById('debug-container');
+  detailsContainer.classList.remove('hidden');
+  dragElement(detailsContainer);
+  shouldDebug = true;
+  generateDebugTable();
 }
 
 function generateDebugTable(){
@@ -368,11 +368,13 @@ function createDebugSection(gestureName) {
   let gestureNameRow = document.createElement('div');
   gestureNameRow.classList.add('gesture-name', gestureName);
   let label = document.createElement('label');
-  label.innerHTML = gestureName;
+  label.innerHTML = `${gestureName} examples`;
   gestureNameRow.append(label);
+
   let gestureDataContainer = document.createElement('div');
   gestureDataContainer.classList.add('data');
   gestureNameRow.append(gestureDataContainer);
+
   debugTable.append(gestureNameRow);
 }
 
@@ -380,10 +382,10 @@ function createDebugRow(gestureName, gestureId) {
   let row = document.createElement('div');
   row.classList.add('debug-row', gestureName, `id-${gestureId}`);
 
-  let label = document.createElement('div');
-  label.innerHTML = gestureId;
-  label.classList.add('label');
-  row.append(label);
+  // let label = document.createElement('div');
+  // label.innerHTML = gestureId;
+  // label.classList.add('label');
+  // row.append(label);
 
   let confidence = document.createElement('div');
   confidence.classList.add('confidence', `id-${gestureId}`);
@@ -393,7 +395,47 @@ function createDebugRow(gestureName, gestureId) {
   distance.classList.add('distance', `id-${gestureId}`);
 
   row.append(distance);
+  row.onclick = highlightSample;
   document.querySelector(`#debug-table .${gestureName} .data`).prepend(row);
+}
+
+function highlightSample(evt){
+  console.log(evt.target);
+  let chartId = evt.target.classList[1].replace('id-', ''); //TODO this is brittle...
+  
+  // show the data for the gesture if it's not visible
+  let gestureName = gestureData.filter(gesture => gesture.id == chartId)[0].label;
+  if(gestureName){
+  
+    let dataToggleBtn = document.getElementById(gestureName).querySelector('.toggle-data-btn');
+    if(dataToggleBtn && dataToggleBtn.innerHTML.includes('Show')){
+
+      dataToggleBtn.click();
+    }
+
+    // remove all other highlights
+    let plots = document.querySelectorAll('.plot');
+    for(i=0; i<plots.length; i++){
+      plots[i].classList.remove('highlight', 'warning');
+    }
+
+    let classToAdd = 'highlight';
+    if(evt.target.classList.value.includes('warning')){
+      classToAdd = 'warning'; // highlight in pink if it's a warning example
+    }else{
+      let debugRowParent = evt.target.closest('.debug-row');
+      if(debugRowParent && debugRowParent.classList.value.includes('warning')){
+        classToAdd = 'warning'
+      }
+    }
+    // highlight the corresponding char
+    document.getElementById(chartId).closest('.plot').classList.add(classToAdd);
+  }
+}
+
+function closeDebugger(){
+  let debugContainer = document.getElementById('debug-container');
+  debugContainer.classList.toggle('hidden');
 }
 
 function plotlyLayout(width, title) {

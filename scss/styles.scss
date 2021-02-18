@@ -1,4 +1,5 @@
 :root {
+  --primary: #007bff;
   --base: #d3ebf5;
   --border-color: #a5c5e7;
   --light-blue: #9cddf8;
@@ -10,6 +11,7 @@
   --yellow: #fff6be;
   --green: #b0f3d4;
   --dark-green: #39b57b;
+  --orange: #ffdd9e;
   --purple: #dbbbff;
   --pink: #ffa6c7;
   --max-width: 1080px;
@@ -133,6 +135,10 @@ i {
       font-size: smaller;
       line-height: 16px;
     }
+  }
+
+  #show-debugger-btn {
+    margin: 0 auto;
   }
 
   #gesture-confidence-container {
@@ -746,12 +752,18 @@ label.gesture .remove {
   position: relative;
   overflow: hidden;
 
-  &.warning {
-    background-color: var(--pink);
+  &.prediction {
+    background-color: var(--purple); 
   }
 
-  &.prediction {
-    background-color: var(--purple);
+  &.warning {
+    animation: warning-fade;
+    animation-duration: 10s;
+  }
+
+  &.highlight {
+    animation: highlight-fade;
+    animation-duration: 10s;
   }
 }
 
@@ -876,35 +888,144 @@ body.bluetooth li:last-of-type {
 
 /* DEBUG */
 
-#debug-table {
-  .gesture-name{
-    margin-top: 15px;
-    .debug-row {
-      display: flex;
-      &.active{
-        .confidence{
-          background: var(--purple);
-        }
-      }
-      .label{
-        margin-right: 20px;
-        font-weight: normal;
-        &.warning{
-          background-color: var(--pink);
-        }
-      }
-      
-      .confidence {
-        margin-bottom: 0.5rem;
-        width: 50%;
-        margin-left: auto;
-        background: var(--box-shadow-grey);
-        border-radius: 5px;
-      }
-      .distance{
-        margin-left: 20px;
-      }
+#debug-container {
+  position: fixed;
+  top: 375px;
+  width: 300px;
+  z-index: 100;
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 13px 27px -5px rgba(50, 50, 93, .25), 0 8px 16px -8px rgba(0, 0, 0, .3), 0 -6px 16px -6px rgba(0, 0, 0, .025);
+
+  .title-bar {
+    margin: -15px -15px 5px -15px;
+    padding: 5px 15px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    background-color: var(--primary);
+    color: white;
+    font-size: 20px;
+    font-family: consolas, monospace;
+    cursor: move;
+  }
+
+  .close-debug-btn {
+    position: absolute;
+    top: 10px;
+    right: 9px;
+    color: white;
+    background: transparent;
+    box-shadow: none;
+    border: none;
+  }
+
+  #debug-table {
+    .description {
+      background: var(--light-grey);
     }
 
+    .gesture-name {
+      margin-top: 15px;
+
+      .debug-row {
+        height: 18px;
+        display: flex;
+
+        &:hover {
+          cursor: pointer;
+
+          &:not(.warning) {
+            .distance {
+              background: var(--orange);
+            }
+          }
+        }
+
+        &.active {
+          .confidence {
+            background: var(--purple);
+          }
+        }
+
+        .label {
+          margin-right: 20px;
+          font-weight: normal;
+        }
+
+        &.warning {
+          .distance {
+            background-color: var(--pink);
+          }
+        }
+
+        .confidence {
+          margin: 0.25rem 0;
+          width: 50%;
+          margin-left: auto;
+          background: var(--box-shadow-grey);
+          border-radius: 5px;
+        }
+
+        .distance {
+          font-size: small;
+          margin-left: 20px;
+          padding: 0px 3px;
+          border-radius: 3px;
+        }
+      }
+    }
   }
+
+  #distance-label{
+    position: absolute;
+    top: 60px;
+    right: 10px;
+    font-size: 20px;
+  }
+
+  .debugger-explanation {
+    margin: 15px -15px -15px -15px;
+    padding: 10px 15px;
+    background: #efefef;
+    color: black;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+  }
+
+  .debugger-explanation:hover {
+    cursor: pointer;
+  }
+
+  .explanation-body {
+    display: none;
+    opacity: 0;
+    margin-top: 10px;
+    font-size: small;
+    transition: 1s all;
+  }
+
+  .red {
+    background-color: var(--pink);
+    padding: 0px 3px;
+    border-radius: 3px;
+  }
+
+  .explanation-body.visible {
+    opacity: 1;
+    display: inline-block;
+  }
+}
+
+@keyframes highlight-fade{
+  0% {background-color: var(--orange)}
+  80% {background-color: var(--orange)}
+  100% {background-color: transparent}
+}
+
+
+@keyframes warning-fade{
+  0% {background-color: var(--pink)}
+  80% {background-color: var(--pink)}
+  100% {background-color: transparent}
 }

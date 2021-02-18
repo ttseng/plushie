@@ -66,6 +66,8 @@ function loadDefaultGestures() {
     addDefaultGestures();
 
     startClassification();
+
+    document.getElementById('show-debugger-btn').classList.remove('hidden');
   });
 }
 
@@ -418,6 +420,15 @@ function updateMLBtns() {
 
   // check if you should display any warnings
   checkWarnings();
+
+  // check if debugger button should be hidden
+  if(gestureData.length == 0){
+    document.getElementById('show-debugger-btn').classList.add('hidden');
+    document.getElementById('distance-label').classList.add('hidden');
+  }else{
+    document.getElementById('show-debugger-btn').classList.remove('hidden');
+    document.getElementById('distance-label').classList.remove('hidden');
+  }
 }
 
 function checkWarnings() {
@@ -620,10 +631,10 @@ function runPrediction() {
         if (confidenceEl) {
           confidenceEl.style.width = confidence + "%";
         }
-        // highlight any problematic samples that are more than 1.5 standard deviations beyond the mean for a given gesture
+        // highlight any problematic samples that are more than 2 standard deviations beyond the mean for a given gesture
         let gestureStats = byGestureSummary.filter((item) => item.label == sample.label)[0];
-        let idEl = document.querySelector(`#debug-container .debug-row.id-${sample.id} .label`);
-        let factor = 1.5;
+        let idEl = document.querySelector(`#debug-container .debug-row.id-${sample.id}`);
+        let factor = 2;
         let highStd = 10;
 
         let lowerLimit = Math.max(gestureStats.avg - factor * gestureStats.std, 0);
@@ -1009,9 +1020,9 @@ function classifySamples() {
 }
 
 // FOR DEBUG MODE
-function debug() {
-  debugMode = !debugMode;
-  document.getElementById('debug-container').classList.toggle('hidden');
+function toggleDebuggerExplanation(){
+  let body = document.querySelector('.debugger-explanation .explanation-body');
+  body.classList.toggle('visible');
 }
 
 // COPYING DATA SAMPLE FOR LOGGING PURPOSES
