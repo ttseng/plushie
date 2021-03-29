@@ -308,8 +308,8 @@ function addNewGesture(evt) {
           `The name ${gestureName} is already been used. Please choose a new name.`
         );
       } else {
-        // format with all lower case and hyphens in place of spaces
-        gestureName = gestureName.replace(/\s+/g, "-").toLowerCase();
+        // format with all lower case, hyphens in place of spaces, and remove all special characters
+        gestureName = gestureName.replace(/\s+/g, "-").replace(/[^a-zA-Z ]/g, "").toLowerCase();
 
         let gestureUI = buildNewGestureUI(gestureName);
 
@@ -442,11 +442,11 @@ function checkWarnings() {
         break;
       }
     }
-    if (shouldShowWarning) {
-      document.getElementById('sample-warning').classList.remove('hidden');
-    } else {
-      document.getElementById('sample-warning').classList.add('hidden');
-    }
+    // if (shouldShowWarning) {
+    //   document.getElementById('sample-warning').classList.remove('hidden');
+    // } else {
+    //   document.getElementById('sample-warning').classList.add('hidden');
+    // }
   }
 }
 
@@ -847,6 +847,7 @@ function getCurrentGestures() {
 
 // record timer functions
 function atRecordTimerStart(display) {
+  console.log(display);
   recordCountdownRunning = true;
   display.classList.add("active");
   accelXSample = [];
