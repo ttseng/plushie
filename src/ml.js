@@ -704,7 +704,7 @@ function runPrediction() {
       }
 
       let activeRow = document.querySelector(`.debug-row.id-${matchId}`);
-      if (activeRow) {
+      if (activeRow && minDist < distThreshold) {
         activeRow.classList.add('active');
       }
     }
