@@ -595,7 +595,7 @@ function runPrediction() {
       let xDist = new DynamicTimeWarping(trainingData.x, axData, distFunc).getDistance();
       let yDist = new DynamicTimeWarping(trainingData.y, ayData, distFunc).getDistance();
       let zDist = new DynamicTimeWarping(trainingData.z, azData, distFunc).getDistance();
-      let totalDist = xDist + yDist + zDist;
+      let totalDist = Math.sqrt(Math.pow(xDist,2) + Math.pow(yDist, 2) + Math.pow(zDist, 2));
       // console.log('distance for label', trainingData.label, ': ', totalDist);
 
       if (i == 0 || totalDist < minDist) {
@@ -969,7 +969,7 @@ function classify(x, y, z) {
     let xDist = new DynamicTimeWarping(trainingData.x, x, distFunc).getDistance();
     let yDist = new DynamicTimeWarping(trainingData.y, y, distFunc).getDistance();
     let zDist = new DynamicTimeWarping(trainingData.z, z, distFunc).getDistance();
-    let totalDist = xDist + yDist + zDist;
+    let totalDist = Math.sqrt(Math.pow(xDist,2) + Math.pow(yDist, 2) + Math.pow(zDist, 2));
     // console.log('distance for label', trainingData.label, ': ', totalDist);
 
     if (i == 0 || totalDist < minDist) {
