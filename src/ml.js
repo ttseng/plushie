@@ -18,7 +18,7 @@ let isClassifying = false;
 let pencilIcon = "<i class='fas fa-pencil-alt'></i>";
 let showIcon = '<i class="fas fa-eye"></i>';
 let hideIcon = '<i class="fas fa-eye-slash"></i>';
-let confidenceThreshold = 0.55; // default confidenceThreshold to trigger new gesture
+let distThreshold = 100; // ignore anything with a distance greater than 100
 
 let gestureLog = []; // for storing the detected gestures
 
@@ -681,7 +681,9 @@ function runPrediction() {
     updateConfidenceGestures(normalizedDistByGesture);
 
     // display prediction
-    showPrediction(prediction);
+    if(minDist < distThreshold){
+      showPrediction(prediction);
+    }
 
     // HIGHLIGHT THE GRAPH OF THE CURRENT CLOSEST MATCH        
     // clear all highlights
